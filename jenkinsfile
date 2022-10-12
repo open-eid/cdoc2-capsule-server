@@ -59,8 +59,7 @@ pipeline {
                     ' --env MAVEN_CONFIG=/var/maven/.m2 ' +
                     " ${javaDockerImageUrl} " +
                     ' mvn --batch-mode -s ria-settings.xml -Duser.home=/var/maven/' +
-                    //' -DskipTests ' +  // skip tests because they perform request to external server and this timeouts
-                    ' clean package '
+                    ' clean verify package '
                 )
             }
         }
