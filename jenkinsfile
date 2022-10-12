@@ -55,14 +55,12 @@ pipeline {
                 // Running-as-non-root inside Docker currently not done, because using Docker inside Docker requires
                 // root inside Docker or setting up more detailed permissions for /var/run/docker.sock
 
-                sh('docker run --pull always --rm ' +
+                sh('docker run --rm ' +
                    ' --volume /var/run/docker.sock:/var/run/docker.sock ' +
-                   //' --volume "$HOME/.m2:/var/maven/.m2"' +
-                   //' --volume "$PWD:/usr/src/project"' +
+                   ' --volume "$PWD:/usr/src/project"' +
+                   ' --workdir /usr/src/project' +
                    " ${javaDockerImageUrl} " +
                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp -DskipTests=true install;' +
-                   ' ls -al /tmp;' +
-                   ' mkdir /tmp/cdoc;' +
                    ' ls -al /tmp;' +
                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp -DskipTests=true ' +
                    ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/builder:0.1.185-base' +
