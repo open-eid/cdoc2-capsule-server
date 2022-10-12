@@ -93,22 +93,21 @@ pipeline {
             }
         }
 */
-
-    
+   
     stage('Build and Push Key Server Liquibase Docker Image') {
-            steps {
-                dir('cdoc20-server/src/main/resources/db') {
-                   sh("docker build -t ${env.DB_LIQUIBASE_DOCKER_IMG_NAME} .")
-                   sh("docker tag ${env.DB_LIQUIBASE_DOCKER_IMG_NAME}:latest ${env.DOCKER_IMAGE_REPOSITORY}/${env.DB_LIQUIBASE_DOCKER_IMG_NAME}:latest")
-                   script {
-                        dockerImage = docker.image("${env.DOCKER_IMAGE_REPOSITORY}/${env.DB_LIQUIBASE_DOCKER_IMG_NAME}:latest")
-                        docker.withRegistry('https://harbor.riaint.ee/', env.DOCKER_CREDENTIALS_ID) {
-                            dockerImage.push()
-                        }
-                   }
+        steps {
+            dir('cdoc20-server/src/main/resources/db') {
+                sh("docker build -t ${env.DB_LIQUIBASE_DOCKER_IMG_NAME} .")
+                sh("docker tag ${env.DB_LIQUIBASE_DOCKER_IMG_NAME}:latest ${env.DOCKER_IMAGE_REPOSITORY}/${env.DB_LIQUIBASE_DOCKER_IMG_NAME}:latest")
+                script {
+                    dockerImage = docker.image("${env.DOCKER_IMAGE_REPOSITORY}/${env.DB_LIQUIBASE_DOCKER_IMG_NAME}:latest")
+                    docker.withRegistry('https://harbor.riaint.ee/', env.DOCKER_CREDENTIALS_ID) {
+                        dockerImage.push()
+                    }
                 }
             }
         }
+    }
 
     stage('Update Key Server instance') {
         steps {
@@ -120,24 +119,23 @@ pipeline {
         }
     }
 
-        /* needs debugging -> currently results in access denied
-        stage('Deploy java artifacts to Nexus') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'nexus-cdoc2-maven-local', usernameVariable: 'NEXUS_user', passwordVariable: 'NEXUS_pass')]) {
-                    sh('docker run --pull always --rm --user "$(id -u):$(id -g)"' +
-                       ' --volume "$HOME/.m2:/var/maven/.m2"' +
-                       ' --volume "$PWD:/usr/src/project"' +
-                       ' --workdir /usr/src/project' +
-                       ' --env MAVEN_CONFIG=/var/maven/.m2 ' +
-                       " ${javaDockerImageUrl} " +
-                       ' mvn --batch-mode -s ria-settings.xml -Duser.home=/var/maven/' +
-                       ' -DskipTests deploy -DaltDeploymentRepository=credentials::default::https://nexus.riaint.ee/repository/cdoc2-maven-local/'
-                    )
-                }
+    /* needs debugging -> currently results in access denied
+    stage('Deploy java artifacts to Nexus') {
+        steps {
+            withCredentials([usernamePassword(credentialsId: 'nexus-cdoc2-maven-local', usernameVariable: 'NEXUS_user', passwordVariable: 'NEXUS_pass')]) {
+                sh('docker run --pull always --rm --user "$(id -u):$(id -g)"' +
+                    ' --volume "$HOME/.m2:/var/maven/.m2"' +
+                    ' --volume "$PWD:/usr/src/project"' +
+                    ' --workdir /usr/src/project' +
+                    ' --env MAVEN_CONFIG=/var/maven/.m2 ' +
+                    " ${javaDockerImageUrl} " +
+                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/var/maven/' +
+                    ' -DskipTests deploy -DaltDeploymentRepository=credentials::default::https://nexus.riaint.ee/repository/cdoc2-maven-local/'
+                )
             }
-		}
-        */
+        }
     }
+    */
 }
 
 def callWithSshCredentials(String node, Closure action) {
@@ -151,5 +149,4 @@ def callWithSshCredentials(String node, Closure action) {
         action.call(remote)
     }
 }
-
 
