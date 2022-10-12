@@ -51,7 +51,7 @@ pipeline {
 
         stage('Compile') {
             steps {
-                sh('docker run --pull always --rm --user "$(id -u):$(id -g)" ' +
+                sh('docker run --pull always --rm ' +
                     ' --volume "$PWD:/usr/src/project"' +
                     ' --workdir /usr/src/project' +
                     " ${javaDockerImageUrl} " +
