@@ -62,11 +62,11 @@ pipeline {
                     ' -DskipTests ' +  // skip tests because they perform request to external server and this timeouts
                     ' clean install package '
                 )
-            }
-        }
+            //}
+        //}
 
-        stage('Build and Push Key Server Docker Image') {
-            steps {
+        //stage('Build and Push Key Server Docker Image') {
+            //steps {
                     // Running-as-non-root inside Docker currently not done, because using Docker inside Docker requires
                     // root inside Docker or setting up more detailed permissions for /var/run/docker.sock
 
