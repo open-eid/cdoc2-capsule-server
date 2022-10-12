@@ -75,7 +75,7 @@ pipeline {
                     ' --workdir /usr/src/project' +
                     " ${javaDockerImageUrl} " +
                     // run install so that cdoc20 subprojects' artifacts are available to cdoc20-server build
-                    ' mkdir -p /tmp/.m2/repository && ' +
+                    //' mkdir -p /tmp/.m2/repository && ' +
                     ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp install -DskipTests=true && ' +
                     ' ls /tmp/.m2/repository/ee/cyber/cdoc20/ && ' + 
                     ' ls /tmp/.m2/repository/ee/cyber/cdoc20/cdoc20-lib/ && ' + 
