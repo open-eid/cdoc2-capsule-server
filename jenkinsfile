@@ -55,7 +55,7 @@ pipeline {
                     ' --volume "$PWD:/usr/src/project"' +
                     ' --workdir /usr/src/project' +
                     " ${javaDockerImageUrl} " +
-                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/usr/src/project' +
+                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp ' +
                     ' -DskipTests=true ' + // skip test for now because they are slow (more than 30 min) on jenkins -- needs better entropy etc (e.g haveged) ?
                     ' clean verify package '
                 )
@@ -71,11 +71,11 @@ pipeline {
                     ' --volume /var/run/docker.sock:/var/run/docker.sock ' +
                     ' --volume "$PWD:/usr/src/project"' +
                     ' --workdir /usr/src/project' +
-                    ' --env MAVEN_CONFIG=/tmp/.m2' +
+                    //' --env MAVEN_CONFIG=/tmp/.m2' +
                     " ${javaDockerImageUrl} " +
                     // run install so that cdoc20 subprojects' artifacts are available to cdoc20-server build
-                    ' mvn --batch-mode -s ria-settings.xml -Dmaven.repo.local=/tmp/.m2/repository clean install -DskipTests=true && ' + 
-                    ' mvn --batch-mode -s ria-settings.xml ' +
+                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp install -DskipTests=true && ' + 
+                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp ' +
                     ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/builder:0.1.185-base' +
                     ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/run:1.1.32-base-cnb' +
                     ' -Dmaven.test.skip=true -Dmaven.repo.local=/tmp/.m2/repository -e -X ' +
