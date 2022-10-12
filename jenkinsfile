@@ -60,9 +60,9 @@ pipeline {
                    ' --volume "$PWD:/usr/src/project"' +
                    ' --workdir /usr/src/project' +
                    " ${javaDockerImageUrl} " +
-                   ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp -DskipTests=true install;' +
-                   ' ls -al /tmp;' +
-                   ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp -DskipTests=true ' +
+                   ' mvn --batch-mode -s ria-settings.xml -Duser.home=/usr/src/project -DskipTests=true install;' +
+                   ' ls -al /usr/src/project/.m2 ;' +
+                   ' mvn --batch-mode -s ria-settings.xml -Duser.home=/usr/src/project -DskipTests=true ' +
                    ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/builder:0.1.185-base' +
                    ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/run:1.1.32-base-cnb' +
                    ' -Dmaven.test.skip=true' +
