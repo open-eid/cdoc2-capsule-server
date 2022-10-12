@@ -65,21 +65,30 @@ pipeline {
 */
 
         stage('Build and Push Key Server Docker Image') {
+            agent {
+                docker {
+                    image ${javaDockerImageUrl}
+                    reuseNode true
+                }
+            }
             steps {
                 // Running-as-non-root inside Docker currently not done, because using Docker inside Docker requires
                 // root inside Docker or setting up more detailed permissions for /var/run/docker.sock
-                sh('docker run --pull always --rm ' +
-                    ' --volume /var/run/docker.sock:/var/run/docker.sock ' +
-                    ' --volume "$PWD:/usr/src/project"' +
-                    ' --workdir /usr/src/project' +
-                    " ${javaDockerImageUrl} " +
+                //sh('docker run --pull always --rm ' +
+                 //   ' --volume /var/run/docker.sock:/var/run/docker.sock ' +
+                 //   ' --volume "$PWD:/usr/src/project"' +
+                 //   ' --workdir /usr/src/project' +
+                 //   " ${javaDockerImageUrl} " +
                     // run install so that cdoc20 subprojects' artifacts are available to cdoc20-server build
-                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp install -DskipTests=true ;' +
-                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp -Dmaven.repo.local=/tmp/.m2/repository ' +
+                 sh('mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp install -DskipTests=true')
+                 sh('ls -al /tmp/.m2/repository);
+                 
+                 /*   ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp -Dmaven.repo.local=/tmp/.m2/repository ' +
                     ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/builder:0.1.185-base' +
                     ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/run:1.1.32-base-cnb' +
                     ' -Dmaven.test.skip=true ' +
                     ' -pl cdoc20-server/ spring-boot:build-image'
+                    */
                 ) 
                 sh("docker tag ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} ${env.DOCKER_IMAGE_REPOSITORY}/${env.DOCKER_IMAGE_NAME}:latest")
                 script {
