@@ -14,6 +14,35 @@ node {
             ])
         ])
     }
+    
+    docker.image("${javaDockerImageUrl}").inside {
+    stage('Install') {
+        sh('mvn --batch-mode -s ria-settings.xml clean install -Duser.home=/tmp -DskipTests=true')
+    }
+     
+    stage('List result') {
+        sh('ls -al /tmp/.m2/repository')
+    }
+    
+    stage('Build Keyserver Docker image') {
+        sh(' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp -Dmaven.repo.local=/tmp/.m2/repository ' +
+           ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/builder:0.1.185-base' +
+           ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/run:1.1.32-base-cnb' +
+           ' -Dmaven.test.skip=true ' +
+           ' -pl cdoc20-server/ spring-boot:build-image'
+         )
+    }
+
+    stage('Publish Keyserver Docker image') {
+        sh("docker tag ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} ${env.DOCKER_IMAGE_REPOSITORY}/${env.DOCKER_IMAGE_NAME}:latest")
+        script {
+            dockerImage = docker.image("${env.DOCKER_IMAGE_REPOSITORY}/${env.DOCKER_IMAGE_NAME}:latest")
+            docker.withRegistry('https://harbor.riaint.ee/', env.DOCKER_CREDENTIALS_ID) {
+                dockerImage.push()
+            }
+        }
+    }
+}
 }
 
 def javaDockerImage = 'maven:3.8.2-openjdk-17'
@@ -64,34 +93,6 @@ pipeline {
         }
 */
 
-docker.image("${javaDockerImageUrl}").inside {
-    stage('Install') {
-        sh('mvn --batch-mode -s ria-settings.xml clean install -Duser.home=/tmp -DskipTests=true')
-    }
-     
-    stage('List result') {
-        sh('ls -al /tmp/.m2/repository')
-    }
-    
-    stage('Build Keyserver Docker image') {
-        sh(' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp -Dmaven.repo.local=/tmp/.m2/repository ' +
-           ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/builder:0.1.185-base' +
-           ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/run:1.1.32-base-cnb' +
-           ' -Dmaven.test.skip=true ' +
-           ' -pl cdoc20-server/ spring-boot:build-image'
-         )
-    }
-
-    stage('Publish Keyserver Docker image') {
-        sh("docker tag ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} ${env.DOCKER_IMAGE_REPOSITORY}/${env.DOCKER_IMAGE_NAME}:latest")
-        script {
-            dockerImage = docker.image("${env.DOCKER_IMAGE_REPOSITORY}/${env.DOCKER_IMAGE_NAME}:latest")
-            docker.withRegistry('https://harbor.riaint.ee/', env.DOCKER_CREDENTIALS_ID) {
-                dockerImage.push()
-            }
-        }
-    }
-}
     
     stage('Build and Push Key Server Liquibase Docker Image') {
             steps {
