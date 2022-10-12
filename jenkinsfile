@@ -55,6 +55,7 @@ pipeline {
                 docker {
                     image "${javaDockerImageUrl}"
                     reuseNode true
+                    args '-u root:root'
                 }
             }
             steps {
