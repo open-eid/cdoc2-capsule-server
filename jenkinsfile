@@ -65,21 +65,26 @@ pipeline {
         */
 
         stage('Build and Push Key Server Docker Image') {
+            agent {
+                docker {
+                    reuseNode true
+                    image "${javaDockerImageUrl}"
+                }
+            }
             steps {
                 // Running-as-non-root inside Docker currently not done, because using Docker inside Docker requires
                 // root inside Docker or setting up more detailed permissions for /var/run/docker.sock
 
-                sh('docker run --pull always --rm ' +
+                /*sh('docker run --pull always --rm ' +
                     ' --volume /var/run/docker.sock:/var/run/docker.sock ' +
                     ' --volume "$PWD:/usr/src/project"' +
                     ' --workdir /usr/src/project' +
                     " ${javaDockerImageUrl} " +
                     // run install so that cdoc20 subprojects' artifacts are available to cdoc20-server build
                     //' mkdir -p /tmp/.m2/repository && ' +
-                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp install -DskipTests=true && ' +
-                    ' ls -al /tmp  && ' + 
-                    ' ls /tmp/.m2/repository  && ' + 
-                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp ' +
+                */
+                sh(' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp install -DskipTests=true ')
+                sh(' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp ' +
                     ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/builder:0.1.185-base' +
                     ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/run:1.1.32-base-cnb' +
                     ' -Dmaven.test.skip=true -Duser.home=/tmp ' +
