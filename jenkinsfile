@@ -1,3 +1,7 @@
+def javaDockerImage = 'maven:3.8.2-openjdk-17'
+def javaDockerImageUrl = "nexus.riaint.ee:8500/library/${javaDockerImage}"
+
+
 node {
     withCredentials([string(credentialsId: 'webhook_token', variable: 'webhooktoken')]) {
         properties([
@@ -44,9 +48,6 @@ node {
     }
 }
 }
-
-def javaDockerImage = 'maven:3.8.2-openjdk-17'
-def javaDockerImageUrl = "nexus.riaint.ee:8500/library/${javaDockerImage}"
 
 pipeline {
 
