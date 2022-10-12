@@ -49,6 +49,7 @@ pipeline {
             }
         }
 
+/*
         stage('Compile') {
             steps {
                 sh('docker run --pull always --rm ' +
@@ -61,6 +62,7 @@ pipeline {
                 )
             }
         }
+        */
 
         stage('Build and Push Key Server Docker Image') {
             steps {
