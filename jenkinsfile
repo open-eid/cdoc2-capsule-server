@@ -77,7 +77,7 @@ pipeline {
                     // run install so that cdoc20 subprojects' artifacts are available to cdoc20-server build
                     //' mkdir -p /tmp/.m2/repository && ' +
                     ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp install -DskipTests=true && ' +
-                    ' ls -al /tmp / && ' + 
+                    ' ls -al /tmp  && ' + 
                     ' ls /tmp/.m2/repository  && ' + 
                     ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp ' +
                     ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/builder:0.1.185-base' +
