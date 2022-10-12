@@ -69,7 +69,7 @@ pipeline {
                     // Running-as-non-root inside Docker currently not done, because using Docker inside Docker requires
                     // root inside Docker or setting up more detailed permissions for /var/run/docker.sock
 
-                   sh('docker run --pull always --rm ' +
+                sh('docker run --pull always --rm ' +
                     ' --volume /var/run/docker.sock:/var/run/docker.sock ' +
                     ' --volume "$PWD:/usr/src/project"' +
                     ' --workdir /usr/src/project' +
@@ -77,6 +77,10 @@ pipeline {
                     " ${javaDockerImageUrl} " +
                     // run install so that cdoc20 subprojects' artifacts are available to cdoc20-server build
                     ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp install -DskipTests=true && ' +
+                    ' ls / && ' +
+                    ' ls /tmp &&' +
+                    ' ls /usr/src &&' +
+                    ' ls /usr/src/project &&' +
                     ' ls /tmp/.m2/repository/ee/cyber/cdoc20/ && ' + 
                     ' ls /tmp/.m2/repository/ee/cyber/cdoc20/cdoc20-lib/ && ' + 
                     ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp ' +
