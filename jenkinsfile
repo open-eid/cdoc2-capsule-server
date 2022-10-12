@@ -62,7 +62,7 @@ pipeline {
                 )
             }
         }
-        */
+*/
 
         stage('Build and Push Key Server Docker Image') {
             steps {
@@ -74,7 +74,7 @@ pipeline {
                     ' --workdir /usr/src/project' +
                     " ${javaDockerImageUrl} " +
                     // run install so that cdoc20 subprojects' artifacts are available to cdoc20-server build
-                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp install -DskipTests=true && '
+                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp install -DskipTests=true && ' +
                     ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp && ' +
                     ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/builder:0.1.185-base' +
                     ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/run:1.1.32-base-cnb' +
