@@ -81,7 +81,7 @@ pipeline {
                  //   " ${javaDockerImageUrl} " +
                     // run install so that cdoc20 subprojects' artifacts are available to cdoc20-server build
                  sh('mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp install -DskipTests=true')
-                 sh('ls -al /tmp/.m2/repository);
+                 sh('ls -al /tmp/.m2/repository');
                  
                  /*   ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp -Dmaven.repo.local=/tmp/.m2/repository ' +
                     ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/builder:0.1.185-base' +
