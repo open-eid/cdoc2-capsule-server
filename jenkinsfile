@@ -53,8 +53,8 @@ pipeline {
             steps {
                 sh('docker run --pull always --rm --user "$(id -u):$(id -g)" ' +
                     //' --volume "$HOME/.m2:/var/maven/.m2"' +
-                    //' --volume "$PWD:/usr/src/project"' +
-                    //' --workdir /usr/src/project' +
+                    ' --volume "$PWD:/usr/src/project"' +
+                    ' --workdir /usr/src/project' +
                     //' -v /dev/urandom:/dev/random ' + // required for entropy for faster tests
                     //' --env MAVEN_CONFIG=/var/maven/.m2 ' +
                     " ${javaDockerImageUrl} " +
@@ -74,8 +74,8 @@ pipeline {
                    sh('docker run --pull always --rm ' +
                     ' --volume /var/run/docker.sock:/var/run/docker.sock ' +
                     //' --volume "$HOME/.m2:/var/maven/.m2"' +
-                    //' --volume "$PWD:/usr/src/project"' +
-                    //' --workdir /usr/src/project' +
+                    ' --volume "$PWD:/usr/src/project"' +
+                    ' --workdir /usr/src/project' +
                     //' --env MAVEN_CONFIG=/var/maven/.m2 ' +
                     " ${javaDockerImageUrl} " +
                     // run install so that cdoc20 subprojects' artifacts are available to cdoc20-server build
