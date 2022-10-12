@@ -57,9 +57,10 @@ pipeline {
                 sh('docker run --rm ' +
                    ' --volume /var/run/docker.sock:/var/run/docker.sock ' +
                    ' --volume "$PWD:/usr/src/project"' +
+                   ' --volume /dev/urandom:/dev/random' +
                    ' --workdir /usr/src/project' +
                    " ${javaDockerImageUrl} " +
-                   ' mvn --batch-mode -s ria-settings.xml -Duser.home=/usr/src/project -DskipTests=true clean install'
+                   ' mvn --batch-mode -s ria-settings.xml -Duser.home=/usr/src/project -DskipTests=false clean install'
                 )
                 sh('docker run --rm ' +
                    ' --volume /var/run/docker.sock:/var/run/docker.sock ' +
