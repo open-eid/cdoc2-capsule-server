@@ -61,9 +61,9 @@ pipeline {
                    //' --volume "$PWD:/usr/src/project"' +
                    " ${javaDockerImageUrl} " +
                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp -DskipTests=true install;' +
-                   ' ls -al /tmp;'
-                   ' mkdir /tmp/cdoc;'
-                   ' ls -al /tmp;'
+                   ' ls -al /tmp;' +
+                   ' mkdir /tmp/cdoc;' +
+                   ' ls -al /tmp;' +
                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp -DskipTests=true ' +
                    ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/builder:0.1.185-base' +
                    ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/run:1.1.32-base-cnb' +
