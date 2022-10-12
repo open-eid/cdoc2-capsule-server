@@ -53,9 +53,9 @@ pipeline {
             steps {
                 sh('docker run --pull always --rm --user "$(id -u):$(id -g)" ' +
                     //' --volume "$HOME/.m2:/var/maven/.m2"' +
-                    ' --volume "$PWD:/usr/src/project"' +
-                    ' --workdir /usr/src/project' +
-                    ' -v /dev/urandom:/dev/random ' + // required for entropy for faster tests
+                    //' --volume "$PWD:/usr/src/project"' +
+                    //' --workdir /usr/src/project' +
+                    //' -v /dev/urandom:/dev/random ' + // required for entropy for faster tests
                     //' --env MAVEN_CONFIG=/var/maven/.m2 ' +
                     " ${javaDockerImageUrl} " +
                     //' mvn --batch-mode -s ria-settings.xml -Duser.home=/var/maven/' +
@@ -73,14 +73,16 @@ pipeline {
 
                    sh('docker run --pull always --rm ' +
                     ' --volume /var/run/docker.sock:/var/run/docker.sock ' +
-                    ' --volume "$HOME/.m2:/var/maven/.m2"' +
-                    ' --volume "$PWD:/usr/src/project"' +
-                    ' --workdir /usr/src/project' +
-                    ' --env MAVEN_CONFIG=/var/maven/.m2 ' +
+                    //' --volume "$HOME/.m2:/var/maven/.m2"' +
+                    //' --volume "$PWD:/usr/src/project"' +
+                    //' --workdir /usr/src/project' +
+                    //' --env MAVEN_CONFIG=/var/maven/.m2 ' +
                     " ${javaDockerImageUrl} " +
                     // run install so that cdoc20 subprojects' artifacts are available to cdoc20-server build
-                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/var/maven/ clean install -DskipTests=true && ' + 
-                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/var/maven/ ' +
+                    //' mvn --batch-mode -s ria-settings.xml -Duser.home=/var/maven/ clean install -DskipTests=true && ' + 
+                    //' mvn --batch-mode -s ria-settings.xml -Duser.home=/var/maven/ ' +
+                    ' mvn --batch-mode -s ria-settings.xml clean install -DskipTests=true && ' + 
+                    ' mvn --batch-mode -s ria-settings.xml ' +
                     ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/builder:0.1.185-base' +
                     ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/run:1.1.32-base-cnb' +
                     ' -Dmaven.test.skip=true -X ' +
