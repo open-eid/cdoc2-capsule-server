@@ -62,7 +62,7 @@ pipeline {
                    " ${javaDockerImageUrl} " +
                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/usr/src/project -DskipTests=true install'
                 )
-                sh('ls -al "$PWD/.m2")
+                sh('ls -al "$PWD/.m2"')
                 sh('docker run --rm ' +
                    ' --volume /var/run/docker.sock:/var/run/docker.sock ' +
                    ' --volume "$PWD:/usr/src/project"' +
