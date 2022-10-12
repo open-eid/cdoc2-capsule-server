@@ -90,30 +90,30 @@ pipeline {
         }
 */
    
-    stage('Build and Push Key Server Liquibase Docker Image') {
-        steps {
-            dir('cdoc20-server/src/main/resources/db') {
-                sh("docker build -t ${env.DB_LIQUIBASE_DOCKER_IMG_NAME} .")
-                sh("docker tag ${env.DB_LIQUIBASE_DOCKER_IMG_NAME}:latest ${env.DOCKER_IMAGE_REPOSITORY}/${env.DB_LIQUIBASE_DOCKER_IMG_NAME}:latest")
-                script {
-                    dockerImage = docker.image("${env.DOCKER_IMAGE_REPOSITORY}/${env.DB_LIQUIBASE_DOCKER_IMG_NAME}:latest")
-                    docker.withRegistry('https://harbor.riaint.ee/', env.DOCKER_CREDENTIALS_ID) {
-                        dockerImage.push()
+        stage('Build and Push Key Server Liquibase Docker Image') {
+            steps {
+                dir('cdoc20-server/src/main/resources/db') {
+                    sh("docker build -t ${env.DB_LIQUIBASE_DOCKER_IMG_NAME} .")
+                    sh("docker tag ${env.DB_LIQUIBASE_DOCKER_IMG_NAME}:latest ${env.DOCKER_IMAGE_REPOSITORY}/${env.DB_LIQUIBASE_DOCKER_IMG_NAME}:latest")
+                    script {
+                        dockerImage = docker.image("${env.DOCKER_IMAGE_REPOSITORY}/${env.DB_LIQUIBASE_DOCKER_IMG_NAME}:latest")
+                        docker.withRegistry('https://harbor.riaint.ee/', env.DOCKER_CREDENTIALS_ID) {
+                            dockerImage.push()
+                        }
                     }
                 }
             }
         }
-    }
 
-    stage('Update Key Server instance') {
-        steps {
-            script {
-                callWithSshCredentials("cdoc2-keyserver-01", { remote ->
-                    sshCommand(remote: remote, command: "sh /home/riajenk/update-server.sh")
-                })
+        stage('Update Key Server instance') {
+            steps {
+                script {
+                    callWithSshCredentials("cdoc2-keyserver-01", { remote ->
+                        sshCommand(remote: remote, command: "sh /home/riajenk/update-server.sh")
+                    })
+                }
             }
         }
-    }
 
     /* needs debugging -> currently results in access denied
     stage('Deploy java artifacts to Nexus') {
@@ -132,6 +132,7 @@ pipeline {
         }
     }
     */
+    }
 }
 
 def callWithSshCredentials(String node, Closure action) {
