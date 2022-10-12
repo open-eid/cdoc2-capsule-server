@@ -37,7 +37,6 @@ pipeline {
         DOCKER_IMAGE_REPOSITORY = 'harbor.riaint.ee/cdoc2'
         DOCKER_CREDENTIALS_ID = 'cdoc2-jenkins-harbor'
         DOCKER_IMAGE_NAME = 'cdoc20-server'
-        DOCKER_IMAGE_TAG = '0.0.7-SNAPSHOT'
         DB_LIQUIBASE_DOCKER_IMG_NAME = 'cdoc20-server-liquibase'
     }
 
@@ -70,10 +69,11 @@ pipeline {
                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/usr/src/project -DskipTests=true ' +
                    ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/builder:0.1.185-base' +
                    ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/run:1.1.32-base-cnb' +
+                   ' -Dspring-boot.build-image.imageName="${env.DOCKER_IMAGE_NAME}"' + 
                    ' -Dmaven.test.skip=true' +
                    ' -pl cdoc20-server/ spring-boot:build-image'
                 )
-                sh("docker tag ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} ${env.DOCKER_IMAGE_REPOSITORY}/${env.DOCKER_IMAGE_NAME}:latest")
+                sh("docker tag ${env.DOCKER_IMAGE_NAME} ${env.DOCKER_IMAGE_REPOSITORY}/${env.DOCKER_IMAGE_NAME}:latest")
                 script {
                     dockerImage = docker.image("${env.DOCKER_IMAGE_REPOSITORY}/${env.DOCKER_IMAGE_NAME}:latest")
                     docker.withRegistry('https://harbor.riaint.ee/', env.DOCKER_CREDENTIALS_ID) {
