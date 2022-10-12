@@ -49,9 +49,9 @@ pipeline {
             }
         }
 
-        stage('Compile and Test') {
+        stage('Compile') {
             steps {
-                sh('docker run --pull always --rm ' +
+                sh('docker run --pull always --rm --user "$(id -u):$(id -g)" ' +
                     ' --volume /var/run/docker.sock:/var/run/docker.sock ' +
                     ' --volume "$HOME/.m2:/var/maven/.m2"' +
                     ' --volume "$PWD:/usr/src/project"' +
