@@ -52,20 +52,17 @@ pipeline {
         stage('Compile') {
             steps {
                 sh('docker run --pull always --rm --user "$(id -u):$(id -g)" ' +
-                    //' --volume "$HOME/.m2:/var/maven/.m2"' +
                     ' --volume "$PWD:/usr/src/project"' +
                     ' --workdir /usr/src/project' +
-                    //' -v /dev/urandom:/dev/random ' + // required for entropy for faster tests
-                    //' --env MAVEN_CONFIG=/var/maven/.m2 ' +
                     " ${javaDockerImageUrl} " +
-                    //' mvn --batch-mode -s ria-settings.xml -Duser.home=/var/maven/' +
-                    ' mvn --batch-mode -s ria-settings.xml ' +
+                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/usr/src/project' +
                     ' -DskipTests=true ' + // skip test for now because they are slow (more than 30 min) on jenkins -- needs better entropy etc (e.g haveged) ?
                     ' clean verify package '
                 )
             }
         }
 
+/*
         stage('Build and Push Key Server Docker Image') {
             steps {
                     // Running-as-non-root inside Docker currently not done, because using Docker inside Docker requires
@@ -97,7 +94,7 @@ pipeline {
                 }
             }
         }
-
+*/
         stage('Build and Push Key Server Liquibase Docker Image') {
             steps {
                 dir('cdoc20-server/src/main/resources/db') {
