@@ -69,7 +69,7 @@ pipeline {
                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/usr/src/project -DskipTests=true ' +
                    ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/builder:0.1.185-base' +
                    ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/run:1.1.32-base-cnb' +
-                   ' -Dspring-boot.build-image.imageName="${env.DOCKER_IMAGE_NAME}"' + 
+                   " -Dspring-boot.build-image.imageName=${env.DOCKER_IMAGE_NAME}" +
                    ' -Dmaven.test.skip=true' +
                    ' -pl cdoc20-server/ spring-boot:build-image'
                 )
