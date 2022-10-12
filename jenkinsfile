@@ -65,7 +65,7 @@ pipeline {
             }
         }
         
-        stage('Build Key Server Docker Image') {
+        stage('Build and Push Key Server Docker Image') {
             steps {
                 // Running-as-non-root inside Docker currently not done, because using Docker inside Docker requires
                 // root inside Docker or setting up more detailed permissions for /var/run/docker.sock
@@ -81,11 +81,6 @@ pipeline {
                    ' -Dmaven.test.skip=true' +
                    ' -pl cdoc20-server/ spring-boot:build-image'
                 )
-            }
-        }
-        
-        stage('Push Key Server Docker Image to Docker repository') {
-            steps {
                 sh("docker tag ${env.DOCKER_IMAGE_NAME} ${env.DOCKER_IMAGE_REPOSITORY}/${env.DOCKER_IMAGE_NAME}:latest")
                 script {
                     dockerImage = docker.image("${env.DOCKER_IMAGE_REPOSITORY}/${env.DOCKER_IMAGE_NAME}:latest")
