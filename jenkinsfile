@@ -49,7 +49,7 @@ pipeline {
             }
         }
 
-        stage('Build and Push Key Server Docker Image') {
+        stage('Compile and test') {
             steps {
                 // Running-as-non-root inside Docker currently not done, because using Docker inside Docker requires
                 // root inside Docker or setting up more detailed permissions for /var/run/docker.sock
@@ -62,6 +62,13 @@ pipeline {
                    " ${javaDockerImageUrl} " +
                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/usr/src/project -DskipTests=false clean install'
                 )
+            }
+        }
+        
+        stage('Build Key Server Docker Image') {
+            steps {
+                // Running-as-non-root inside Docker currently not done, because using Docker inside Docker requires
+                // root inside Docker or setting up more detailed permissions for /var/run/docker.sock
                 sh('docker run --rm ' +
                    ' --volume /var/run/docker.sock:/var/run/docker.sock ' +
                    ' --volume "$PWD:/usr/src/project"' +
@@ -74,6 +81,11 @@ pipeline {
                    ' -Dmaven.test.skip=true' +
                    ' -pl cdoc20-server/ spring-boot:build-image'
                 )
+            }
+        }
+        
+        stage('Push Key Server Docker Image to Docker repository') {
+            steps {
                 sh("docker tag ${env.DOCKER_IMAGE_NAME} ${env.DOCKER_IMAGE_REPOSITORY}/${env.DOCKER_IMAGE_NAME}:latest")
                 script {
                     dockerImage = docker.image("${env.DOCKER_IMAGE_REPOSITORY}/${env.DOCKER_IMAGE_NAME}:latest")
