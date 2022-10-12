@@ -67,7 +67,7 @@ pipeline {
         stage('Build and Push Key Server Docker Image') {
             agent {
                 docker {
-                    image ${javaDockerImageUrl}
+                    image "${javaDockerImageUrl}"
                     reuseNode true
                 }
             }
