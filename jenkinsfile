@@ -60,9 +60,8 @@ pipeline {
                    ' --volume "$PWD:/usr/src/project"' +
                    ' --workdir /usr/src/project' +
                    " ${javaDockerImageUrl} " +
-                   ' mvn --batch-mode -s ria-settings.xml -Duser.home=/usr/src/project -DskipTests=true install'
+                   ' mvn --batch-mode -s ria-settings.xml -Duser.home=/usr/src/project -DskipTests=true clean install'
                 )
-                sh('ls -al "$PWD/.m2"')
                 sh('docker run --rm ' +
                    ' --volume /var/run/docker.sock:/var/run/docker.sock ' +
                    ' --volume "$PWD:/usr/src/project"' +
@@ -84,21 +83,6 @@ pipeline {
             }
         }
 
-/*
-        stage('Compile') {
-            steps {
-                sh('docker run --pull always --rm ' +
-                    ' --volume "$PWD:/usr/src/project"' +
-                    ' --workdir /usr/src/project' +
-                    " ${javaDockerImageUrl} " +
-                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/tmp ' +
-                    ' -DskipTests=true ' + // skip test for now because they are slow (more than 30 min) on jenkins -- needs better entropy etc (e.g haveged) ?
-                    ' clean verify package '
-                )
-            }
-        }
-*/
-   
         stage('Build and Push Key Server Liquibase Docker Image') {
             steps {
                 dir('cdoc20-server/src/main/resources/db') {
