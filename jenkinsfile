@@ -36,7 +36,7 @@ pipeline {
         DOCKER_IMAGE_REPOSITORY = 'harbor.riaint.ee/cdoc2'
         DOCKER_CREDENTIALS_ID = 'cdoc2-jenkins-harbor'
         DOCKER_IMAGE_NAME = 'cdoc20-server'
-        DOCKER_IMAGE_TAG = '0.0.6-SNAPSHOT'
+        DOCKER_IMAGE_TAG = '0.0.7-SNAPSHOT'
         DB_LIQUIBASE_DOCKER_IMG_NAME = 'cdoc20-server-liquibase'
     }
 
@@ -62,7 +62,6 @@ pipeline {
             }
         }
 
-/*
         stage('Build and Push Key Server Docker Image') {
             steps {
                     // Running-as-non-root inside Docker currently not done, because using Docker inside Docker requires
@@ -70,16 +69,12 @@ pipeline {
 
                    sh('docker run --pull always --rm ' +
                     ' --volume /var/run/docker.sock:/var/run/docker.sock ' +
-                    //' --volume "$HOME/.m2:/var/maven/.m2"' +
                     ' --volume "$PWD:/usr/src/project"' +
                     ' --workdir /usr/src/project' +
-                    //' --env MAVEN_CONFIG=/var/maven/.m2 ' +
                     " ${javaDockerImageUrl} " +
                     // run install so that cdoc20 subprojects' artifacts are available to cdoc20-server build
-                    //' mvn --batch-mode -s ria-settings.xml -Duser.home=/var/maven/ clean install -DskipTests=true && ' + 
-                    //' mvn --batch-mode -s ria-settings.xml -Duser.home=/var/maven/ ' +
-                    ' mvn --batch-mode -s ria-settings.xml clean install -DskipTests=true && ' + 
-                    ' mvn --batch-mode -s ria-settings.xml ' +
+                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/usr/src/project clean install -DskipTests=true && ' + 
+                    ' mvn --batch-mode -s ria-settings.xml -Duser.home=/usr/src/project ' +
                     ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/builder:0.1.185-base' +
                     ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/run:1.1.32-base-cnb' +
                     ' -Dmaven.test.skip=true -X ' +
@@ -94,7 +89,7 @@ pipeline {
                 }
             }
         }
-*/
+
         stage('Build and Push Key Server Liquibase Docker Image') {
             steps {
                 dir('cdoc20-server/src/main/resources/db') {
