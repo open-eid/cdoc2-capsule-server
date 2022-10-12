@@ -83,7 +83,7 @@ pipeline {
                     ' mvn --batch-mode -s ria-settings.xml -Duser.home=/var/maven/ ' +
                     ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/builder:0.1.185-base' +
                     ' -Dspring-boot.build-image.runImage=nexus.riaint.ee:8500/paketobuildpacks/run:1.1.32-base-cnb' +
-                    ' -Dmaven.test.skip=true' +
+                    ' -Dmaven.test.skip=true -X ' +
                     ' -pl cdoc20-server/ spring-boot:build-image'
                 )
                 sh("docker tag ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} ${env.DOCKER_IMAGE_REPOSITORY}/${env.DOCKER_IMAGE_NAME}:latest")
