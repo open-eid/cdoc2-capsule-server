@@ -1,4 +1,4 @@
-def javaDockerImage = 'maven:3.8.2-openjdk-17'
+def javaDockerImage = 'maven:3.8.5-openjdk-17-slim'
 def javaDockerImageUrl = "nexus.riaint.ee:8500/library/${javaDockerImage}"
 
 
@@ -65,7 +65,7 @@ pipeline {
                 )
             }
         }
-        
+
         stage('Build and Push Key Server Docker Images') {
             steps {
                 // Running-as-non-root inside Docker currently not done, because using Docker inside Docker requires
