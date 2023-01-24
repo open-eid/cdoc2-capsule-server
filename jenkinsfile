@@ -151,7 +151,7 @@ pipeline {
                        '-DskipTests deploy -DaltDeploymentRepository=credentials::default::https://nexus.riaint.ee/repository/cdoc2-maven-local/ ' +
                        "-Dusername=${NEXUS_user} -Dpassword=${NEXUS_pass} -Dcheckstyle.output.file=/tmp/cdoc2-checkstyle.xml"
                     )*/
-                    sh 'ls -alth'
+                    sh 'ls -alth cdoc20-lib'
                 }
             }
         }
