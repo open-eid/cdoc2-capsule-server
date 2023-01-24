@@ -151,10 +151,7 @@ pipeline {
                        '-DskipTests deploy -DaltDeploymentRepository=credentials::default::https://nexus.riaint.ee/repository/cdoc2-maven-local/ ' +
                        "-Dusername=${NEXUS_user} -Dpassword=${NEXUS_pass} -Dcheckstyle.output.file=/tmp/cdoc2-checkstyle.xml"
                     )*/
-                    withMaven() {
-                        sh 'mvn deploy -DaltDeploymentRepository=credentials::default::https://nexus.riaint.ee/repository/cdoc2-maven-local' +
-                           ' -DskipTests -Dusername=${NEXUS_user} -Dpassword=${NEXUS_pass} -Dcheckstyle.output.file=/tmp/cdoc2-checkstyle.xml '
-                    }
+                    sh 'ls -alth'
                 }
             }
         }
