@@ -11,7 +11,7 @@ node {
                      [key: 'webhookActorDisplayName', value: '$.actor.displayName'],
                  ],
                  token           : webhooktoken,
-                 causeString     : 'See töö käivitati $webhookActorDisplayName poolt läbi bitbucketi webhooki kaudu',
+                 causeString     : 'See töö käivitati $webhookActorDisplayName poolt bitbucketi webhooki kaudu',
                  printPostContent: true,
                  silentResponse  : false
                 ]
@@ -39,6 +39,7 @@ pipeline {
         PUT_SERVER_DOCKER_IMG_NAME = 'cdoc20-put-server'
         GET_SERVER_DOCKER_IMG_NAME = 'cdoc20-get-server'
         DB_LIQUIBASE_DOCKER_IMG_NAME = 'cdoc20-server-liquibase'
+        GATLING_DOCKER_IMG_NAME = 'cdoc20-server-gatling'
     }
 
     agent any
@@ -125,6 +126,22 @@ pipeline {
             }
         }
 
+        stage('Build and Push Key Server Gatling tests Docker Image') {
+            steps {
+                dir('gatling-tests') {
+                    sh("find -L ../.m2 -name \"gatling-tests*.jar\" -type f -exec cp \"{}\" cdoc2-gatling-tests.jar \\;")
+                    sh("docker build -t ${env.GATLING_DOCKER_IMG_NAME} --build-arg JAR_FILE=cdoc2-gatling-tests.jar .")
+                    sh("docker tag ${env.GATLING_DOCKER_IMG_NAME}:latest ${env.DOCKER_IMAGE_REPOSITORY}/${env.GATLING_DOCKER_IMG_NAME}:latest")
+                    script {
+                        dockerImage = docker.image("${env.DOCKER_IMAGE_REPOSITORY}/${env.GATLING_DOCKER_IMG_NAME}:latest")
+                        docker.withRegistry('https://harbor.riaint.ee/', env.DOCKER_CREDENTIALS_ID) {
+                            dockerImage.push()
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Update Key Server instance') {
             steps {
                 script {
@@ -135,11 +152,21 @@ pipeline {
             }
         }
 
+        stage('Run Key Server functional tests') {
+            steps {
+                script {
+                    callWithSshCredentials("cdoc2-keyserver-01", { remote ->
+                        sshCommand(remote: remote, command: "sh /home/riajenk/run-server-func-tests.sh")
+                    })
+                }
+            }
+        }
+
         stage('Deploy java artifacts to Nexus') {
             agent {
                 docker {
                     image "${javaDockerImageUrl}"
-                    args  "--volume $HOME/.m2:/var/maven/.m2 "+
+                    args "--volume $HOME/.m2:/var/maven/.m2 "+
                     "--volume $PWD:/usr/src/project "+
                     "--workdir /usr/src/project " +
                     "--env MAVEN_CONFIG=/var/maven/.m2 "
@@ -152,7 +179,6 @@ pipeline {
                        "-Dusername=${NEXUS_user} -Dpassword=${NEXUS_pass} -Dcheckstyle.output.file=/tmp/cdoc2-checkstyle.xml"
                     )
                 }
-
             }
         }
     }
