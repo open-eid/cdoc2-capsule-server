@@ -30,6 +30,9 @@ test:
 build-components:
   stage: build
   image: maven:3.8.8-eclipse-temurin-17
+  
+  rules:
+    - when: manual
   script:
     - mvn clean install -DskipTests -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
   cache: 
@@ -47,6 +50,8 @@ build-components:
     entrypoint: [""]
   tags:
     - dind
+  rules:
+    - when: manual
   script:
     - |
       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
