@@ -10,13 +10,15 @@ stages:
 test:
   stage: test
   image: maven:3.8.8-eclipse-temurin-17
-  services:
-    - name: docker:25.0.3-dind
-      alias: docker
-  tags:
-    - dind
+#  services:
+#    - name: docker:25.0.3-dind
+#      alias: docker
+#  tags:
+#    - dind
   script:
-    - mvn clean verify -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+      - mvn -s ci_settings.xml help:effective-settings
+      - mvn -s ci_settings.xml help:system
+      - mvn -f cdoc2-server/ clean verify -s ci_settings.xml -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
   artifacts:
     when: always
     reports:
@@ -32,9 +34,9 @@ build-components:
   image: maven:3.8.8-eclipse-temurin-17
   
   rules:
-    - when: manual
+    - when: never
   script:
-    - mvn clean install -DskipTests -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+    - mvn -f cdoc2-server/ clean install -DskipTests -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
   cache: 
     key: "$CI_COMMIT_REF_NAME"
     paths:
@@ -51,7 +53,7 @@ build-components:
   tags:
     - dind
   rules:
-    - when: manual
+    - when: never
   script:
     - |
       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then

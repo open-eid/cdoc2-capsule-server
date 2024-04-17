@@ -2,21 +2,189 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>ee.cyber.cdoc2</groupId>
-		<artifactId>cdoc2</artifactId>
-		<version>1.2.0-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
-
 	<artifactId>cdoc2-server</artifactId>
+	<groupId>ee.cyber.cdoc2</groupId>
+	<version>1.2.0-SNAPSHOT</version>
+
+	<description>CDOC2 server pom</description>
+
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>../cdoc2-openapi</module>
+		<module>../cdoc2-client</module>
 		<module>server-common</module>
 		<module>server-db</module>
 		<module>put-server</module>
 		<module>get-server</module>
 	</modules>
+
+
+	<properties>
+		<java.version>17</java.version>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<sonar.qualitygate.wait>true</sonar.qualitygate.wait>
+
+		<!-- by default slow and pcks11 tests are excluded from running-->
+		<!-- ldap test require connection to external esteid.ldap.sk.ee server -->
+		<tests>!(pkcs11 | slow | ldap)</tests>
+
+		<junit.jupiter.version>5.8.2</junit.jupiter.version>
+		<lombok.version>1.18.24</lombok.version>
+		<logback-classic.version>1.2.11</logback-classic.version>
+		<exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+		<maven-shade-plugin.version>3.3.0</maven-shade-plugin.version>
+		<bouncycastle.version>1.70</bouncycastle.version>
+		<spring-boot.version>2.7.5</spring-boot.version>
+		<spring.version>5.3.23</spring.version>
+		<gatling.version>3.9.0</gatling.version>
+		<gatling-maven-plugin.version>4.1.6</gatling-maven-plugin.version>
+
+		<sonar.coverage.jacoco.xmlReportPaths>
+			${project.basedir}/cdoc2-lib/target/site/jacoco-aggregate/jacoco.xml,
+			${project.basedir}/cdoc2-schema/target/site/jacoco-aggregate/jacoco.xml,
+			${project.basedir}/cdoc2-cli/target/site/jacoco-aggregate/jacoco.xml
+		</sonar.coverage.jacoco.xmlReportPaths>
+  	</properties>
+
+
+
+	<repositories>
+		<!-- download maven package -->
+		<!-- https://docs.gitlab.com/ee/user/packages/maven_repository/#edit-the-configuration-file-for-publishing -->
+		<repository>
+			<id>gitlab.ext.cyber.ee</id>
+			<url>https://gitlab.ext.cyber.ee/api/v4/groups/103/-/packages/maven</url>
+		</repository>
+	</repositories>
+	<distributionManagement>
+		<!-- upload maven packages, used by maven deploy-->
+		<repository>
+			<id>gitlab.ext.cyber.ee</id>
+			<url>https://gitlab.ext.cyber.ee/api/v4/projects/26/packages/maven</url>
+		</repository>
+		<snapshotRepository>
+			<id>gitlab.ext.cyber.ee</id>
+			<url>https://gitlab.ext.cyber.ee/api/v4/projects/26/packages/maven</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.junit</groupId>
+				<artifactId>junit-bom</artifactId>
+				<version>${junit.jupiter.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+
+	<build>
+		<pluginManagement>
+			<plugins>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-checkstyle-plugin</artifactId>
+					<version>3.2.0</version>
+
+					<configuration>
+						<configLocation>../checkstyle.xml</configLocation>
+						<suppressionsLocation>../checkstyle-suppressions.xml</suppressionsLocation>
+
+						<sourceDirectories>
+							<sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+							<sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory>
+						</sourceDirectories>
+
+
+						<encoding>UTF-8</encoding>
+						<consoleOutput>true</consoleOutput>
+
+						<failsOnError>true</failsOnError>
+						<failOnViolation>false</failOnViolation>
+
+						<linkXRef>false</linkXRef>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+
+					<configuration>
+						<excludes>
+							<exclude>**/*-dev.properties</exclude>
+							<exclude>**/logback.xml</exclude>
+						</excludes>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.22.0</version>
+					<configuration>
+						<trimStackTrace>false</trimStackTrace>
+						<groups>${tests}</groups>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>2.22.0</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>3.0.0-M5</version>
+					<configuration>
+						<tagNameFormat>v@{project.version}</tagNameFormat>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>validate</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>4.5.2.0</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.2</version>
+				<configuration>
+					<skip>false</skip>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
 
 </project>
