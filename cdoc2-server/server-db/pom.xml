@@ -11,7 +11,7 @@
 
 	<artifactId>cdoc2-server-db</artifactId>
 	<packaging>jar</packaging>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>ee.cyber.cdoc2</groupId>

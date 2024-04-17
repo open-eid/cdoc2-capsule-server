@@ -28,6 +28,18 @@
 		<jakarta-xml-bind.version>4.0.0</jakarta-xml-bind.version>
 		<jakarta-ws-rs.version>3.1.0</jakarta-ws-rs.version>
 	</properties>
+
+	<distributionManagement>
+        <repository>
+            <id>gitlab.ext.cyber.ee</id>
+            <url>https://gitlab.ext.cyber.ee/api/v4/projects/39/packages/maven</url>
+        </repository>
+        <snapshotRepository>
+            <id>gitlab.ext.cyber.ee</id>
+            <url>https://gitlab.ext.cyber.ee/api/v4/projects/39/packages/maven</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 	<profiles>
 		<profile>
 			<id>allTests</id>
