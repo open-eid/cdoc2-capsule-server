@@ -2,7 +2,7 @@
 
 ## Preconditions for executing tests
 
-* The latest cdoc2 java libraries are installed locally. From cdoc20_java directory run:
+* The latest cdoc2 java libraries are installed locally. From cdoc2-server directory run:
 
 ```
 mvn clean install

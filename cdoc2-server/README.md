@@ -1,6 +1,6 @@
-#Running locally (dev)
+# Running locally (dev)
 
-This file describes how to run cdoc2 key servers in your local development machine, without external dependencies
+This file describes how to run cdoc2 key servers in your local development machine, without external infrastructure
 
 ## Installing and creating PostgreSQL DB in Docker
 

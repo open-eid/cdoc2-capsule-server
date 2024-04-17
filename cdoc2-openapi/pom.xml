@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <artifactId>cdoc2</artifactId>
-        <groupId>ee.cyber.cdoc2</groupId>
-        <version>1.2.0-SNAPSHOT</version>
-    </parent>
 
+    <groupId>ee.cyber.cdoc2</groupId>
+    <version>1.2.0-SNAPSHOT</version>
     <artifactId>cdoc2-openapi</artifactId>
     <description>CDOC2 OpenApi server generation</description>
 
@@ -28,6 +25,24 @@
         <javax-annotation-api.version>1.3.2</javax-annotation-api.version>
         <spotbugs-annotations.version>4.5.3</spotbugs-annotations.version>
     </properties>
+
+    <!-- upload maven packages, used by maven deploy-->
+
+    <!-- optionally specify as
+    -DaltDeploymentRepository=gitlab.ext.cyber.ee::https://gitlab.ext.cyber.ee/api/v4/projects/26/packages/maven
+    -->
+
+    <distributionManagement>
+        <repository>
+            <id>gitlab.ext.cyber.ee</id>
+            <url>https://gitlab.ext.cyber.ee/api/v4/projects/26/packages/maven</url>
+        </repository>
+        <snapshotRepository>
+            <id>gitlab.ext.cyber.ee</id>
+            <url>https://gitlab.ext.cyber.ee/api/v4/projects/26/packages/maven</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 
 
     <dependencies>

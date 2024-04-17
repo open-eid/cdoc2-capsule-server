@@ -1,1 +1,0 @@
-This directory contains orphan documents. Will be moved to CDOC2 docs repository or removed.
