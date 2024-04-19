@@ -64,11 +64,11 @@
 		<!-- upload maven packages, used by maven deploy-->
 		<repository>
 			<id>gitlab.ext.cyber.ee</id>
-			<url>https://gitlab.ext.cyber.ee/api/v4/projects/26/packages/maven</url>
+			<url>https://gitlab.ext.cyber.ee/api/v4/projects/39/packages/maven</url>
 		</repository>
 		<snapshotRepository>
 			<id>gitlab.ext.cyber.ee</id>
-			<url>https://gitlab.ext.cyber.ee/api/v4/projects/26/packages/maven</url>
+			<url>https://gitlab.ext.cyber.ee/api/v4/projects/39/packages/maven</url>
 		</snapshotRepository>
 	</distributionManagement>
 
