@@ -2,49 +2,6 @@ variables:
   DOCKER_TLS_CERTDIR: ""
   DOCKER_HOST: "tcp://docker:2375"
 
-stages:
-  - test
-  - build
-  - publish
-
-test:
-  stage: test
-  image: maven:3.8.8-eclipse-temurin-17
-#  services:
-#    - name: docker:25.0.3-dind
-#      alias: docker
-#  tags:
-#    - dind
-  script:
-      - mvn -s ci_settings.xml help:effective-settings
-      - mvn -s ci_settings.xml help:system
-      - mvn -f cdoc2-server/ clean verify -s ci_settings.xml -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
-  artifacts:
-    when: always
-    reports:
-      junit:
-        - "**/target/surefire-reports/*.xml"
-  cache: 
-    key: "$CI_COMMIT_REF_NAME"
-    paths:
-      - .m2/repository
-
-build-components:
-  stage: build
-  image: maven:3.8.8-eclipse-temurin-17
-  
-  rules:
-    - when: never
-  script:
-    - mvn -f cdoc2-server/ clean install -DskipTests -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
-  cache: 
-    key: "$CI_COMMIT_REF_NAME"
-    paths:
-      - .m2/repository
-  artifacts:
-    paths:
-      - ./**/target/*.jar
-
 .publish-component: &publish-component
   stage: publish
   image:
@@ -52,8 +9,6 @@ build-components:
     entrypoint: [""]
   tags:
     - dind
-  rules:
-    - when: never
   script:
     - |
       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
@@ -76,6 +31,61 @@ build-components:
         --destination $DOCKER_IMAGE_NAME:$CI_COMMIT_REF_SLUG \
         --cache
       fi
+
+stages:
+  - test
+  - build
+  - publish
+
+test:
+  stage: test
+  image: maven:3.8.8-eclipse-temurin-17
+  services:
+    - name: docker:25.0.3-dind
+      alias: docker
+  tags:
+    - dind
+  script:
+    - mvn -f cdoc2-server/ clean verify -s $MAVEN_SETTINGS -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - "**/target/surefire-reports/*.xml"
+  cache: 
+    key: "$CI_COMMIT_REF_NAME"
+    paths:
+      - .m2/repository
+
+build-components:
+  stage: build
+  image: maven:3.8.8-eclipse-temurin-17
+  script:
+    - mvn -f cdoc2-server/ clean install -s $MAVEN_SETTINGS -DskipTests -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+  cache: 
+    key: "$CI_COMMIT_REF_NAME"
+    paths:
+      - .m2/repository
+  artifacts:
+    paths:
+      - ./**/target/*.jar
+
+publish:maven: 
+  stage: publish
+  image: maven:3.8.8-eclipse-temurin-17
+  script:
+    - mvn -f cdoc2-server/ clean deploy -s $MAVEN_SETTINGS -DskipTests -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+  cache: 
+    key: "$CI_COMMIT_REF_NAME"
+    paths:
+      - .m2/repository
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
+      when: manual
 
 publish:get-server:
   variables:
