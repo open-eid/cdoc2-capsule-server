@@ -43,11 +43,6 @@
 		<gatling.version>3.9.0</gatling.version>
 		<gatling-maven-plugin.version>4.1.6</gatling-maven-plugin.version>
 
-		<sonar.coverage.jacoco.xmlReportPaths>
-			${project.basedir}/cdoc2-lib/target/site/jacoco-aggregate/jacoco.xml,
-			${project.basedir}/cdoc2-schema/target/site/jacoco-aggregate/jacoco.xml,
-			${project.basedir}/cdoc2-cli/target/site/jacoco-aggregate/jacoco.xml
-		</sonar.coverage.jacoco.xmlReportPaths>
   	</properties>
 
 	<repositories>
@@ -167,6 +162,26 @@
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-maven-plugin</artifactId>
 				<version>4.5.2.0</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.12</version>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
