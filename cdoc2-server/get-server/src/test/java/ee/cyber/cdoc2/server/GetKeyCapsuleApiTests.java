@@ -6,6 +6,7 @@ import ee.cyber.cdoc2.client.Cdoc2KeyCapsuleApiClient;
 import ee.cyber.cdoc2.client.EcCapsuleClientImpl;
 import ee.cyber.cdoc2.client.KeyCapsuleClientImpl;
 import ee.cyber.cdoc2.client.RsaCapsuleClientImpl;
+import ee.cyber.cdoc2.client.api.ApiException;
 import ee.cyber.cdoc2.client.model.Capsule;
 import ee.cyber.cdoc2.crypto.Crypto;
 import ee.cyber.cdoc2.crypto.ECKeys;
@@ -14,6 +15,7 @@ import ee.cyber.cdoc2.crypto.PemTools;
 import ee.cyber.cdoc2.crypto.Pkcs11DeviceConfiguration;
 import ee.cyber.cdoc2.crypto.Pkcs11Tools;
 import ee.cyber.cdoc2.crypto.RsaUtils;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +35,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -48,6 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
 @Slf4j
 class GetKeyCapsuleApiTests extends BaseIntegrationTest {
 
@@ -61,29 +65,7 @@ class GetKeyCapsuleApiTests extends BaseIntegrationTest {
 
     @Test
     void testPKCS12Client() throws Exception {
-        KeyStore clientKeyStore = null;
-        KeyStore trustKeyStore = null;
-        try {
-            clientKeyStore = KeyStore.getInstance("PKCS12");
-            clientKeyStore.load(Files.newInputStream(TestData.getKeysDirectory().resolve("cdoc2client.p12")),
-                    "passwd".toCharArray());
-            clientKeyStore.aliases().asIterator().forEachRemaining(a -> log.debug("client KS alias: {}", a));
-
-            trustKeyStore = KeyStore.getInstance("JKS");
-            trustKeyStore.load(Files.newInputStream(TestData.getKeysDirectory().resolve("clienttruststore.jks")),
-                    "passwd".toCharArray());
-            trustKeyStore.aliases().asIterator().forEachRemaining(a -> log.debug("client trust KS alias: {}", a));
-        }  catch (GeneralSecurityException | IOException e) {
-            e.printStackTrace();
-            log.error("Error initializing key stores", e);
-        }
-
-        Cdoc2KeyCapsuleApiClient client = Cdoc2KeyCapsuleApiClient.builder()
-                .withBaseUrl(baseUrl)
-                .withClientKeyStore(clientKeyStore)
-                .withClientKeyStorePassword("passwd".toCharArray())
-                .withTrustKeyStore(trustKeyStore)
-                .build();
+        Cdoc2KeyCapsuleApiClient client = createClientWithPkcs12();
 
         var capsule = new Capsule()
             .capsuleType(Capsule.CapsuleTypeEnum.ECC_SECP384R1);
@@ -396,7 +378,6 @@ class GetKeyCapsuleApiTests extends BaseIntegrationTest {
         assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
     }
 
-
     @Test
     void shouldThrowUserExceptions() throws Exception {
         // unknown serverId should throw exception
@@ -414,7 +395,18 @@ class GetKeyCapsuleApiTests extends BaseIntegrationTest {
             () -> misconfiguredClient.getCapsule(UUID.randomUUID().toString())
         );
         assertEquals(UserErrorCode.NETWORK_ERROR, networkException.getErrorCode());
+    }
 
+    @Test
+    void shouldFailWithNotFoundError() throws Exception {
+        String txId = "KC12345678901234567890"; // certificate provided and passes validation, but capsule not found
+
+        Cdoc2KeyCapsuleApiClient client = createClientWithPkcs12();
+
+        assertThrows(
+            ApiException.class,
+            () -> client.getCapsule(txId)
+        );
     }
 
     private static KeyCapsuleClientImpl createPkcs12ServerClient(String serverBaseUrl) throws Exception {
@@ -434,4 +426,31 @@ class GetKeyCapsuleApiTests extends BaseIntegrationTest {
 
         return (KeyCapsuleClientImpl) KeyCapsuleClientImpl.create(p);
     }
+
+    private Cdoc2KeyCapsuleApiClient createClientWithPkcs12() throws GeneralSecurityException {
+        KeyStore clientKeyStore = null;
+        KeyStore trustKeyStore = null;
+        try {
+            clientKeyStore = KeyStore.getInstance("PKCS12");
+            clientKeyStore.load(Files.newInputStream(TestData.getKeysDirectory().resolve("cdoc2client.p12")),
+                "passwd".toCharArray());
+            clientKeyStore.aliases().asIterator().forEachRemaining(a -> log.debug("client KS alias: {}", a));
+
+            trustKeyStore = KeyStore.getInstance("JKS");
+            trustKeyStore.load(Files.newInputStream(TestData.getKeysDirectory().resolve("clienttruststore.jks")),
+                "passwd".toCharArray());
+            trustKeyStore.aliases().asIterator().forEachRemaining(a -> log.debug("client trust KS alias: {}", a));
+        }  catch (GeneralSecurityException | IOException e) {
+            e.printStackTrace();
+            log.error("Error initializing key stores", e);
+        }
+
+        return Cdoc2KeyCapsuleApiClient.builder()
+            .withBaseUrl(baseUrl)
+            .withClientKeyStore(clientKeyStore)
+            .withClientKeyStorePassword("passwd".toCharArray())
+            .withTrustKeyStore(trustKeyStore)
+            .build();
+    }
+
 }

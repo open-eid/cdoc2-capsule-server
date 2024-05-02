@@ -216,6 +216,9 @@ management.server.ssl.key-alias=cdoc20
 # configure monitoring endpoints
 management.endpoints.enabled-by-default=false
 management.endpoints.web.discovery.enabled=false
+# key values can be hidden when change value to "never" or "when_authorized"
+management.endpoint.env.show-values=always
+management.endpoint.configprops.show-values=always
 
 # explicitly enable endpoints
 management.endpoint.info.enabled=true
@@ -283,7 +286,7 @@ running on a separate HTTP port, the access to the monitoring endpoints must be 
 
 ```json
 {
-  "springBootVersion": "2.7.5",
+  "springBootVersion": "3.2.5",
   "timeline": {
     "startTime": "2023-01-17T14:36:17.935227352Z",
     "events": []

@@ -1,6 +1,6 @@
 package ee.cyber.cdoc2.server;
 
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * in OpenAPI spec are violated (example length is wrong).
      * <pre>
      * GET "/key-capsules/KC6eab"
-     * javax.validation.ConstraintViolationException:
+     * jakarta.validation.ConstraintViolationException:
      *  getCapsuleByTransactionId.transactionId: size must be between 18 and 34
      * </pre>
      */

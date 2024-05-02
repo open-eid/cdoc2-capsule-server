@@ -15,9 +15,9 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.Optional;
 import javax.security.auth.x500.X500Principal;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,13 +29,11 @@ import org.springframework.web.context.request.NativeWebRequest;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class GetKeyCapsuleApi implements KeyCapsulesApiDelegate {
 
-    @Autowired
-    private NativeWebRequest nativeWebRequest;
-
-    @Autowired
-    private KeyCapsuleRepository capsuleRepository;
+    private final NativeWebRequest nativeWebRequest;
+    private final KeyCapsuleRepository capsuleRepository;
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
@@ -114,8 +112,14 @@ public class GetKeyCapsuleApi implements KeyCapsulesApiDelegate {
     private Optional<X509Certificate> getClientCertFromRequest() {
         HttpServletRequest req = this.nativeWebRequest.getNativeRequest(HttpServletRequest.class);
         X509Certificate[] certs = (req != null)
-                ? (X509Certificate[]) req.getAttribute("javax.servlet.request.X509Certificate")
+                ? (X509Certificate[]) req.getAttribute("jakarta.servlet.request.X509Certificate")
                 : new X509Certificate[0];
+        if (null == certs) {
+            String errorMsg = "Failed to get client certificate from http request";
+            log.error(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
+        }
+
         if (certs.length > 0) {
             var clientCert = certs[0];
             log.info("Got client certificate(subject='{}')", getCertSubjectName(clientCert));
