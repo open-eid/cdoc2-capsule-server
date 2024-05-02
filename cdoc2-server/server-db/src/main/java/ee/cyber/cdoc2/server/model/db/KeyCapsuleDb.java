@@ -4,22 +4,24 @@ import ee.cyber.cdoc2.shared.crypto.Crypto;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.HexFormat;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 
 /**
  * CDOC2 key capsule database entity
@@ -58,13 +60,13 @@ public class KeyCapsuleDb {
     @NotNull
     @Column(nullable = false)
     @Size(max = 2500) // 16 K RSA public key is ~2100 bytes
-    @Type(type = "org.hibernate.type.BinaryType")
+    @JdbcTypeCode(SqlTypes.BINARY)
     private byte[] recipient;
 
     @NotNull
     @Column(nullable = false)
     @Size(max = 3000)
-    @Type(type = "org.hibernate.type.BinaryType")
+    @JdbcTypeCode(SqlTypes.BINARY)
     private byte[] payload;
 
     @NotNull
@@ -74,4 +76,5 @@ public class KeyCapsuleDb {
 
     @CreatedDate
     private Instant createdAt;
+
 }

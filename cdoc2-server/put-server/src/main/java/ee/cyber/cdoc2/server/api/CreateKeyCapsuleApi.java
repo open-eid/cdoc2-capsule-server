@@ -7,8 +7,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Base64;
 import java.util.Optional;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,13 +23,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CreateKeyCapsuleApi implements KeyCapsulesApiDelegate {
 
-    @Autowired
-    private NativeWebRequest nativeWebRequest;
-
-    @Autowired
-    private KeyCapsuleRepository keyCapsuleRepository;
+    private final NativeWebRequest nativeWebRequest;
+    private final KeyCapsuleRepository keyCapsuleRepository;
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
@@ -84,7 +83,7 @@ public class CreateKeyCapsuleApi implements KeyCapsulesApiDelegate {
      * Get URI for getting Key Capsule resource (Location).
      * @param id Capsule id example: KC9b7036de0c9fce889850c4bbb1e23482
      * @return URI (path and query) example: /key-capsules/KC9b7036de0c9fce889850c4bbb1e23482
-     * @throws URISyntaxException
+     * @throws URISyntaxException if URI is invalid
      */
     private static URI getResourceLocation(String id) throws URISyntaxException {
         return getPathAndQueryPart(

@@ -61,6 +61,7 @@ paths:
         '400':
           description: 'Bad request. Client error.'
       requestBody:
+        required: true
         content:
           application/json:
             schema:
