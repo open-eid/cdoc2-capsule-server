@@ -1,12 +1,13 @@
 package ee.cyber.cdoc2.server.api;
 
-import ee.cyber.cdoc2.crypto.EllipticCurve;
+import ee.cyber.cdoc2.shared.crypto.ECKeys;
+import ee.cyber.cdoc2.shared.crypto.RsaUtils;
 import java.io.IOException;
 
-import ee.cyber.cdoc2.crypto.RsaUtils;
+
 import lombok.extern.slf4j.Slf4j;
 
-import java.nio.ByteBuffer;
+
 import java.security.GeneralSecurityException;
 import java.security.interfaces.ECPublicKey;
 
@@ -34,9 +35,9 @@ public final class CapsuleValidator {
     }
 
     private static boolean validateEcSecp34r1Capsule(Capsule capsule) {
+
         try {
-            var curve = EllipticCurve.SECP384R1;
-            int tlsEncodedKeyLen = 2 * curve.getKeyLength() + 1;
+            int tlsEncodedKeyLen = 2 * ECKeys.SECP_384_R_1_LEN_BYTES + 1;
 
             if (capsule.getRecipientId() == null || capsule.getEphemeralKeyMaterial() == null) {
                 log.error("Recipient id or ephemeral key was null");
@@ -48,17 +49,18 @@ public final class CapsuleValidator {
                 return false;
             }
 
-            ECPublicKey recipientPubKey = curve.decodeFromTls(ByteBuffer.wrap(capsule.getRecipientId()));
-            ECPublicKey senderPubKey = curve.decodeFromTls(ByteBuffer.wrap(capsule.getEphemeralKeyMaterial()));
+            ECPublicKey recipientPubKey = ECKeys.decodeSecP384R1EcPublicKeyFromTls(capsule.getRecipientId());
+            ECPublicKey senderPubKey = ECKeys.decodeSecP384R1EcPublicKeyFromTls(capsule.getEphemeralKeyMaterial());
 
-            return curve.isValidKey(recipientPubKey) && curve.isValidKey(senderPubKey);
+            return (ECKeys.isValidSecP384R1(recipientPubKey) && ECKeys.isValidSecP384R1(senderPubKey));
         } catch (GeneralSecurityException gse) {
-            log.error("Invalid EC key", gse);
+            log.error("Invalid secp384r1 EC key", gse);
         }
         return false;
     }
 
     private static boolean validateRSACapsule(Capsule capsule) {
+
         try {
             RsaUtils.decodeRsaPubKey(capsule.getRecipientId());
             return true;

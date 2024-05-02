@@ -60,6 +60,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>ee.cyber.cdoc2</groupId>
+			<artifactId>cdoc2-shared-crypto</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ee.cyber.cdoc2</groupId>
 			<artifactId>cdoc2-common-server</artifactId>
 			<version>1.2.0-SNAPSHOT</version>
 		</dependency>
@@ -75,6 +81,14 @@
 			<artifactId>cdoc2-openapi</artifactId>
 			<version>1.2.0-SNAPSHOT</version>
 			<scope>compile</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>ee.cyber.cdoc2</groupId>
+			<artifactId>cdoc2-lib</artifactId>
+			<version>1.2.0-SNAPSHOT</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>

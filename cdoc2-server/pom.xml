@@ -17,6 +17,7 @@
 		<module>server-db</module>
 		<module>put-server</module>
 		<module>get-server</module>
+		<module>../cdoc2-shared-crypto</module>
 	</modules>
 
 

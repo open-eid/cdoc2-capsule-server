@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ee.cyber.cdoc2</groupId>
+    <artifactId>cdoc2-shared-crypto</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <description>CDOC2 common crypto functions shared between lib and server</description>
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+
+        <bouncycastle.version>1.70</bouncycastle.version>
+        <logback-classic.version>1.2.11</logback-classic.version>
+    </properties>
+
+    <!-- upload maven packages, used by maven deploy-->
+    <!-- optionally specify as
+    -DaltDeploymentRepository=gitlab.ext.cyber.ee::https://gitlab.ext.cyber.ee/api/v4/projects/26/packages/maven
+    -->
+    <distributionManagement>
+        <repository>
+            <id>gitlab.ext.cyber.ee</id>
+            <url>https://gitlab.ext.cyber.ee/api/v4/projects/39/packages/maven</url>
+        </repository>
+        <snapshotRepository>
+            <id>gitlab.ext.cyber.ee</id>
+            <url>https://gitlab.ext.cyber.ee/api/v4/projects/39/packages/maven</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback-classic.version}</version>
+        </dependency>
+
+        <!-- bc.jar 5.6MB -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>${bouncycastle.version}</version>
+        </dependency>
+
+    </dependencies>
+
+</project>
