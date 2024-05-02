@@ -1,6 +1,6 @@
 package ee.cyber.cdoc2.server.model.db;
 
-import ee.cyber.cdoc2.crypto.Crypto;
+import ee.cyber.cdoc2.shared.crypto.Crypto;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.HexFormat;

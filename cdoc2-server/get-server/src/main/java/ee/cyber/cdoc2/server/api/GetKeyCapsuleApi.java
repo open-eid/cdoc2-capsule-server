@@ -1,8 +1,8 @@
 package ee.cyber.cdoc2.server.api;
 
-import ee.cyber.cdoc2.crypto.ECKeys;
-import ee.cyber.cdoc2.crypto.RsaUtils;
-import ee.cyber.cdoc2.crypto.KeyAlgorithm;
+import ee.cyber.cdoc2.shared.crypto.ECKeys;
+import ee.cyber.cdoc2.shared.crypto.RsaUtils;
+import ee.cyber.cdoc2.shared.crypto.KeyAlgorithm;
 import ee.cyber.cdoc2.server.model.db.KeyCapsuleDb;
 import ee.cyber.cdoc2.server.model.db.KeyCapsuleRepository;
 import ee.cyber.cdoc2.server.model.Capsule;
