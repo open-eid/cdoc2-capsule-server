@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ee.cyber.cdoc2</groupId>
@@ -14,17 +16,18 @@
 
         <swagger-annotations.version>2.2.7</swagger-annotations.version>
         <jackson.version>2.14.0</jackson.version>
-        <jodatime.version>2.10.13</jodatime.version>
         <maven-plugin.version>1.0.0</maven-plugin.version>
-        <junit.version>4.13.2</junit.version>
-        <springfox.version>3.0.0</springfox.version>
-        <threetenbp.version>1.5.1</threetenbp.version>
-        <datatype-threetenbp.version>2.12.5</datatype-threetenbp.version>
         <spring-boot.version>3.2.5</spring-boot.version>
-        <migbase64.version>2.2</migbase64.version>
         <jackson-databind-nullable.version>0.2.2</jackson-databind-nullable.version>
-        <javax-annotation-api.version>1.3.2</javax-annotation-api.version>
         <spotbugs-annotations.version>4.7.3</spotbugs-annotations.version>
+
+        <!--maven-deploy-file plugin doesn't care about distributionManagement-->
+        <!--there should be project.distributionManagement.repository property, but its empty -->
+        <!--specify mvn repo as property so that distributionManagement and maven-plugin-file use the same-->
+        <maven.repository.id>gitlab.ext.cyber.ee</maven.repository.id>
+        <maven.repository.url>https://gitlab.ext.cyber.ee/api/v4/projects/39/packages/maven
+        </maven.repository.url>
+
     </properties>
 
     <!-- upload maven packages, used by maven deploy-->
@@ -35,12 +38,12 @@
 
     <distributionManagement>
         <repository>
-            <id>gitlab.ext.cyber.ee</id>
-            <url>https://gitlab.ext.cyber.ee/api/v4/projects/39/packages/maven</url>
+            <id>${maven.repository.id}</id>
+            <url>${maven.repository.url}</url>
         </repository>
         <snapshotRepository>
-            <id>gitlab.ext.cyber.ee</id>
-            <url>https://gitlab.ext.cyber.ee/api/v4/projects/39/packages/maven</url>
+            <id>${maven.repository.id}</id>
+            <url>${maven.repository.url}</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -76,33 +79,6 @@
             <version>${jackson.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-joda</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>${jodatime.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.brsanthu</groupId>
-            <artifactId>migbase64</artifactId>
-            <version>${migbase64.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <version>${spring-boot.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring-boot.version}</version>
@@ -116,26 +92,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-hateoas</artifactId>
             <version>${spring-boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${springfox.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${springfox.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.threeten</groupId>
-            <artifactId>threetenbp</artifactId>
-            <version>${threetenbp.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.joschi.jackson</groupId>
-            <artifactId>jackson-datatype-threetenbp</artifactId>
-            <version>${datatype-threetenbp.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openapitools</groupId>
@@ -154,6 +110,63 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>groovy-maven-plugin</artifactId>
+                <groupId>org.codehaus.gmaven</groupId>
+                <version>2.1.1</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.yaml</groupId>
+                        <artifactId>snakeyaml</artifactId>
+                        <version>2.2</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>parse-info.version-from-cdoc2-key-capsules-openapi.yaml</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                import org.yaml.snakeyaml.Yaml
+
+                                def yaml = new Yaml()
+                                def openapi = yaml.load(new File('${project.basedir}/cdoc2-key-capsules-openapi.yaml').text)
+                                println "cdoc2-key-capsules-openapi.version: ${openapi.info.version}"
+                                project.getProperties().setProperty('cdoc2-key-capsules-openapi.version', openapi.info.version)
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.1</version>
+
+                <executions>
+                    <execution>
+                        <id>deploy-openapi-cdoc2-key-capsules</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy-file</goal>
+                        </goals>
+                        <configuration>
+                            <skip>false</skip>
+                            <file>${project.basedir}/cdoc2-key-capsules-openapi.yaml</file>
+                            <groupId>ee.cyber.cdoc2.openapi</groupId>
+                            <artifactId>cdoc2-key-capsules-openapi</artifactId>
+                            <!-- cdoc2-key-capsules-openapi.version value is set by groovy-maven-plugin, parsed from openapi file -->
+                            <version>${cdoc2-key-capsules-openapi.version}</version>
+                            <packaging>yaml</packaging>
+                            <repositoryId>${maven.repository.id}</repositoryId>
+                            <url>${maven.repository.url}</url>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>7.5.0</version>
@@ -167,7 +180,7 @@
                             <configOptions>
                                 <useSpringBoot3>true</useSpringBoot3>
                             </configOptions>
-                            <inputSpec>${project.basedir}/cdoc2-key-capsules.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/cdoc2-key-capsules-openapi.yaml</inputSpec>
                             <apiPackage>ee.cyber.cdoc2.server.api</apiPackage>
                         </configuration>
                     </execution>
@@ -209,6 +222,9 @@
                     <proc>none</proc>
                 </configuration>
             </plugin>
+
         </plugins>
+
     </build>
+
 </project>
