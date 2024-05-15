@@ -193,6 +193,7 @@ To disable client certificate checking over OCSP `application.properties` must h
 ```
 cdoc2.ssl.client-auth.revocation-checks.enabled=false
 ```
+Or add property `-k` to the curl command to disable SSL certificate check.
 
 
 
@@ -227,7 +228,22 @@ management.endpoint.health.show-details=always
 management.endpoint.startup.enabled=true
 
 # expose endpoints
-management.endpoints.web.exposure.include=info,health,startup
+management.endpoints.web.exposure.include=info,health,startup,prometheus
+
+# Supported metrics
+# https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.metrics.supported
+
+#enable tomcat.* metrics
+server.tomcat.mbeanregistry.enabled=true
+
+# Spring Data Repository Metrics
+# https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.metrics.supported.spring-data-repository
+# spring.data.repository.* metrics
+management.metrics.data.repository.autotime.enabled=true
+
+# https://docs.spring.io/spring-boot/docs/2.1.5.RELEASE/reference/htmlsingle/#production-ready-metrics-spring-mvc
+# http.server.requests metrics
+management.metrics.web.server.auto-time-requests=true
 ```
 
 NB! Currently, the monitoring endpoints require no authentication. As these endpoints are
@@ -235,10 +251,9 @@ running on a separate HTTP port, the access to the monitoring endpoints must be 
 
 
 ### Info endpoint 
-`curl -X GET https://<management_host>:<management_port>/actuator/info | jq`
+`curl -k -X GET https://<management_host>:<management_port>/actuator/info`
 
 ```json
-
 {
   "build": {
     "artifact": "cdoc2-put-server",
@@ -252,7 +267,7 @@ running on a separate HTTP port, the access to the monitoring endpoints must be 
 ```
 
 ### Health endpoint
-`curl -X GET https://<management_host>:<management_port>/actuator/health | jq`
+`curl -k -X GET https://<management_host>:<management_port>/actuator/health`
 
 ```json
 {
@@ -282,7 +297,7 @@ running on a separate HTTP port, the access to the monitoring endpoints must be 
 ```
 
 ### Startup endpoint
-`curl -X GET https://<management_host>:<management_port>/actuator/startup | jq`
+`curl -k -X GET https://<management_host>:<management_port>/actuator/startup`
 
 ```json
 {
@@ -293,5 +308,25 @@ running on a separate HTTP port, the access to the monitoring endpoints must be 
   }
 }
 ```
+
+### Prometheus endpoint
+`curl -k -u <username>:<password> https://<management_host>:<management_port>/actuator/prometheus -X GET`
+
+```
+# HELP executor_pool_core_threads The core number of threads for the pool
+# TYPE executor_pool_core_threads gauge
+executor_pool_core_threads{application="cdoc2-put-server",applications="transfer-service",name="applicationTaskExecutor",} 8.0
+# HELP jvm_memory_usage_after_gc_percent The percentage of long-lived heap pool used after the last GC event, in the range [0..1]
+# TYPE jvm_memory_usage_after_gc_percent gauge
+jvm_memory_usage_after_gc_percent{application="cdoc2-put-server",applications="transfer-service",area="heap",pool="long-lived",} 0.00239985994123664
+# HELP jvm_memory_used_bytes The amount of used memory
+# TYPE jvm_memory_used_bytes gauge
+jvm_memory_used_bytes{application="cdoc2-put-server",applications="transfer-service",area="nonheap",id="Compressed Class Space",} 1.0815688E7
+...........
+# HELP jdbc_connections_active Current number of active connections that have been allocated from the data source.
+# TYPE jdbc_connections_active gauge
+...........
+```
+
 
 [^1]: https://docs.oracle.com/cd/E54932_01/doc.705/e54936/cssg_create_ssl_cert.htm#CSVSG182
