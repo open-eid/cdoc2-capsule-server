@@ -1,11 +1,12 @@
 package ee.cyber.cdoc2.server;
 
 import io.micrometer.core.instrument.MeterRegistry;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.web.server.Ssl;
 import org.springframework.context.annotation.Bean;
@@ -14,20 +15,25 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import ee.cyber.cdoc2.server.config.ConfigProperties;
+
+
 @SpringBootApplication
 @Configuration
 @EnableJpaAuditing
 @Slf4j
+@RequiredArgsConstructor
+@EnableConfigurationProperties(ConfigProperties.class)
 public class Cdoc2GetServerApplication {
 
-    @Autowired
-    BuildProperties buildProperties;
+    final BuildProperties buildProperties;
 
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(Cdoc2GetServerApplication.class);
         // capture startup events for startup actuator endpoint
         app.setApplicationStartup(MonitoringUtil.getApplicationStartupInfo());
         app.run(args);
+        log.info("CDOC2 key capsule get-server is running.");
     }
 
     @Bean
@@ -52,4 +58,5 @@ public class Cdoc2GetServerApplication {
             throw new IllegalStateException("TLS client authentication not enabled");
         }
     }
+
 }
