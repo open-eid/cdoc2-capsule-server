@@ -7,7 +7,7 @@ import ee.cyber.cdoc2.client.EcCapsuleClientImpl;
 import ee.cyber.cdoc2.client.KeyCapsuleClientImpl;
 import ee.cyber.cdoc2.client.RsaCapsuleClientImpl;
 import ee.cyber.cdoc2.client.api.ApiException;
-import ee.cyber.cdoc2.client.model.Capsule;
+import ee.cyber.cdoc2.server.model.Capsule;
 import ee.cyber.cdoc2.crypto.Crypto;
 import ee.cyber.cdoc2.crypto.ECKeys;
 import ee.cyber.cdoc2.crypto.EllipticCurve;
@@ -88,7 +88,13 @@ class GetKeyCapsuleApiTests extends BaseIntegrationTest {
         var serverCapsule = client.getCapsule(id);
 
         assertTrue(serverCapsule.isPresent());
-        assertEquals(capsule, serverCapsule.get());
+
+        // comparing client.model.Capsule and server.model.Capsule.
+        //Since these are different classes, can't do simple equals, although json is the same
+        assertArrayEquals(capsule.getRecipientId(), serverCapsule.get().getRecipientId());
+        assertArrayEquals(capsule.getEphemeralKeyMaterial(), serverCapsule.get().getEphemeralKeyMaterial());
+        assertEquals(String.valueOf(capsule.getCapsuleType()), String.valueOf(serverCapsule.get().getCapsuleType()));
+
     }
 
     @Test
@@ -125,6 +131,7 @@ class GetKeyCapsuleApiTests extends BaseIntegrationTest {
         Optional<ECPublicKey> serverSenderKey = new EcCapsuleClientImpl(client).getSenderKey(transactionID);
         assertTrue(serverSenderKey.isPresent());
         assertEquals(senderPubKey, serverSenderKey.get());
+
 
     }
 
@@ -320,9 +327,14 @@ class GetKeyCapsuleApiTests extends BaseIntegrationTest {
 
         assertNotNull(id);
 
-        Optional<Capsule> serverCapsule = client.getCapsule(id);
+        var serverCapsule = client.getCapsule(id);
         assertTrue(serverCapsule.isPresent());
-        assertEquals(capsule, serverCapsule.get());
+
+        // comparing client.model.Capsule and server.model.Capsule.
+        // Since these are different classes, can't do simple equals
+        assertArrayEquals(capsule.getRecipientId(), serverCapsule.get().getRecipientId());
+        assertArrayEquals(capsule.getEphemeralKeyMaterial(), serverCapsule.get().getEphemeralKeyMaterial());
+        assertEquals(String.valueOf(capsule.getCapsuleType()), String.valueOf(serverCapsule.get().getCapsuleType()));
     }
 
     @Test

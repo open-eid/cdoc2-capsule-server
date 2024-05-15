@@ -123,7 +123,7 @@
                 <executions>
                     <execution>
                         <id>parse-info.version-from-cdoc2-key-capsules-openapi.yaml</id>
-                        <phase>deploy</phase>
+                        <phase>initialize</phase>
                         <goals>
                             <goal>execute</goal>
                         </goals>
@@ -141,8 +141,32 @@
                 </executions>
             </plugin>
             <plugin>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>3.1.2</version>
+
+                <executions>
+                    <execution>
+                        <id>deploy-openapi-cdoc2-key-capsules</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+
+                            <file>${project.basedir}/cdoc2-key-capsules-openapi.yaml</file>
+                            <groupId>ee.cyber.cdoc2.openapi</groupId>
+                            <artifactId>cdoc2-key-capsules-openapi</artifactId>
+                            <!-- cdoc2-key-capsules-openapi.version value is set by groovy-maven-plugin, parsed from openapi file -->
+                            <version>${cdoc2-key-capsules-openapi.version}</version>
+                            <packaging>yaml</packaging>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.1.2</version>
 
                 <executions>
                     <execution>
