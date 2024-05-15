@@ -1,6 +1,6 @@
 package ee.cyber.cdoc2.server;
 
-import ee.cyber.cdoc2.client.model.Capsule;
+import ee.cyber.cdoc2.server.model.Capsule;
 import ee.cyber.cdoc2.server.model.db.KeyCapsuleDb;
 import ee.cyber.cdoc2.server.model.db.KeyCapsuleRepository;
 import jakarta.validation.ConstraintViolationException;

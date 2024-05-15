@@ -19,6 +19,8 @@ keytool -exportcert -keystore cdoc2client.p12 -alias cdoc2-client -storepass pas
 keytool -import -trustcacerts -file client-certificate.pem -alias cdoc2-client -storepass passwd -keystore servertruststore.jks
 ```
 
+Note: `cdoc2client.p12`and `client-certificate.pem` are used by `cdoc2-cli`. See `cdoc2-cli/config` and `test/bats` (in `cdoc2-java-ref-impl` repository) 
+
 Add TEST of ESTEID-SK 2015 (test id-kaart issuer)
 and esteid2018 (id-kaart issuer) and server trust store so that id-kaart certificates are trusted by the server
 ```

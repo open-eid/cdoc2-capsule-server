@@ -16,8 +16,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 
-        <bouncycastle.version>1.70</bouncycastle.version>
-        <logback-classic.version>1.2.11</logback-classic.version>
+        <bouncycastle.version>1.78.1</bouncycastle.version>
+        <logback.version>1.5.6</logback.version>
     </properties>
 
     <!-- upload maven packages, used by maven deploy-->
@@ -40,13 +40,13 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback-classic.version}</version>
+            <version>${logback.version}</version>
         </dependency>
 
         <!-- bc.jar 5.6MB -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
+            <artifactId>bcpkix-jdk18on</artifactId>
             <version>${bouncycastle.version}</version>
         </dependency>
 

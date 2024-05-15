@@ -19,7 +19,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>ee.cyber.cdoc2</groupId>
-			<artifactId>cdoc2-client</artifactId>
+			<artifactId>cdoc2-openapi</artifactId>
 			<version>1.2.0-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
