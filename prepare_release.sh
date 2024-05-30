@@ -14,15 +14,15 @@ if [[ "master" != "$GIT_BRANCH" ]]; then
   sleep 5
 fi
 
-if [[ -n $(git cherry -v) ]]; then
-  echo "Detected unpushed commits. Exit"
-  exit 1
-fi
-
-if [[ -n $(git status --porcelain --untracked-files=no) ]]; then
-  echo "Uncommited changes detected. Exit"
-  exit 1
-fi
+#if [[ -n $(git cherry -v) ]]; then
+#  echo "Detected unpushed commits. Exit"
+#  exit 1
+#fi
+#
+#if [[ -n $(git status --porcelain --untracked-files=no) ]]; then
+#  echo "Uncommited changes detected. Exit"
+#  exit 1
+#fi
 
 while getopts "v:" opt; do
   case $opt in
@@ -51,13 +51,13 @@ mvn -f cdoc2-openapi install
 
 mvn -f cdoc2-server versions:set -DremoveSnapshot
 # replace ee.cyber.cdoc2:* dependency versions with latest release version (includes packages from local maven repo)
-mvn -f cdoc2-server versions:use-latest-versions -Dincludes=ee.cyber.cdoc2:* -DexcludeReactor=false -DallowSnapshots=false
+mvn -f cdoc2-server versions:use-latest-versions -Dincludes=ee.cyber.cdoc2:* -DexcludeReactor=false -DallowSnapshots=false -DallowDowngrade=true
 
 # put and get server have spring-boot as parent and need to be updated separately
 mvn -f cdoc2-server/put-server versions:set -DremoveSnapshot
-mvn -f cdoc2-server/put-server versions:use-latest-versions -Dincludes=ee.cyber.cdoc2:* -DexcludeReactor=false -DallowSnapshots=false
+mvn -f cdoc2-server/put-server versions:use-latest-versions -Dincludes=ee.cyber.cdoc2:* -DexcludeReactor=false -DallowSnapshots=false -DallowDowngrade=true
 mvn -f cdoc2-server/get-server versions:set -DremoveSnapshot
-mvn -f cdoc2-server/get-server versions:use-latest-versions -Dincludes=ee.cyber.cdoc2:* -DexcludeReactor=false -DallowSnapshots=false
+mvn -f cdoc2-server/get-server versions:use-latest-versions -Dincludes=ee.cyber.cdoc2:* -DexcludeReactor=false -DallowSnapshots=false -DallowDowngrade=true
 
 # verify and install all modules
 mvn -f cdoc2-server install
