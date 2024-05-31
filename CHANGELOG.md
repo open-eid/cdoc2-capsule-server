@@ -1,4 +1,15 @@
 # Changelog
+## [1.2.1 ] release related bugfixes (2024-05-31)
+
+Fix release related bugs. No code changes.
+
+### Internal
+
+* Individual versions for cdoc2-server-db and cdoc2-common-server versions (previously same as cdoc2-server parent )
+
+### Bugfixes
+* Add missing gitlab repository url to get-server
+
 ## [1.2.0 ] Repository split and maintenance (2024-05-30)
 
 ### Features
