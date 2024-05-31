@@ -1,5 +1,11 @@
 # Changelog
-## [1.2.0 ] Repository split and maintenance (2024-05-30)
+## [1.2.1] Repository split and maintenance (2024-05-30)
+
+### Bugfixes
+
+* Add missing repository to get-server pom.xml 
+
+## [1.2.0] Repository split and maintenance (2024-05-30)
 
 ### Features
 
