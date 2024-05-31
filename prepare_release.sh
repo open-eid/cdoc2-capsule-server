@@ -14,15 +14,15 @@ if [[ "master" != "$GIT_BRANCH" ]]; then
   sleep 5
 fi
 
-#if [[ -n $(git cherry -v) ]]; then
-#  echo "Detected unpushed commits. Exit"
-#  exit 1
-#fi
-#
-#if [[ -n $(git status --porcelain --untracked-files=no) ]]; then
-#  echo "Uncommited changes detected. Exit"
-#  exit 1
-#fi
+if [[ -n $(git cherry -v) ]]; then
+  echo "Detected unpushed commits. Exit"
+  exit 1
+fi
+
+if [[ -n $(git status --porcelain --untracked-files=no) ]]; then
+  echo "Uncommited changes detected. Exit"
+  exit 1
+fi
 
 while getopts "v:" opt; do
   case $opt in
