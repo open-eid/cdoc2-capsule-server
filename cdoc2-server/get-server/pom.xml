@@ -11,7 +11,7 @@
 
 	<artifactId>cdoc2-get-server</artifactId>
 	<groupId>ee.cyber.cdoc2</groupId>
-	<version>1.2.0</version>
+	<version>1.2.1</version>
 	<packaging>jar</packaging>
 
 	<name>cdoc2-get-server</name>
@@ -35,7 +35,14 @@
 		<logback.version>1.5.6</logback.version>
 	</properties>
 
-	<distributionManagement>
+    <repositories>
+        <repository>
+            <id>gitlab.ext.cyber.ee</id>
+            <url>https://gitlab.ext.cyber.ee/api/v4/projects/40/packages/maven</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
         <repository>
             <id>gitlab.ext.cyber.ee</id>
             <url>https://gitlab.ext.cyber.ee/api/v4/projects/39/packages/maven</url>
