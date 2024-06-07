@@ -330,6 +330,15 @@
 							<BP_SPRING_CLOUD_BINDINGS_DISABLED>true</BP_SPRING_CLOUD_BINDINGS_DISABLED>
 							<BPL_SPRING_CLOUD_BINDINGS_DISABLED>true</BPL_SPRING_CLOUD_BINDINGS_DISABLED>
 						</env>
+						<buildpacks>
+							<buildpack>paketo-buildpacks/ca-certificates@3.6.3</buildpack>
+							<buildpack>paketo-buildpacks/bellsoft-liberica</buildpack>
+							<buildpack>/usr/src/project/ria-infra-scripts/buildpacks/bellsoft-liberica</buildpack>
+							<buildpack>/usr/src/project/ria-infra-scripts/buildpacks/syft</buildpack>
+							<buildpack>paketo-buildpacks/executable-jar</buildpack>
+							<buildpack>paketo-buildpacks/dist-zip</buildpack>
+							<buildpack>paketo-buildpacks/spring-boot</buildpack>
+						</buildpacks>
 					</image>
 				</configuration>
 				<executions>
