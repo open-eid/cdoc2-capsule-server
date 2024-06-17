@@ -1,13 +1,19 @@
 package ee.cyber.cdoc2.server.api;
 
+import ee.cyber.cdoc2.server.config.KeyCapsuleConfigProperties;
 import ee.cyber.cdoc2.server.model.Capsule;
 import ee.cyber.cdoc2.server.model.db.KeyCapsuleDb;
 import ee.cyber.cdoc2.server.model.db.KeyCapsuleRepository;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.Period;
+import java.time.ZoneOffset;
 import java.util.Base64;
 import java.util.Optional;
 
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,6 +24,7 @@ import static ee.cyber.cdoc2.server.Utils.getPathAndQueryPart;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+
 /**
  * Implements API for creating CDOC2 key capsules {@link KeyCapsulesApi}
  */
@@ -27,6 +34,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class CreateKeyCapsuleApi implements KeyCapsulesApiDelegate {
 
     private final NativeWebRequest nativeWebRequest;
+    private final KeyCapsuleConfigProperties configProperties;
     private final KeyCapsuleRepository keyCapsuleRepository;
 
     @Override
@@ -35,7 +43,10 @@ public class CreateKeyCapsuleApi implements KeyCapsulesApiDelegate {
     }
 
     @Override
-    public ResponseEntity<Void> createCapsule(Capsule capsule) {
+    public ResponseEntity<Void> createCapsule(
+        Capsule capsule,
+        @Nullable LocalDateTime xExpiryTime
+    ) {
         log.trace("createCapsule(type={}, recipientId={} bytes, ephemeralKey={} bytes)",
             capsule.getCapsuleType(), capsule.getRecipientId().length,
             capsule.getEphemeralKeyMaterial().length
@@ -45,8 +56,11 @@ public class CreateKeyCapsuleApi implements KeyCapsulesApiDelegate {
             return ResponseEntity.badRequest().build();
         }
 
+        OffsetDateTime expiryTime = getExpiryTime(xExpiryTime);
+
         try {
             var saved = this.keyCapsuleRepository.save(
+                // ToDo save expiryTime to DB #3348
                 new KeyCapsuleDb()
                     .setCapsuleType(getDbCapsuleType(capsule.getCapsuleType()))
                     .setRecipient(capsule.getRecipientId())
@@ -101,4 +115,35 @@ public class CreateKeyCapsuleApi implements KeyCapsulesApiDelegate {
                 throw new IllegalArgumentException("Unknown capsule type: " + dtoType);
         }
     }
+
+    private OffsetDateTime getExpiryTime(LocalDateTime xExpiryTime) {
+        if (null != xExpiryTime) {
+            validateExpiryTime(xExpiryTime);
+
+            return toOffsetDateTime(xExpiryTime);
+        } else {
+            return OffsetDateTime.now().plusMonths(
+                getDurationTotalMonths(configProperties.defaultExpirationDuration())
+            );
+        }
+    }
+
+    private void validateExpiryTime(LocalDateTime expiryTime) {
+        LocalDateTime xMaxExpiryTime = LocalDateTime.now().plusMonths(
+            getDurationTotalMonths(configProperties.maxExpirationDuration())
+        );
+        if (expiryTime.isAfter(xMaxExpiryTime)) {
+            throw new IllegalArgumentException("Key capsule expire time cannot exceed max allowed");
+        }
+    }
+
+    private OffsetDateTime toOffsetDateTime(LocalDateTime expiryTime) {
+        return OffsetDateTime.of(expiryTime, ZoneOffset.UTC);
+    }
+
+    private long getDurationTotalMonths(String duration) {
+        Period expiryPeriod = Period.parse(duration);
+        return expiryPeriod.toTotalMonths();
+    }
+
 }

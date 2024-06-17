@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 
 /**
- * Security configuration properties
+ * Security configuration properties for management endpoints credentials
  */
 @ConfigurationProperties(prefix = "management.endpoints.metrics")
 public record ConfigProperties(String username, String password) {

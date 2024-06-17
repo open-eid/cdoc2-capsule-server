@@ -53,7 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @Slf4j
-class GetKeyCapsuleApiTests extends BaseIntegrationTest {
+class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
 
     // read hardware PKCS11 device conf from a properties file
     private static final Pkcs11DeviceConfiguration PKCS11_CONF = Pkcs11DeviceConfiguration.load();
@@ -131,8 +131,6 @@ class GetKeyCapsuleApiTests extends BaseIntegrationTest {
         Optional<ECPublicKey> serverSenderKey = new EcCapsuleClientImpl(client).getSenderKey(transactionID);
         assertTrue(serverSenderKey.isPresent());
         assertEquals(senderPubKey, serverSenderKey.get());
-
-
     }
 
     @Test
@@ -165,9 +163,9 @@ class GetKeyCapsuleApiTests extends BaseIntegrationTest {
         byte[] encryptedKek = RsaUtils.rsaEncrypt(kek, rsaPublicKey);
 
         var capsule = new Capsule()
-                .ephemeralKeyMaterial(encryptedKek)
-                .recipientId(RsaUtils.encodeRsaPubKey(senderPubKey))
-                .capsuleType(Capsule.CapsuleTypeEnum.RSA);
+            .ephemeralKeyMaterial(encryptedKek)
+            .recipientId(RsaUtils.encodeRsaPubKey(senderPubKey))
+            .capsuleType(Capsule.CapsuleTypeEnum.RSA);
 
         String transactionID = this.saveCapsule(capsule).getTransactionId();
 
@@ -188,7 +186,7 @@ class GetKeyCapsuleApiTests extends BaseIntegrationTest {
     @Test
     @Tag("pkcs11")
     @Disabled("Requires user interaction. Needs to be run separately from other PKCS11 tests as SunPKCS11 caches "
-            + "passwords ")
+        + "passwords ")
     void testKeyServerPropertiesClientPKCS11Prompt() throws Exception {
         if (System.console() == null) {
             //SpringBootTest sets headless to true and causes graphic dialog to fail, when running inside IDE
@@ -282,7 +280,7 @@ class GetKeyCapsuleApiTests extends BaseIntegrationTest {
 
             trustKeyStore = KeyStore.getInstance("JKS");
             trustKeyStore.load(Files.newInputStream(TestData.getKeysDirectory().resolve("clienttruststore.jks")),
-                    "passwd".toCharArray());
+                "passwd".toCharArray());
 
         }  catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
@@ -295,7 +293,7 @@ class GetKeyCapsuleApiTests extends BaseIntegrationTest {
 
         X509Certificate cert  = (X509Certificate) clientKeyStore.getCertificate(PKCS11_CONF.keyAlias());
         log.debug("Certificate issuer is {}.  This must be in server truststore "
-                + "or SSL handshake will fail with cryptic error", cert.getIssuerDN());
+            + "or SSL handshake will fail with cryptic error", cert.getIssuerDN());
 
         Cdoc2KeyCapsuleApiClient client = Cdoc2KeyCapsuleApiClient.builder()
                 .withBaseUrl(baseUrl)
@@ -371,9 +369,11 @@ class GetKeyCapsuleApiTests extends BaseIntegrationTest {
         // constraint errors should be converted to HTTP 400, see GlobalExceptionHandler
 
         String txId = "KC123"; // too short tx
+        URI requestUri = new URI(this.capsuleApiUrl() + "/" + txId);
+
         HttpClientErrorException ex = assertThrows(
-                HttpClientErrorException.class,
-                () -> this.restTemplate.getForEntity(new URI(this.capsuleApiUrl() + "/" + txId), Capsule.class)
+            HttpClientErrorException.class,
+            () -> this.restTemplate.getForEntity(requestUri, Capsule.class)
         );
 
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
@@ -382,9 +382,10 @@ class GetKeyCapsuleApiTests extends BaseIntegrationTest {
     @Test
     void shouldGetHttp404() throws Exception {
         String txId = "KC12345678901234567890"; // certificate provided and passes validation, but capsule not found
+        URI requestUri = new URI(this.capsuleApiUrl() + "/" + txId);
         HttpClientErrorException ex = assertThrows(
-                HttpClientErrorException.class,
-                () -> this.restTemplate.getForEntity(new URI(this.capsuleApiUrl() + "/" + txId), Capsule.class)
+            HttpClientErrorException.class,
+            () -> this.restTemplate.getForEntity(requestUri, Capsule.class)
         );
 
         assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
@@ -394,17 +395,21 @@ class GetKeyCapsuleApiTests extends BaseIntegrationTest {
     void shouldThrowUserExceptions() throws Exception {
         // unknown serverId should throw exception
         var client = createPkcs12ServerClient(baseUrl);
+        String nonExistingUuid = UUID.randomUUID().toString();
+
         CDocUserException notFoundException = assertThrows(
             CDocUserException.class,
-            () -> client.getForId(UUID.randomUUID().toString())
+            () -> client.getForId(nonExistingUuid)
         );
         assertEquals(UserErrorCode.SERVER_NOT_FOUND, notFoundException.getErrorCode());
 
         // test network error
         var misconfiguredClient = createPkcs12ServerClient("https://foo");
+        String uuid = UUID.randomUUID().toString();
+
         CDocUserException networkException = assertThrows(
             CDocUserException.class,
-            () -> misconfiguredClient.getCapsule(UUID.randomUUID().toString())
+            () -> misconfiguredClient.getCapsule(uuid)
         );
         assertEquals(UserErrorCode.NETWORK_ERROR, networkException.getErrorCode());
     }

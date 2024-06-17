@@ -92,6 +92,10 @@ spring.datasource.driver-class-name=org.postgresql.Driver
 # logging levels
 logging.level.root=info
 logging.level.ee.cyber.cdoc2=trace
+
+# Key capsule expiration duration configuration
+key-capsule.default-expiration-duration=P36M
+key-capsule.max-expiration-duration=P60M
 ```
 
 #### Running
@@ -166,6 +170,10 @@ spring.datasource.driver-class-name=org.postgresql.Driver
 # logging levels
 logging.level.root=info
 logging.level.ee.cyber.cdoc2=trace
+
+# Key capsule expiration duration configuration
+key-capsule.default-expiration-duration=P36M
+key-capsule.max-expiration-duration=P60M
 ```
 
 #### Running
@@ -246,8 +254,17 @@ management.metrics.data.repository.autotime.enabled=true
 management.metrics.web.server.auto-time-requests=true
 ```
 
+If needed to list all spring boot application.properties enable endpoint `/env` temporary:
+```
+management.endpoints.web.exposure.include=info,health,startup,prometheus,env
+management.endpoint.env.enabled=true
+```
+Endpoint output can see in `https://<management_host>:<management_port>/actuator/env`
+
+
 NB! Currently, the monitoring endpoints require no authentication. As these endpoints are
 running on a separate HTTP port, the access to the monitoring endpoints must be implemented by network access rules (e.g firewall).
+Only `/prometheus` endpoint is authenticated.
 
 
 ### Info endpoint 
@@ -309,7 +326,7 @@ running on a separate HTTP port, the access to the monitoring endpoints must be 
 }
 ```
 
-### Prometheus endpoint
+### Prometheus endpoint (authentication required)
 `curl -k -u <username>:<password> https://<management_host>:<management_port>/actuator/prometheus -X GET`
 
 ```
