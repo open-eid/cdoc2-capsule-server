@@ -25,7 +25,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
-    private final ConfigProperties configProperties;
+    private final ConfigProperties credentials;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -55,8 +55,8 @@ public class SecurityConfiguration {
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User.builder()
-            .username(configProperties.username())
-            .password("{noop}" + configProperties.password())
+            .username(credentials.username())
+            .password("{noop}" + credentials.password())
             .roles("USER")
             .build();
         return new InMemoryUserDetailsManager(user);

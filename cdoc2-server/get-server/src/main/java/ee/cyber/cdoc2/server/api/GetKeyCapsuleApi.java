@@ -12,6 +12,7 @@ import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 import javax.security.auth.x500.X500Principal;
@@ -66,7 +67,7 @@ public class GetKeyCapsuleApi implements KeyCapsulesApiDelegate {
     }
 
     @Override
-    public ResponseEntity<Void> createCapsule(Capsule capsule) {
+    public ResponseEntity<Void> createCapsule(Capsule capsule, LocalDateTime xExpiryTime) {
         log.error("createCapsule() operation not supported on key capsule get server");
         return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
     }
@@ -135,4 +136,5 @@ public class GetKeyCapsuleApi implements KeyCapsulesApiDelegate {
             .map(X500Principal::getName)
             .orElse("");
     }
+
 }

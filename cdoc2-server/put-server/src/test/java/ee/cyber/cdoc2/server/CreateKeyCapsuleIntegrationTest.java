@@ -50,13 +50,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
 @Slf4j
-class CreateKeyCapsuleTests extends BaseIntegrationTest {
-    private static final KeyStore CLIENT_TRUST_STORE = TestData.loadKeyStore(
-        "JKS",
-        TestData.getKeysDirectory().resolve("clienttruststore.jks"),
-        "passwd"
-    );
+class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
 
     // read hardware PKCS11 device conf from a properties file
     private static final Pkcs11DeviceConfiguration PKCS11_CONF = Pkcs11DeviceConfiguration.load();
@@ -67,10 +63,7 @@ class CreateKeyCapsuleTests extends BaseIntegrationTest {
 
     @Test
     void shouldCreateEcCapsuleUsingPKCS12Client() throws Exception {
-        Cdoc2KeyCapsuleApiClient noAuthClient = Cdoc2KeyCapsuleApiClient.builder()
-            .withBaseUrl(this.baseUrl)
-            .withTrustKeyStore(CLIENT_TRUST_STORE)
-            .build();
+        Cdoc2KeyCapsuleApiClient noAuthClient = createClient();
 
         EcCapsuleClientImpl client = new EcCapsuleClientImpl(
                 KeyCapsuleClientImpl.create("shouldCreateEcCapsuleUsingPKCS12Client", noAuthClient, noAuthClient));
@@ -324,8 +317,12 @@ class CreateKeyCapsuleTests extends BaseIntegrationTest {
         }
     }
 
-    private void checkCapsuleExistsInDb(String txId, KeyCapsuleDb.CapsuleType expectedType,
-            byte[] expectedRecipient, byte[] expectedPayload) {
+    private void checkCapsuleExistsInDb(
+        String txId,
+        KeyCapsuleDb.CapsuleType expectedType,
+        byte[] expectedRecipient,
+        byte[] expectedPayload
+    ) {
         var dbCapsuleOpt = this.capsuleRepository.findById(txId);
         assertTrue(dbCapsuleOpt.isPresent());
         var dbCapsule = dbCapsuleOpt.get();
@@ -385,4 +382,12 @@ class CreateKeyCapsuleTests extends BaseIntegrationTest {
             assertNotNull(location);
         }
     }
+
+    private Cdoc2KeyCapsuleApiClient createClient() throws GeneralSecurityException {
+        return Cdoc2KeyCapsuleApiClient.builder()
+            .withBaseUrl(this.baseUrl)
+            .withTrustKeyStore(CLIENT_TRUST_STORE)
+            .build();
+    }
+
 }

@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import ee.cyber.cdoc2.server.config.ConfigProperties;
+import ee.cyber.cdoc2.server.config.KeyCapsuleConfigProperties;
 
 
 @SpringBootApplication
@@ -21,7 +22,7 @@ import ee.cyber.cdoc2.server.config.ConfigProperties;
 @EnableJpaAuditing
 @Slf4j
 @RequiredArgsConstructor
-@EnableConfigurationProperties(ConfigProperties.class)
+@EnableConfigurationProperties({ConfigProperties.class, KeyCapsuleConfigProperties.class})
 public class Cdoc2PutServerApplication implements CommandLineRunner {
 
     final BuildProperties buildProperties;

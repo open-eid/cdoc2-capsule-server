@@ -1,17 +1,15 @@
-# Key Capsules API, version 2.0 of cdoc2services API
 openapi: 3.0.3
 info:
   contact:
     url: http://ria.ee
   title: cdoc2-key-capsules
-  version: '2.0.0'
+  version: 2.1.0-SNAPSHOT
   description: API for exchanging CDOC2 ephemeral key material in key capsules
 servers:
   - url: 'https://localhost:8443'
     description: no auth (for creating key capsules)
   - url: 'https://localhost:8444'
     description: mutual TLS authentication (for retrieving key capsules)
-
 paths:
   '/key-capsules/{transactionId}':
     get:
@@ -35,6 +33,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Capsule'
+          headers:
+            x-expiry-time:
+              schema:
+                type: string
+                format: date-time
+              description: Key capsule may be deleted by server after expiry time. Format rfc3339#section-5.6
         '400':
           description: 'Bad request. Client error.'
         '401':
@@ -44,11 +48,25 @@ paths:
       operationId: getCapsuleByTransactionId
       security:
         - mutualTLS: []
-  '/key-capsules':
+  /key-capsules:
     post:
       summary: Add Key Capsule
       description: Save Capsule and generate transaction id using secure random. Generated transactionId is returned in Location header
       operationId: createCapsule
+      parameters:
+        - schema:
+            type: string
+            format: date-time
+          in: header
+          name: x-expiry-time
+          description: Key capsule may be deleted by server after expiry time. Format rfc3339#section-5.6
+          required: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Capsule'
       responses:
         '201':
           description: Created
@@ -59,13 +77,7 @@ paths:
                 example: /key-capsules/KC0123456789ABCDEF
               description: 'URI of created resource. TransactionId can be extracted from URI as it follows pattern /key-capsules/{transactionId}'
         '400':
-          description: 'Bad request. Client error.'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Capsule'
+          description: Bad request. Client error.
       security: []
       tags:
         - cdoc2-key-capsules
