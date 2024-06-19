@@ -12,7 +12,9 @@ import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+import ee.cyber.cdoc2.server.config.DbConnectionConfigProperties;
 import ee.cyber.cdoc2.server.config.ConfigProperties;
 import ee.cyber.cdoc2.server.config.KeyCapsuleConfigProperties;
 
@@ -22,7 +24,12 @@ import ee.cyber.cdoc2.server.config.KeyCapsuleConfigProperties;
 @EnableJpaAuditing
 @Slf4j
 @RequiredArgsConstructor
-@EnableConfigurationProperties({ConfigProperties.class, KeyCapsuleConfigProperties.class})
+@EnableConfigurationProperties({
+    ConfigProperties.class,
+    DbConnectionConfigProperties.class,
+    KeyCapsuleConfigProperties.class
+})
+@EnableScheduling
 public class Cdoc2PutServerApplication implements CommandLineRunner {
 
     final BuildProperties buildProperties;

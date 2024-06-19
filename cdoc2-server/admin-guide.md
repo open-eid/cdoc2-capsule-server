@@ -96,6 +96,8 @@ logging.level.ee.cyber.cdoc2=trace
 # Key capsule expiration duration configuration
 key-capsule.default-expiration-duration=P36M
 key-capsule.max-expiration-duration=P60M
+# Expired capsules removing job executes every 5 minutes every day
+key-capsule.expired.clean-up.cron=0 0/5 * * * ?
 ```
 
 #### Running
@@ -174,6 +176,8 @@ logging.level.ee.cyber.cdoc2=trace
 # Key capsule expiration duration configuration
 key-capsule.default-expiration-duration=P36M
 key-capsule.max-expiration-duration=P60M
+# Expired capsules removing job executes every 5 minutes every day
+key-capsule.expired.clean-up.cron=0 0/5 * * * ?
 ```
 
 #### Running

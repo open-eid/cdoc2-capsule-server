@@ -22,6 +22,7 @@ import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+
 /**
  * CDOC2 key capsule database entity
  */
@@ -72,6 +73,10 @@ public class KeyCapsuleDb {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private CapsuleType capsuleType;
+
+    @NotNull
+    @Column(nullable = false)
+    private Instant expiryTime;
 
     @CreatedDate
     private Instant createdAt;

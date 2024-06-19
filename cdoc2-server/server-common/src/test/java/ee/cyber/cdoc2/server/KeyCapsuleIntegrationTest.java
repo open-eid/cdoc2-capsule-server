@@ -3,9 +3,12 @@ package ee.cyber.cdoc2.server;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import ee.cyber.cdoc2.server.model.Capsule;
 import ee.cyber.cdoc2.server.model.db.KeyCapsuleDb;
@@ -17,10 +20,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @Slf4j
-abstract class KeyCapsuleIntegrationTest extends BaseIntegrationTest {
+abstract class KeyCapsuleIntegrationTest extends BaseInitializationTest {
 
     // context path of the key capsule api
     protected static final String API_KEY_CAPSULES = "/key-capsules";
+
+    @Autowired
+    private ExpiredCapsuleCleanUpJob cleanUpJob;
 
     @Test
     void testKeyCapsuleJpaConstraints() {
@@ -44,6 +50,7 @@ abstract class KeyCapsuleIntegrationTest extends BaseIntegrationTest {
 
         model.setRecipient("123".getBytes());
         model.setPayload("345".getBytes());
+        model.setExpiryTime(EXPIRY_TIME);
         KeyCapsuleDb saved = this.capsuleRepository.save(model);
 
         assertNotNull(saved);
@@ -62,12 +69,33 @@ abstract class KeyCapsuleIntegrationTest extends BaseIntegrationTest {
         log.debug("Retrieved {}", dbRecord);
     }
 
+    @Test
+    void shouldCleanUpExpiredKeyCapsules() {
+        // prepare database for testing
+        this.capsuleRepository.deleteAll();
+
+        Instant expiryTime = Instant.now();
+        KeyCapsuleDb model = new KeyCapsuleDb();
+        model.setCapsuleType(KeyCapsuleDb.CapsuleType.SECP384R1);
+
+        model.setRecipient("123".getBytes());
+        model.setPayload("345".getBytes());
+        model.setExpiryTime(expiryTime);
+        List<KeyCapsuleDb> savedCapsules = this.capsuleRepository.saveAll(List.of(model, model, model));
+        assertEquals(3, savedCapsules.size());
+
+        cleanUpJob.cleanUpExpiredCapsules();
+
+        long count = this.capsuleRepository.count();
+        assertEquals(0, count);
+    }
+
     /**
      * Saves the capsule in the database
      * @param dto the capsule dto
      * @return the saved capsule
      */
-    protected KeyCapsuleDb saveCapsule(Capsule dto) {
+    protected KeyCapsuleDb saveCapsule(Capsule dto, Instant expiryTime) {
         return this.capsuleRepository.save(
             new KeyCapsuleDb()
                 .setCapsuleType(
@@ -77,6 +105,7 @@ abstract class KeyCapsuleIntegrationTest extends BaseIntegrationTest {
                 )
                 .setRecipient(dto.getRecipientId())
                 .setPayload(dto.getEphemeralKeyMaterial())
+                .setExpiryTime(expiryTime)
         );
     }
 

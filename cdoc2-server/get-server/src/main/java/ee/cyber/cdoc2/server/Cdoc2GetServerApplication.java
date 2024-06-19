@@ -14,8 +14,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import ee.cyber.cdoc2.server.config.ConfigProperties;
+import ee.cyber.cdoc2.server.config.DbConnectionConfigProperties;
 
 
 @SpringBootApplication
@@ -23,7 +25,11 @@ import ee.cyber.cdoc2.server.config.ConfigProperties;
 @EnableJpaAuditing
 @Slf4j
 @RequiredArgsConstructor
-@EnableConfigurationProperties(ConfigProperties.class)
+@EnableConfigurationProperties({
+    ConfigProperties.class,
+    DbConnectionConfigProperties.class
+})
+@EnableScheduling
 public class Cdoc2GetServerApplication {
 
     final BuildProperties buildProperties;
