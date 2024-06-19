@@ -81,7 +81,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         ECPublicKey senderPubKey = (ECPublicKey) senderKeyPair.getPublic();
         capsule.ephemeralKeyMaterial(ECKeys.encodeEcPubKeyForTls(senderPubKey));
 
-        String id = this.saveCapsule(capsule).getTransactionId();
+        String id = this.saveCapsule(capsule, EXPIRY_TIME).getTransactionId();
 
         assertNotNull(id);
 
@@ -124,7 +124,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
             .recipientId(ECKeys.encodeEcPubKeyForTls(curve, recipientPubKey))
             .capsuleType(Capsule.CapsuleTypeEnum.ECC_SECP384R1);
 
-        String transactionID = this.saveCapsule(capsule).getTransactionId();
+        String transactionID = this.saveCapsule(capsule, EXPIRY_TIME).getTransactionId();
 
         assertNotNull(transactionID);
 
@@ -167,7 +167,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
             .recipientId(RsaUtils.encodeRsaPubKey(senderPubKey))
             .capsuleType(Capsule.CapsuleTypeEnum.RSA);
 
-        String transactionID = this.saveCapsule(capsule).getTransactionId();
+        String transactionID = this.saveCapsule(capsule, EXPIRY_TIME).getTransactionId();
 
         assertNotNull(transactionID);
 
@@ -235,7 +235,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
                 .recipientId(ECKeys.encodeEcPubKeyForTls(curve, pubKey))
                 .capsuleType(Capsule.CapsuleTypeEnum.ECC_SECP384R1);
 
-            String id = this.saveCapsule(capsule).getTransactionId();
+            String id = this.saveCapsule(capsule, EXPIRY_TIME).getTransactionId();
             assertNotNull(id);
 
             Optional<ECPublicKey> payload = new EcCapsuleClientImpl(client).getSenderKey(id);
@@ -248,7 +248,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
                 .recipientId(RsaUtils.encodeRsaPubKey(pubKey))
                 .capsuleType(Capsule.CapsuleTypeEnum.RSA);
 
-            String id = this.saveCapsule(capsule).getTransactionId();
+            String id = this.saveCapsule(capsule, EXPIRY_TIME).getTransactionId();
             assertNotNull(id);
 
             Optional<byte[]> payload = new RsaCapsuleClientImpl(client).getEncryptedKek(id);
@@ -321,7 +321,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
             capsule.ephemeralKeyMaterial(senderPubKey.getEncoded());
         }
 
-        String id = this.saveCapsule(capsule).getTransactionId();
+        String id = this.saveCapsule(capsule, EXPIRY_TIME).getTransactionId();
 
         assertNotNull(id);
 
@@ -349,7 +349,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
             .ephemeralKeyMaterial(UUID.randomUUID().toString().getBytes())
             .recipientId(RsaUtils.encodeRsaPubKey((RSAPublicKey) recipientCert.getPublicKey()));
 
-        String txId = this.saveCapsule(rsaCapsule).getTransactionId();
+        String txId = this.saveCapsule(rsaCapsule, EXPIRY_TIME).getTransactionId();
 
         var response = this.restTemplate.getForEntity(
             new URI(this.capsuleApiUrl() + "/" + txId),

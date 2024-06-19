@@ -2,6 +2,11 @@ package ee.cyber.cdoc2.server;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.Period;
+import java.time.ZoneOffset;
+
 
 /**
  * Server utilities.
@@ -23,4 +28,14 @@ public final class Utils {
             return new URI(uri.getPath());
         }
     }
+
+    public static OffsetDateTime toOffsetDateTime(LocalDateTime expiryTime) {
+        return OffsetDateTime.of(expiryTime, ZoneOffset.UTC);
+    }
+
+    public static long getDurationTotalMonths(String duration) {
+        Period expiryPeriod = Period.parse(duration);
+        return expiryPeriod.toTotalMonths();
+    }
+
 }

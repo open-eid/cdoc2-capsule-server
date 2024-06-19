@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.NativeWebRequest;
+
 import static ee.cyber.cdoc2.server.Utils.getPathAndQueryPart;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -60,11 +61,11 @@ public class CreateKeyCapsuleApi implements KeyCapsulesApiDelegate {
 
         try {
             var saved = this.keyCapsuleRepository.save(
-                // ToDo save expiryTime to DB #3348
                 new KeyCapsuleDb()
                     .setCapsuleType(getDbCapsuleType(capsule.getCapsuleType()))
                     .setRecipient(capsule.getRecipientId())
                     .setPayload(capsule.getEphemeralKeyMaterial())
+                    .setExpiryTime(expiryTime.toInstant())
             );
 
             log.info(
