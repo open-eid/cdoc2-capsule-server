@@ -31,6 +31,7 @@ import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.Base64;
+
 import java.util.Collections;
 import java.util.Properties;
 import java.util.UUID;
@@ -119,7 +120,10 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
 
         assertNotNull(client.getServerIdentifier());
 
-        String transactionID = new EcCapsuleClientImpl(client).storeSenderKey(recipientPubKey, senderPubKey);
+        String transactionID = new EcCapsuleClientImpl(client).storeSenderKey(
+            recipientPubKey,
+            senderPubKey
+        );
 
         assertNotNull(transactionID);
 
@@ -153,7 +157,10 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
 
         byte[] encryptedKek = RsaUtils.rsaEncrypt(kek, rsaPublicKey);
 
-        String transactionID = new RsaCapsuleClientImpl(client).storeRsaCapsule(rsaPublicKey, encryptedKek);
+        String transactionID = new RsaCapsuleClientImpl(client).storeRsaCapsule(
+            rsaPublicKey,
+            encryptedKek
+        );
 
         assertNotNull(transactionID);
 
@@ -184,19 +191,7 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
     }
 
     void testKeyServerPropertiesClientPKCS11(boolean interactive) throws Exception {
-        String prop = "cdoc2.client.server.id=testKeyServerPropertiesClientPKCS11\n";
-        prop += "cdoc2.client.server.base-url.post=" + this.baseUrl + "\n";
-        prop += "cdoc2.client.server.base-url.get=" + this.baseUrl + "\n";
-        prop += "cdoc2.client.ssl.trust-store.type=JKS\n";
-        prop += "cdoc2.client.ssl.trust-store=" + TestData.getKeysDirectory().resolve("clienttruststore.jks") + "\n";
-        prop += "cdoc2.client.ssl.trust-store-password=passwd\n";
-
-        prop += "cdoc2.client.ssl.client-store.type=PKCS11\n";
-        if (interactive) {
-            prop += "cdoc2.client.ssl.client-store-password.prompt=PIN1\n";
-        } else {
-            prop += "cdoc2.client.ssl.client-store-password=" + Arrays.toString(PKCS11_CONF.pin()) + "\n";
-        }
+        String prop = getProperties(interactive);
 
         Properties p = new Properties();
         p.load(new StringReader(prop));
@@ -246,6 +241,23 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
         }
     }
 
+    private String getProperties(boolean interactive) {
+        String prop = "cdoc2.client.server.id=testKeyServerPropertiesClientPKCS11\n";
+        prop += "cdoc2.client.server.base-url.post=" + this.baseUrl + "\n";
+        prop += "cdoc2.client.server.base-url.get=" + this.baseUrl + "\n";
+        prop += "cdoc2.client.ssl.trust-store.type=JKS\n";
+        prop += "cdoc2.client.ssl.trust-store=" + TestData.getKeysDirectory().resolve("clienttruststore.jks") + "\n";
+        prop += "cdoc2.client.ssl.trust-store-password=passwd\n";
+
+        prop += "cdoc2.client.ssl.client-store.type=PKCS11\n";
+        if (interactive) {
+            prop += "cdoc2.client.ssl.client-store-password.prompt=PIN1\n";
+        } else {
+            prop += "cdoc2.client.ssl.client-store-password=" + Arrays.toString(PKCS11_CONF.pin()) + "\n";
+        }
+        return prop;
+    }
+
     @Test
     @Tag("pkcs11")
     void testPKCS11Client() throws Exception {
@@ -264,15 +276,15 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
                     "passwd".toCharArray());
 
         }  catch (GeneralSecurityException | IOException e) {
-            e.printStackTrace();
             log.error("Error initializing key stores", e);
         }
 
+        assert clientKeyStore != null;
         log.debug("aliases: {}", Collections.list(clientKeyStore.aliases()));
 
         X509Certificate cert  = (X509Certificate) clientKeyStore.getCertificate(PKCS11_CONF.keyAlias());
         log.debug("Certificate issuer is {}.  This must be in server truststore "
-                + "or SSL handshake will fail with cryptic error", cert.getIssuerDN());
+                + "or SSL handshake will fail with cryptic error", cert.getIssuerX500Principal());
 
         Cdoc2KeyCapsuleApiClient mTlsClient = Cdoc2KeyCapsuleApiClient.builder()
                 .withBaseUrl(baseUrl)
@@ -284,14 +296,17 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
         //recipient must match to client's cert pub key or GET will fail with 404
         PublicKey recipientPubKey = cert.getPublicKey();
         KeyPair senderKeyPair = EllipticCurve.SECP384R1.generateEcKeyPair();
-        EllipticCurve curve = EllipticCurve.forPubKey(recipientPubKey);
+        EllipticCurve.forPubKey(recipientPubKey);
         ECPublicKey senderPubKey = (ECPublicKey) senderKeyPair.getPublic();
 
         var serverClient = KeyCapsuleClientImpl.create("testPKCS11Client", mTlsClient, null);
 
         if (recipientPubKey instanceof ECPublicKey) {
             var capsuleClient = new EcCapsuleClientImpl(serverClient);
-            var transactionId = capsuleClient.storeSenderKey((ECPublicKey) recipientPubKey, senderPubKey);
+            var transactionId = capsuleClient.storeSenderKey(
+                (ECPublicKey) recipientPubKey,
+                senderPubKey
+            );
 
             assertNotNull(transactionId);
             this.checkCapsuleExistsInDb(
@@ -303,7 +318,10 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
         } else if (recipientPubKey instanceof RSAPublicKey) {
             var capsuleClient = new RsaCapsuleClientImpl(serverClient);
             var payload = senderPubKey.getEncoded();
-            var transactionId = capsuleClient.storeRsaCapsule((RSAPublicKey) recipientPubKey, payload);
+            var transactionId = capsuleClient.storeRsaCapsule(
+                (RSAPublicKey) recipientPubKey,
+                payload
+            );
 
             assertNotNull(transactionId);
             this.checkCapsuleExistsInDb(

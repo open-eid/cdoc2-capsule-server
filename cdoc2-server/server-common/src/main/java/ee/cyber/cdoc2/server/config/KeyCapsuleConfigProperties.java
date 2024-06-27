@@ -4,11 +4,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 
 /**
- * Configuration properties for key capsule. {@code Period#parse} format is implemented for
+ * Configuration properties for key capsule. {@code Duration#parse} format is implemented for
  * extracting duration dates.
  *
- * @param defaultExpirationDuration default value for capsule expiration period
- * @param maxExpirationDuration max allowed value for capsule expiration period
+ * @param defaultExpirationDuration default value for capsule expiration duration
+ * @param maxExpirationDuration max allowed value for capsule expiration duration
  */
 @ConfigurationProperties(prefix = "key-capsule")
 public record KeyCapsuleConfigProperties(

@@ -8,7 +8,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.Period;
 import java.time.ZoneOffset;
 import java.util.Base64;
 import java.util.Optional;
@@ -21,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.NativeWebRequest;
 
+import static ee.cyber.cdoc2.server.Utils.getCapsuleExpirationTime;
 import static ee.cyber.cdoc2.server.Utils.getPathAndQueryPart;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -123,28 +123,19 @@ public class CreateKeyCapsuleApi implements KeyCapsulesApiDelegate {
 
             return toOffsetDateTime(xExpiryTime);
         } else {
-            return OffsetDateTime.now().plusMonths(
-                getDurationTotalMonths(configProperties.defaultExpirationDuration())
-            );
+            return getCapsuleExpirationTime(configProperties.defaultExpirationDuration());
         }
     }
 
     private void validateExpiryTime(LocalDateTime expiryTime) {
-        LocalDateTime xMaxExpiryTime = LocalDateTime.now().plusMonths(
-            getDurationTotalMonths(configProperties.maxExpirationDuration())
-        );
-        if (expiryTime.isAfter(xMaxExpiryTime)) {
+        OffsetDateTime xMaxExpiryTime = getCapsuleExpirationTime(configProperties.maxExpirationDuration());
+        if (toOffsetDateTime(expiryTime).isAfter(xMaxExpiryTime)) {
             throw new IllegalArgumentException("Key capsule expire time cannot exceed max allowed");
         }
     }
 
     private OffsetDateTime toOffsetDateTime(LocalDateTime expiryTime) {
         return OffsetDateTime.of(expiryTime, ZoneOffset.UTC);
-    }
-
-    private long getDurationTotalMonths(String duration) {
-        Period expiryPeriod = Period.parse(duration);
-        return expiryPeriod.toTotalMonths();
     }
 
 }

@@ -8,7 +8,6 @@ import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -28,7 +27,7 @@ import ee.cyber.cdoc2.server.config.KeyCapsuleConfigProperties;
 import ee.cyber.cdoc2.server.model.Capsule;
 import ee.cyber.cdoc2.server.model.db.KeyCapsuleDb;
 
-import static ee.cyber.cdoc2.server.Utils.getDurationTotalMonths;
+import static ee.cyber.cdoc2.server.Utils.getCapsuleExpirationTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -55,11 +54,8 @@ class CreateKeyCapsuleApiTest extends KeyCapsuleIntegrationTest {
 
         Instant expiryDate = expiryTime.truncatedTo(ChronoUnit.DAYS);
 
-        long defaultExpirationMonths
-            = getDurationTotalMonths(configProperties.defaultExpirationDuration());
-
         Instant expectedInstant
-            = OffsetDateTime.now().plusMonths(defaultExpirationMonths).toInstant();
+            = getCapsuleExpirationTime(configProperties.defaultExpirationDuration()).toInstant();
         Instant expectedExpiryDate = expectedInstant.truncatedTo(ChronoUnit.DAYS);
 
         assertEquals(expectedExpiryDate, expiryDate);
