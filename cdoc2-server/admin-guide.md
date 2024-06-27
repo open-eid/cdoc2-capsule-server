@@ -93,9 +93,11 @@ spring.datasource.driver-class-name=org.postgresql.Driver
 logging.level.root=info
 logging.level.ee.cyber.cdoc2=trace
 
-# Key capsule expiration duration configuration
-key-capsule.default-expiration-duration=P36M
-key-capsule.max-expiration-duration=P60M
+# Key capsule expiration duration configuration in format P(n)DT(n)H(n)M(n)S
+key-capsule.default-expiration-duration=P1095D
+# or with specified time (only hours or minutes also can be specified PT1H1M5 or P1DT10H)
+key-capsule.default-expiration-duration=P1DT10H30M5S
+key-capsule.max-expiration-duration=P1825D
 # Expired capsules removing job executes every 5 minutes every day
 key-capsule.expired.clean-up.cron=0 0/5 * * * ?
 ```
@@ -173,9 +175,11 @@ spring.datasource.driver-class-name=org.postgresql.Driver
 logging.level.root=info
 logging.level.ee.cyber.cdoc2=trace
 
-# Key capsule expiration duration configuration
-key-capsule.default-expiration-duration=P36M
-key-capsule.max-expiration-duration=P60M
+# Key capsule expiration duration configuration in format P(n)DT(n)H(n)M(n)S
+key-capsule.default-expiration-duration=P1095D
+# or with specified time (only hours or minutes also can be specified PT1H1M5 or P1DT10H)
+key-capsule.default-expiration-duration=P1DT10H30M5S
+key-capsule.max-expiration-duration=P1825D
 # Expired capsules removing job executes every 5 minutes every day
 key-capsule.expired.clean-up.cron=0 0/5 * * * ?
 ```
