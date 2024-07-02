@@ -23,14 +23,14 @@ Fix release related bugs. No code changes.
 * Use 'cdoc2' instead of 'cdoc20' everywhere (packages, documents etc). Salt strings remain unchanged (cdoc20kek, cdoc20cek and so)
 * Fix jacoco test coverage reports (broken previously)
 * Add gitlab CI build files
-* Added scripts for making releases and managing versions (see VERSIONS.md)
+* Added scripts for making releases and managing versions (see VERSIONING.md)
 * Refactoring required to build cdoc2-capsule-server repo without cdoc2-lib dependency (cdoc2-lib dependency is still needed for running tests )
 * Upload/consume cdoc2-key-capsule-openapi.yaml as maven artifact
 * Added bats tests to check backward compatibility of CDOC2 format with previous releases
 
 ### Bugfixes
 
-* With rename cdoc20-cdoc2 salts values were also incorrectly changed. Broke backward compatibility. Fixed before release 1.2.0
+* With rename cdoc20->cdoc2 salts values were also incorrectly changed. Broke backward compatibility. Fixed before release 1.2.0
 
 ## [1.1.0] Version update (2024-03-26)
 
