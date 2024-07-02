@@ -56,8 +56,10 @@ export RELEASE_TAG="v$CDOC2_SERVER_VER"
 git checkout -b "$RELEASE_BRANCH" || exit 1
 git commit -a -m "Release cdoc2-server version $CDOC2_SERVER_VER" || exit 1
 git push "$GIT_REMOTE" -u "$RELEASE_BRANCH" || exit 1
-git tag "$RELEASE_TAG" || exit 1
-git push --tags $GIT_REMOTE "$RELEASE_TAG" || exit 1
+
+# instead of creating release tag on branch, merge to master and then tag
+#git tag "$RELEASE_TAG" || exit 1
+#git push --tags $GIT_REMOTE "$RELEASE_TAG" || exit 1
 echo "Created release branch $RELEASE_BRANCH"
 
 # to delete branch
@@ -79,11 +81,15 @@ fi
 # switch back to original branch
 git checkout $GIT_BRANCH
 
-echo "Created release branch $RELEASE_BRANCH"
-echo "To merge squash back to your branch. Run"
+echo "Created release branch $RELEASE_BRANCH. To finish release, run:"
+echo
 echo "git merge --squash $RELEASE_BRANCH"
 echo "git commit -m \"Squashed commit from $RELEASE_BRANCH\""
 echo "git push $GIT_REMOTE $GIT_BRANCH"
+echo "git tag \"$RELEASE_TAG\""
+echo "git push --tags $GIT_REMOTE \"$RELEASE_TAG\""
+echo
+echo "Or create MR on branch $RELEASE_BRANCH and squash merge it to $GIT_BRANCH"
 
 
 #increase minor version and add -SNAPSHOT
