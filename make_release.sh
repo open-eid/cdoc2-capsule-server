@@ -54,7 +54,7 @@ export RELEASE_BRANCH="release_v$CDOC2_SERVER_VER"
 export RELEASE_TAG="v$CDOC2_SERVER_VER"
 
 git checkout -b "$RELEASE_BRANCH" || exit 1
-git commit -a -m "Release cdoc2-server version $CDOC2_SERVER_VER" || exit 1
+git commit -a -m "Release cdoc2-capsule-server version $CDOC2_SERVER_VER" || exit 1
 git push "$GIT_REMOTE" -u "$RELEASE_BRANCH" || exit 1
 
 # instead of creating release tag on branch, merge to master and then tag
