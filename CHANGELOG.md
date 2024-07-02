@@ -1,4 +1,13 @@
 # Changelog
+
+## [1.3.0] Implement '/key-capsules' v2.1.0 (2024-07-02)
+
+### Features
+
+* Implement '/key-capsules' OAS version 2.1.0 (Support for optional 'x-expiry-time' HTTP header)
+* Automatically clean-up (delete) expired key-capsules from the database
+
+
 ## [1.2.1 ] release related bugfixes (2024-05-31)
 
 Fix release related bugs. No code changes.
