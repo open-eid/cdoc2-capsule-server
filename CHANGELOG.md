@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.1] Fix dependencies for 1.3.0 (2024-07-03)
+
+### Bugfixes
+* Bump test dependency 'ee.cyber.cdoc2:cdoc2-lib:1.3.0-SNAPSHOT' to 1.4.0 for get-server and put-server
+
+
 ## [1.3.0] Implement '/key-capsules' v2.1.0 (2024-07-02)
 
 ### Features
