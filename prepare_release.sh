@@ -9,23 +9,15 @@
 
 GIT_BRANCH=$(git branch --show-current)
 
-if [[ "master" != "$GIT_BRANCH" ]]; then
-  echo "Not on 'master' branch. You have 5 seconds to abort."
-  sleep 5
-fi
+CHECK_FOR_CLEAN_BRANCH=true
 
-#if [[ -n $(git cherry -v) ]]; then
-#  echo "Detected unpushed commits. Exit"
-#  exit 1
-#fi
-#
-#if [[ -n $(git status --porcelain --untracked-files=no) ]]; then
-#  echo "Uncommited changes detected. Exit"
-#  exit 1
-#fi
 
-while getopts "v:" opt; do
+while getopts "v:c" opt; do
   case $opt in
+    c)
+      echo "Not checking for clean branch (-c)"
+      CHECK_FOR_CLEAN_BRANCH=false
+      ;;
     v)
       echo "Changing parent pom version to: $OPTARG"
       mvn -f cdoc2-server versions:set -DnewVersion="${OPTARG}" -DupdateMatchingVersions=false
@@ -37,6 +29,29 @@ while getopts "v:" opt; do
   esac
 done
 
+if [[ "$CHECK_FOR_CLEAN_BRANCH" = true ]]; then
+  echo "Checking for clean git checkout. Disable with '-c'"
+  if [[ "master" != "$GIT_BRANCH" ]]; then
+    echo "Not on 'master' branch. You have 5 seconds to abort."
+    sleep 5
+  fi
+
+  if [[ -n $(git cherry -v) ]]; then
+    echo "Detected unpushed commits. Exit"
+    exit 1
+  fi
+
+  if [[ -n $(git status --porcelain --untracked-files=no) ]]; then
+    echo "Uncommited changes detected. Exit"
+    exit 1
+  fi
+else
+  echo "Not checking for clean branch CHECK_FOR_CLEAN_BRANCH=$CHECK_FOR_CLEAN_BRANCH"
+fi
+
+
+#clean up local maven repo
+#mvn -f cdoc2-server dependency:purge-local-repository -Dexclude=ee.cyber.cdoc2:cdoc2-lib,ee.cyber.cdoc2:cdoc2-key-capsules-openapi -Dinclude=ee.cyber.cdoc2:cdoc2-server,ee.cyber.cdoc2:cdoc2-common-server,ee.cyber.cdoc2:cdoc2-server-db,ee.cyber.cdoc2:cdoc2-get-server,ee.cyber.cdoc2:cdoc2-put-server -DresolutionFuzziness=artifactId
 
 # replace module -SNAPSHOT version with release version (non-SNAPSHOT)
 mvn -f cdoc2-shared-crypto versions:set -DremoveSnapshot
