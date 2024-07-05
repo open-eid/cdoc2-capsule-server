@@ -230,6 +230,10 @@ management.server.ssl.key-store-password=passwd
 # The alias mapped to the certificate
 management.server.ssl.key-alias=cdoc20
 
+# credentials for /actuator/prometheus api basic authentication
+management.endpoints.metrics.username=username
+management.endpoints.metrics.password=password
+
 # configure monitoring endpoints
 management.endpoints.enabled-by-default=false
 management.endpoints.web.discovery.enabled=false
