@@ -63,9 +63,6 @@ Deploying to gitlab.ext maven repo
 ### cdoc2-capsule-server
 `mvn deploy -DskipTests -DaltDeploymentRepository=gitlab.ext.cyber.ee::default::https://gitlab.ext.cyber.ee/api/v4/projects/39/packages/maven`
 
-### cdoc2-capsule-server
-`mvn deploy -DskipTests -DaltDeploymentRepository=gitlab.ext.cyber.ee::default::https://gitlab.ext.cyber.ee/api/v4/projects/40/packages/maven`
-
 
 Deploying to github private repo
 `mvn deploy -DskipTests -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/jann0k/cdoc2-java-ref-impl`
