@@ -15,7 +15,7 @@ get-server {
 # key stores to use in communicating with the server
 client-keystores {
     # absolute path to the folder containing client keystore files
-    path = "/home/user/cdoc2-capsule-server/gatling-tests/src/test/resources/keys/test-clients"
+    path = "/home/user/absolute/path/to/cdoc2-capsule-server/gatling-tests/src/test/resources/keys/test-clients"
     # keystore password (must be the same for all keystores)
     password = "secret"
     # alias for the key entry

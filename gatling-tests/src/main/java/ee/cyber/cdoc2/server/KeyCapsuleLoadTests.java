@@ -4,7 +4,7 @@ import ee.cyber.cdoc2.server.conf.TestConfig;
 import ee.cyber.cdoc2.server.scenarios.EccKeyCapsuleScenarios;
 import ee.cyber.cdoc2.server.scenarios.RsaKeyCapsuleScenarios;
 
-import io.gatling.commons.shared.unstable.util.Ssl;
+import io.gatling.shared.util.Ssl;
 import io.gatling.javaapi.core.Simulation;
 import io.gatling.javaapi.http.HttpProtocolBuilder;
 import javax.net.ssl.KeyManagerFactory;
