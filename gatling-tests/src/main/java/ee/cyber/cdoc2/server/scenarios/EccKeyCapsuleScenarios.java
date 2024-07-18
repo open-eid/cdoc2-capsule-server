@@ -2,7 +2,7 @@ package ee.cyber.cdoc2.server.scenarios;
 
 import ee.cyber.cdoc2.server.TestDataGenerator;
 import ee.cyber.cdoc2.server.conf.TestConfig;
-import io.gatling.commons.shared.unstable.util.Ssl;
+import io.gatling.shared.util.Ssl;
 import io.gatling.javaapi.core.ChainBuilder;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import io.netty.handler.codec.http.HttpResponseStatus;

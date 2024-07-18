@@ -6,7 +6,7 @@ import ee.cyber.cdoc2.server.datagen.CertUtil;
 import ee.cyber.cdoc2.server.dto.GeneratedCapsule;
 import ee.cyber.cdoc2.server.dto.KeyCapsuleRequest;
 import ee.cyber.cdoc2.server.dto.KeyCapsuleType;
-import io.gatling.commons.shared.unstable.util.Ssl;
+import io.gatling.shared.util.Ssl;
 import io.gatling.javaapi.core.ChainBuilder;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import io.netty.handler.codec.http.HttpResponseStatus;

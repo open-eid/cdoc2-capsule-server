@@ -6,16 +6,30 @@
     <parent>
         <artifactId>cdoc2</artifactId>
         <groupId>ee.cyber.cdoc2</groupId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.3.0</version>
     </parent>
 
     <artifactId>gatling-tests</artifactId>
+    <version>1.4.0-SNAPSHOT</version>
+
+    <properties>
+        <lombok.version>1.18.34</lombok.version>
+        <gatling.version>3.11.5</gatling.version>
+        <gatling-maven-plugin.version>4.9.6</gatling-maven-plugin.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>gitlab.ext.cyber.ee</id>
+            <url>https://gitlab.ext.cyber.ee/api/v4/projects/40/packages/maven</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
             <groupId>ee.cyber.cdoc2</groupId>
             <artifactId>cdoc2-lib</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
+            <version>1.4.0</version>
         </dependency>
 
         <dependency>
@@ -38,7 +52,7 @@
 
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
+            <artifactId>bcpkix-jdk18on</artifactId>
             <version>${bouncycastle.version}</version>
         </dependency>
     </dependencies>
@@ -98,6 +112,29 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.3.1</version>
+
+                <configuration>
+                    <configLocation>../checkstyle.xml</configLocation>
+                    <suppressionsLocation>../checkstyle-suppressions.xml</suppressionsLocation>
+
+                    <sourceDirectories>
+                        <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+                        <sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory>
+                    </sourceDirectories>
+
+                    <consoleOutput>true</consoleOutput>
+
+                    <failsOnError>true</failsOnError>
+                    <failOnViolation>false</failOnViolation>
+
+                    <linkXRef>false</linkXRef>
+                </configuration>
+            </plugin>
+
             <!-- creates the jar with all dependencies -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -114,9 +151,9 @@
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>module-info.class</exclude>
+                                        <exclude>META-INF/*</exclude>
+                                        <exclude>META-INF/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
