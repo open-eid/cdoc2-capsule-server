@@ -4,7 +4,7 @@
 
 	<artifactId>cdoc2-server</artifactId>
 	<groupId>ee.cyber.cdoc2</groupId>
-	<version>1.3.1</version>
+	<version>1.4.0-SNAPSHOT</version>
 
 	<description>CDOC2 server pom</description>
 
@@ -43,54 +43,71 @@
 		<spring.version>6.1.6</spring.version>
 
   	</properties>
+
 	<profiles>
-	<profile>
-		<!-- activate github profile when run by github actions -->
-		<id>github_ci</id>
-		<activation>
-			<property>
-				<name>env.GITHUB_ACTIONS</name>
-				<value>true</value>
-			</property>
-		</activation>
-		<repositories>
-			<repository>
-				<!-- must have matching server.id in settings.xml -->
-				<!-- github actions/checkout default for server-id is "github"-->
-				<id>github</id>
-				<!-- When pulling, the package index is based on the organization level, not the repository level. -->
-				<!-- Although GITHUB_REPOSITORY contains repo, all organization packages are indexed there -->
-				<!-- https://stackoverflow.com/questions/63041402/github-packages-single-maven-repository-for-github-organization -->
-				<url>https://maven.pkg.github.com/${env.GITHUB_REPOSITORY}</url>
-			</repository>
-		</repositories>
-	</profile>
+		<profile>
+			<!-- activate github profile when run by github actions -->
+			<id>github_ci</id>
+			<activation>
+				<property>
+					<name>env.GITHUB_ACTIONS</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<repositories>
+				<repository>
+					<!-- must have matching server.id in settings.xml -->
+					<!-- github actions/checkout default for server-id is "github"-->
+					<id>github</id>
+					<!-- When pulling, the package index is based on the organization level, not the repository level. -->
+					<!-- Although GITHUB_REPOSITORY contains repo, all organization packages are indexed there -->
+					<!-- https://stackoverflow.com/questions/63041402/github-packages-single-maven-repository-for-github-organization -->
+					<!--suppress UnresolvedMavenProperty -->
+					<url>https://maven.pkg.github.com/${env.GITHUB_REPOSITORY}</url>
+				</repository>
 
-	<profile>
-		<!-- set gitlab.ext profile active when run by gitlab CI -->
-		<id>gitlab_ci</id>
-		<activation>
-			<property>
-				<name>env.GITLAB_CI</name>
-				<value>true</value>
-			</property>
-		</activation>
-		<!-- repositories are configured in settings.xml -->
-		<!--repositories></repositories-->
+			</repositories>
+			<distributionManagement>
+				<repository>
+					<id>github</id>
+					<!--suppress UnresolvedMavenProperty -->
+					<url>https://maven.pkg.github.com/${env.GITHUB_REPOSITORY}</url>
+				</repository>
+				<snapshotRepository>
+					<id>github</id>
+					<!--suppress UnresolvedMavenProperty -->
+					<url>https://maven.pkg.github.com/${env.GITHUB_REPOSITORY}</url>
+				</snapshotRepository>
+			</distributionManagement>
 
-		<distributionManagement>
-			<!-- env variables are available, when run by gitlab CI -->
-			<repository>
-				<id>gitlab.ext.cyber.ee</id>
-				<url>${env.CI_SERVER_URL}/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
-			</repository>
-			<snapshotRepository>
-				<id>gitlab.ext.cyber.ee</id>
-				<url>${env.CI_SERVER_URL}/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
-			</snapshotRepository>
-		</distributionManagement>
-	</profile>
-	</profiles>
+		</profile>
+
+		<profile>
+			<!-- set gitlab.ext profile active when run by gitlab CI -->
+			<id>gitlab_ci</id>
+			<activation>
+				<property>
+					<name>env.GITLAB_CI</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<!-- repositories are configured in settings.xml -->
+			<!--repositories></repositories-->
+
+			<distributionManagement>
+				<!-- env variables are available, when run by gitlab CI -->
+				<repository>
+					<id>${env.CI_SERVER_HOST}</id>
+					<!--suppress UnresolvedMavenProperty -->
+					<url>${env.CI_SERVER_URL}/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
+				</repository>
+				<snapshotRepository>
+					<id>${env.CI_SERVER_HOST}</id>
+					<!--suppress UnresolvedMavenProperty -->
+					<url>${env.CI_SERVER_URL}/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>	</profiles>
 
 	<dependencyManagement>
 		<dependencies>
@@ -217,13 +234,36 @@
 				</executions>
 			</plugin>
 
+			<!-- if exact RELEASE version of module already exists, -->
+			<!-- then skip deployment by setting maven.deploy.skip=true property for that module -->
+			<!-- GitHub doesn't allow overwriting existing RELEASE modules and deploy will fail with HTTP 409 -->
+			<plugin>
+				<groupId>org.honton.chas</groupId>
+				<artifactId>exists-maven-plugin</artifactId>
+				<version>0.13.0</version>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>remote</goal>
+						</goals>
+						<configuration>
+							<!-- run only if deploy goal is specified in maven command line -->
+							<requireGoal>deploy</requireGoal>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<failIfNotMatch>false</failIfNotMatch>
+					<userProperty>true</userProperty>
+					<!--skip>true</skip-->
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<version>3.1.1</version>
-				<configuration>
-					<skip>false</skip>
-				</configuration>
 			</plugin>
 
 		</plugins>
