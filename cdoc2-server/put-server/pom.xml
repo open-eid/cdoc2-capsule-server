@@ -71,7 +71,21 @@
 					<!--suppress UnresolvedMavenProperty -->
 					<url>https://maven.pkg.github.com/${env.GITHUB_REPOSITORY}</url>
 				</repository>
+
 			</repositories>
+			<distributionManagement>
+				<repository>
+					<id>github</id>
+					<!--suppress UnresolvedMavenProperty -->
+					<url>https://maven.pkg.github.com/${env.GITHUB_REPOSITORY}</url>
+				</repository>
+				<snapshotRepository>
+					<id>github</id>
+					<!--suppress UnresolvedMavenProperty -->
+					<url>https://maven.pkg.github.com/${env.GITHUB_REPOSITORY}</url>
+				</snapshotRepository>
+			</distributionManagement>
+
 		</profile>
 
 		<profile>
@@ -89,26 +103,24 @@
 			<distributionManagement>
 				<!-- env variables are available, when run by gitlab CI -->
 				<repository>
-					<id>gitlab.ext.cyber.ee</id>
+					<id>${env.CI_SERVER_HOST}</id>
 					<!--suppress UnresolvedMavenProperty -->
 					<url>${env.CI_SERVER_URL}/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
 				</repository>
 				<snapshotRepository>
-					<id>gitlab.ext.cyber.ee</id>
+					<id>${env.CI_SERVER_HOST}</id>
 					<!--suppress UnresolvedMavenProperty -->
 					<url>${env.CI_SERVER_URL}/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
 				</snapshotRepository>
 			</distributionManagement>
 		</profile>
-
 	</profiles>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>ee.cyber.cdoc2</groupId>
 			<artifactId>cdoc2-shared-crypto</artifactId>
-			<version>0.1.0</version>
+			<version>0.2.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -127,7 +139,7 @@
 		<dependency>
 			<groupId>ee.cyber.cdoc2</groupId>
 			<artifactId>cdoc2-server-db</artifactId>
-			<version>2.0.1</version>
+			<version>2.1.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -383,6 +395,33 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- if exact RELEASE version of module already exists, -->
+			<!-- then skip deployment by setting maven.deploy.skip=true property for that module -->
+			<!-- GitHub doesn't allow overwriting existing RELEASE modules and deploy will fail with HTTP 409 -->
+			<plugin>
+				<groupId>org.honton.chas</groupId>
+				<artifactId>exists-maven-plugin</artifactId>
+				<version>0.13.0</version>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>remote</goal>
+						</goals>
+						<configuration>
+							<!-- run only if deploy goal is specified in maven command line -->
+							<requireGoal>deploy</requireGoal>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<failIfNotMatch>false</failIfNotMatch>
+					<userProperty>true</userProperty>
+					<!--skip>true</skip-->
+				</configuration>
+			</plugin>
+
 
 		</plugins>
 	</build>

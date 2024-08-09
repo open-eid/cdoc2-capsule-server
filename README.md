@@ -15,7 +15,6 @@ and [DigiDoc4-Client](https://github.com/open-eid/DigiDoc4-Client) for CDOC2 enc
   - server-common       - shared common server code
   - server-openapi      - server stub generation from OpenAPI specifications
   - cdoc2-shared-crypto - some shared crypto functions
-* gatling-tests  - Functional and load tests for cdoc2-server. TODO: move to separate repo (in progress)
 
 ## Preconditions for building
 * Java 17
@@ -55,6 +54,8 @@ So defining single Maven package repo from `open-eid` is enough for pulling cdoc
 
 ## Building & Running
 
+[![Build cdoc2-capsule-server with CI](https://github.com/open-eid/cdoc2-capsule-server/actions/workflows/maven.yml/badge.svg)](https://github.com/open-eid/cdoc2-capsule-server/actions/workflows/maven.yml)
+
 ```bash
 cd cdoc2-server
 mvn clean install
@@ -65,6 +66,12 @@ See [admin-guide.md](cdoc2-server/admin-guide.md) for running
 ## Releasing and versioning
 
 See [VERSIONING.md](https://github.com/open-eid/cdoc2-java-ref-impl/blob/master/VERSIONING.md)
+
+### GitHub release
+
+[Create release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release) on tag done by VERSIONING.md process. It will trigger `maven-release.yml` workflow that
+will deploy Maven packages to GitHub Maven package repository.
+
 
 ## Related projects
 
