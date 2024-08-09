@@ -15,7 +15,6 @@ and [DigiDoc4-Client](https://github.com/open-eid/DigiDoc4-Client) for CDOC2 enc
   - server-common       - shared common server code
   - server-openapi      - server stub generation from OpenAPI specifications
   - cdoc2-shared-crypto - some shared crypto functions
-* gatling-tests  - Functional and load tests for cdoc2-server. TODO: move to separate repo (in progress)
 
 ## Preconditions for building
 * Java 17
@@ -54,6 +53,8 @@ https://stackoverflow.com/questions/63041402/github-packages-single-maven-reposi
 So defining single Maven package repo from `open-eid` is enough for pulling cdoc2-* dependencies.
 
 ## Building & Running
+
+[![Build cdoc2-capsule-server with CI](https://github.com/open-eid/cdoc2-capsule-server/actions/workflows/maven.yml/badge.svg)](https://github.com/open-eid/cdoc2-capsule-server/actions/workflows/maven.yml)
 
 ```bash
 cd cdoc2-server
