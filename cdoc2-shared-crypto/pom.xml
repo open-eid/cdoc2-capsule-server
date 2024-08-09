@@ -6,7 +6,7 @@
 
     <groupId>ee.cyber.cdoc2</groupId>
     <artifactId>cdoc2-shared-crypto</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0-SNAPSHOT</version>
     <description>CDOC2 common crypto functions shared between lib and server</description>
     <packaging>jar</packaging>
 
@@ -20,20 +20,51 @@
         <logback.version>1.5.6</logback.version>
     </properties>
 
-    <!-- upload maven packages, used by maven deploy-->
-    <!-- optionally specify as
-    -DaltDeploymentRepository=gitlab.ext.cyber.ee::https://gitlab.ext.cyber.ee/api/v4/projects/39/packages/maven
-    -->
-    <distributionManagement>
-        <repository>
-            <id>gitlab.ext.cyber.ee</id>
-            <url>https://gitlab.ext.cyber.ee/api/v4/projects/39/packages/maven</url>
-        </repository>
-        <snapshotRepository>
-            <id>gitlab.ext.cyber.ee</id>
-            <url>https://gitlab.ext.cyber.ee/api/v4/projects/39/packages/maven</url>
-        </snapshotRepository>
-    </distributionManagement>
+    <profiles>
+        <profile>
+            <!-- activate github profile when run by github actions -->
+            <id>github_ci</id>
+            <activation>
+                <property>
+                    <name>env.GITHUB_ACTIONS</name>
+                    <value>true</value>
+                </property>
+            </activation>
+
+            <distributionManagement>
+                <repository>
+                    <id>github</id> <!-- must match server.id in settings.xml -->
+                    <!--suppress UnresolvedMavenProperty -->
+                    <url>https://maven.pkg.github.com/${env.GITHUB_REPOSITORY}</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+
+        <profile>
+            <!-- set gitlab profile active when run by gitlab CI -->
+            <id>gitlab_ci</id>
+            <activation>
+                <property>
+                    <name>env.GITLAB_CI</name>
+                    <value>true</value>
+                </property>
+            </activation>
+
+            <distributionManagement>
+                <!-- env variables are available, when run by gitlab CI -->
+                <repository>
+                    <id>${env.CI_SERVER_HOST}</id>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <url>${env.CI_SERVER_URL}/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
+                </repository>
+                <snapshotRepository>
+                    <id>${env.CI_SERVER_HOST}</id>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <url>${env.CI_SERVER_URL}/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 
     <dependencies>
 
@@ -51,5 +82,36 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- if exact RELEASE version of module already exists, -->
+            <!-- then skip deployment by setting maven.deploy.skip=true property for that module -->
+            <!-- GitHub doesn't allow overwriting existing RELEASE modules and deploy will fail with HTTP 409 -->
+            <plugin>
+                <groupId>org.honton.chas</groupId>
+                <artifactId>exists-maven-plugin</artifactId>
+                <version>0.13.0</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>remote</goal>
+                        </goals>
+                        <configuration>
+                            <!-- run only if deploy goal is specified in maven command line -->
+                            <requireGoal>deploy</requireGoal>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failIfNotMatch>false</failIfNotMatch>
+                    <userProperty>true</userProperty>
+                    <!--skip>true</skip-->
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 
 </project>
