@@ -67,6 +67,12 @@ See [admin-guide.md](cdoc2-server/admin-guide.md) for running
 
 See [VERSIONING.md](https://github.com/open-eid/cdoc2-java-ref-impl/blob/master/VERSIONING.md)
 
+### GitHub release
+
+[Create release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release) on tag done by VERSIONING.md process. It will trigger `maven-release.yml` workflow that
+will deploy Maven packages to GitHub Maven package repository.
+
+
 ## Related projects
 
 * Gatling tests (load and functional) for cdoc2-capsule-server https://github.com/open-eid/cdoc2-gatling-tests 
