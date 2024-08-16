@@ -49,8 +49,8 @@ jobs:
       - name: Build with Maven
         run: |
           echo "Debug env vars: is_fork=$IS_FORK base_repo=$BASE_REPO MAVEN_REPO=$MAVEN_REPO"
-          mvn help:active-profiles
-          echo "Using Maven repo=$(mvn help:evaluate -Dexpression=github_ci.maven_repo -q -DforceStdout)"
+          mvn help:active-profiles --file cdoc2-server/
+          echo "Using Maven repo=$(mvn help:evaluate --file cdoc2-server/ -Dexpression=github_ci.maven_repo -q -DforceStdout)"
           mvn -B verify --file cdoc2-server/pom.xml
         env:
           GITHUB_TOKEN: ${{ github.token }} # GITHUB_TOKEN is the default env for the password
