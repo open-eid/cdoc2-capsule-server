@@ -16,7 +16,7 @@
 		<module>server-db</module>
 		<module>put-server</module>
 		<module>get-server</module>
-		<module>../cdoc2-shared-crypto</module>
+		<module>cdoc2-shared-crypto</module>
 	</modules>
 
 	<properties>
@@ -182,8 +182,8 @@
 					<version>3.3.1</version>
 
 					<configuration>
-						<configLocation>../checkstyle.xml</configLocation>
-						<suppressionsLocation>../checkstyle-suppressions.xml</suppressionsLocation>
+						<configLocation>checkstyle.xml</configLocation>
+						<suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
 
 						<sourceDirectories>
 							<sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>

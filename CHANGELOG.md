@@ -92,7 +92,7 @@ No changes, only version update in all components.
 ### Features
 
 * client authenticate certificate revocation checks (OCSP) for get-server
-* enable monitoring endpoints, see cdoc2-server/admin-guide.md
+* enable monitoring endpoints, see admin-guide.md
 * only tls v1.3 is supported by servers
 * remove deprecated ecc-details API
 * gatling-tests updates

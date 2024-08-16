@@ -8,7 +8,6 @@ and [DigiDoc4-Client](https://github.com/open-eid/DigiDoc4-Client) for CDOC2 enc
 
 ## Structure
 
-* cdoc2-server  - Key Capsules server
   - put-server          - Implements `/key-capsules` POST API. TLS port, for uploading capsules (encryption).
   - get-server          - Implements `/key-capsules` GET API. mTLS port, for downloading key capsules (decryption).  
   - server-db           - shared DB code. Liquibase based DB creation
@@ -19,7 +18,7 @@ and [DigiDoc4-Client](https://github.com/open-eid/DigiDoc4-Client) for CDOC2 enc
 ## Preconditions for building
 * Java 17
 * Maven 3.8.x
-* Docker available and running (required for running tests)
+* Docker available and running (required for running tests, use `-Dmaven.test.skip=true` to skip)
 
 ## Maven dependencies
 
@@ -57,7 +56,6 @@ So defining single Maven package repo from `open-eid` is enough for pulling cdoc
 [![Build cdoc2-capsule-server with CI](https://github.com/open-eid/cdoc2-capsule-server/actions/workflows/maven.yml/badge.svg)](https://github.com/open-eid/cdoc2-capsule-server/actions/workflows/maven.yml)
 
 ```bash
-cd cdoc2-server
 mvn clean install
 ```
 
@@ -73,7 +71,8 @@ by [defining repository variable](https://docs.github.com/en/actions/writing-wor
 
 ### Running
 
-See [admin-guide.md](cdoc2-server/admin-guide.md) for running
+See [getting-started.md](getting-started.md) and [admin-guide.md](admin-guide.md)
+
 
 ## Releasing and versioning
 

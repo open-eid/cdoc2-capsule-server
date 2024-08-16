@@ -9,7 +9,7 @@
 # docker deploy
 
 #export GIT_REMOTE=gitlab.ext
-CDOC2_SERVER_VER=$(mvn -f cdoc2-server help:evaluate -Dexpression=project.version -q -DforceStdout)
+CDOC2_SERVER_VER=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
 
 GIT_BRANCH=$(git branch --show-current)
 GIT_REMOTE=$(git config --get-regexp "branch\.$GIT_BRANCH\.remote" | sed -e "s/^.* //")
@@ -69,12 +69,12 @@ echo "Created release branch $RELEASE_BRANCH"
 
 #deploy RELEASE modules
 if [[ "$DEPLOY" = true ]]; then
-  mvn -f cdoc2-server deploy -DskipTests
+  mvn deploy -DskipTests
   if [[ $? -ne 0 ]]; then
-    echo "mvn deploy failed. If this was temporary error, it may be possible to recover by re-running 'mvn -f cdoc2-server deploy -DskipTests'"
+    echo "mvn deploy failed. If this was temporary error, it may be possible to recover by re-running 'mvn deploy -DskipTests'"
   fi
 else
-  echo "DEPLOY=$DEPLOY. To deploy Maven artifacts, run 'mvn -f cdoc2-server deploy -DskipTests' on branch $RELEASE_BRANCH"
+  echo "DEPLOY=$DEPLOY. To deploy Maven artifacts, run 'mvn deploy -DskipTests' on branch $RELEASE_BRANCH"
 fi
 
 

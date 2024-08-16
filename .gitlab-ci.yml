@@ -19,21 +19,21 @@ variables:
     - |
       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
       /kaniko/executor \
-        --context $CI_PROJECT_DIR/cdoc2-server \
+        --context $CI_PROJECT_DIR \
         --build-arg NAME=${COMPONENT} \
         --build-arg http_proxy=$http_proxy \
         --build-arg https_proxy=$https_proxy \
-        --dockerfile $CI_PROJECT_DIR/cdoc2-server/${COMPONENT}/docker/Dockerfile \
+        --dockerfile $CI_PROJECT_DIR/${COMPONENT}/docker/Dockerfile \
         --destination $DOCKER_IMAGE_NAME:latest \
         --destination $DOCKER_IMAGE_NAME:$CI_COMMIT_REF_SLUG \
         --cache
       else
       /kaniko/executor \
-        --context $CI_PROJECT_DIR/cdoc2-server \
+        --context $CI_PROJECT_DIR \
         --build-arg NAME=${COMPONENT} \
         --build-arg http_proxy=$http_proxy \
         --build-arg https_proxy=$https_proxy \
-        --dockerfile $CI_PROJECT_DIR/cdoc2-server/${COMPONENT}/docker/Dockerfile \
+        --dockerfile $CI_PROJECT_DIR/${COMPONENT}/docker/Dockerfile \
         --destination $DOCKER_IMAGE_NAME:$CI_COMMIT_REF_SLUG \
         --cache
       fi
@@ -60,7 +60,7 @@ test:
     - when: never
   script:
     - cat $MAVEN_SETTINGS
-    - mvn -f cdoc2-server/ clean verify -s $MAVEN_SETTINGS -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+    - mvn clean verify -s $MAVEN_SETTINGS -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
     - shopt -s globstar
     - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, " instructions covered"; print "Total", 100*covered/instructions, "% covered" }' /builds/**/target/site/jacoco/jacoco.csv
   coverage: /Total \d+\.\d+ %/
@@ -114,7 +114,7 @@ build-components:
   stage: build
   image: maven:3.8.8-eclipse-temurin-17
   script:
-    - mvn -f cdoc2-server/ clean install -s $MAVEN_SETTINGS -DskipTests -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+    - mvn clean install -s $MAVEN_SETTINGS -DskipTests -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
   cache: 
     key: "$CI_COMMIT_REF_NAME"
     paths:
@@ -134,7 +134,7 @@ publish:maven:
   image: maven:3.8.8-eclipse-temurin-17
   script:
     - cat $MAVEN_SETTINGS
-    - mvn -f cdoc2-server/ clean deploy -s $MAVEN_SETTINGS -DskipTests -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+    - mvn clean deploy -s $MAVEN_SETTINGS -DskipTests -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
   cache: 
     key: "$CI_COMMIT_REF_NAME"
     paths:
