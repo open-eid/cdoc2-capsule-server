@@ -16,7 +16,7 @@ docker compose up
 This will create the database and CDOC2 Key Capsule servers.
 The servers use self-signed test certificates and keystores found in `cdoc_java/cdoc2_server/keys`
 
-For more details on creating server certificates and trust stores, see [Generating Server keystore](../cdoc2-server/keys/README.md).
+For more details on creating server certificates and trust stores, see [Generating Server keystore](../keys/README.md).
 
 ## Testing
 

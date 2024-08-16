@@ -1,37 +1,37 @@
-# Running locally (dev)
+## Running locally (localhost)
 
 This file describes how to run cdoc2 key servers in your local development machine, without external infrastructure
 
-## Installing and creating PostgreSQL DB in Docker
+### Installing and creating PostgreSQL DB in Docker
 
-### Install PostgreSQL in Docker
+#### Install PostgreSQL in Docker
 (Docker must be installed)
 ```
 docker run --name cdoc2-psql -p 5432:5432 -e POSTGRES_DB=cdoc2 -e POSTGRES_PASSWORD=secret -d postgres
 docker start cdoc2-psql
 ```
 
-### Create DB
+#### Create DB
 From server-db directory run:
 ```
 mvn liquibase:update
 ```
 
-## Compiling the servers
-From cdoc2-server directory run:
+### Compiling the servers
+From cdoc2-capsule-server directory run:
 ```
 mvn clean package
 ```
 
-## Running
+### Running
 (psql in docker must be running)
 
-From cdoc2-server/put-server directory run:
+From put-server directory run:
 ```
 java -Dspring.config.location=config/application-local.properties -jar target/cdoc2-put-server-VER.jar
 ```
 
-and from cdoc2-server/get-server directory run:
+and from get-server directory run:
 ```
 java -Dspring.config.location=config/application-local.properties -jar target/cdoc2-get-server-VER.jar
 ```
@@ -43,8 +43,8 @@ Note: to enable TLS handshake debugging, add `-Djavax.net.debug=ssl:handshake` o
 
 
 #Testing
-## Create Key Capsule
-Run from cdoc2-server/keys directory or adjust paths to certificates and keys
+### Create Key Capsule
+Run from keys directory or adjust paths to certificates and keys
 
 recipient_id is public key extracted from certificate in cdoc2client.p12 file.
 ephemeral_key_material is any EC public key with same curve as recipient_pub_key (can be reused from example below)
@@ -76,9 +76,9 @@ Response:
 
 If the private key does not match with recipient_pub_key from the POST request, then the server returns 404 Not Found
 
-## Generating request data from certificate
+### Generating request data from certificate
 
-See cdoc2-server/keys/README.md how to generate client private key and EC certificate (cdoc2client.p12 and client-certificate.pem)
+See keys/README.md how to generate client private key and EC certificate (cdoc2client.p12 and client-certificate.pem)
 
 Extract EC public key from certificate
 ```
@@ -109,4 +109,3 @@ BFR25IttEoB7fwzJi5KOaVMTNrfGgXlC/SilElVubX8hmGL4orYq/oP5jP6dERD7Fnw4XUk7SQgrj70m
 ```
 
 Replace "recipient_pub_key" value with output
-
