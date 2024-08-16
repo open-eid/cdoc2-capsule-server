@@ -61,6 +61,18 @@ cd cdoc2-server
 mvn clean install
 ```
 
+### GitHub workflow build
+
+Maven build is executed for GH event `pull_request` an and `push` to 'master'.
+
+GH build workflow configures Maven repository automatically. For fork based pull_requests
+Maven repo value will be set to `github.event.pull_request.base.repo.full_name` (`open-eid/*`). It can be overwritten
+by [defining repository variable](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/variables#creating-configuration-variables-for-a-repository)
+`MAVEN_REPO`
+
+
+### Running
+
 See [admin-guide.md](cdoc2-server/admin-guide.md) for running
 
 ## Releasing and versioning
