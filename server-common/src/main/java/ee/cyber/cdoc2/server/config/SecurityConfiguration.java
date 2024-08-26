@@ -23,6 +23,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@SuppressWarnings("java:S4502")
 public class SecurityConfiguration {
 
     private final ConfigProperties credentials;
