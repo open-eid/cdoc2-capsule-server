@@ -267,6 +267,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         var protectionParameter = new KeyStore.PasswordProtection(PKCS11_CONF.pin());
 
         //Or ask pin interactively
+        @SuppressWarnings("java:S125")
         //KeyStore.ProtectionParameter protectionParameter = getKeyStoreCallbackProtectionParameter("PIN1");
 
         KeyStore clientKeyStore = null;

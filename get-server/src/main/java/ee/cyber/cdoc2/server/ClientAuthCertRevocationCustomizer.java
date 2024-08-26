@@ -37,6 +37,7 @@ public class ClientAuthCertRevocationCustomizer implements TomcatConnectorCustom
 
             // Optional revocation related properties
             ////https://docs.oracle.com/en/java/javase/17/security/java-pki-programmers-guide.html#GUID-650D0D53-B617-4055-AFD3-AF5C2629CBBF
+            @SuppressWarnings("java:S125")
             //System.setProperty("com.sun.security.enableCRLDP", "true");
             //System.setProperty("com.sun.security.crl.timeout", "15");
             //System.setProperty("com.sun.security.crl.readtimeout", "15");
