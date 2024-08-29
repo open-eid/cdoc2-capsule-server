@@ -230,7 +230,7 @@ management.server.ssl.key-store=../keys/cdoc2server.p12
 # The password used to generate the certificate
 management.server.ssl.key-store-password=passwd
 # The alias mapped to the certificate
-management.server.ssl.key-alias=cdoc20
+management.server.ssl.key-alias=cdoc2-server
 
 # credentials for /actuator/prometheus api basic authentication
 management.endpoints.metrics.username=username

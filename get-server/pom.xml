@@ -179,13 +179,11 @@
 			<version>2.1.0-SNAPSHOT</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>ee.cyber.cdoc2</groupId>
 			<artifactId>cdoc2-server-openapi</artifactId>
 			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>ee.cyber.cdoc2</groupId>
