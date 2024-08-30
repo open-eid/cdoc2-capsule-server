@@ -203,6 +203,7 @@
 		<dependency>
 			<groupId>ee.cyber.cdoc2</groupId>
 			<artifactId>cdoc2-lib</artifactId>
+<!--			for successful pkcs11 tests version must be at least 1.5.0-SNAPSHOT-->
 			<version>1.4.0</version>
 			<!-- cdoc2-lib src/test compiled classes-->
 			<type>test-jar</type>
