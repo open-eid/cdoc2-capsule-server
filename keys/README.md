@@ -39,11 +39,12 @@ Move new `client-certificate.pem` into `ca_certs` directory:
 
 Note: `cdoc2client.p12`and `client-certificate.pem` are used by `cdoc2-cli`. See `cdoc2-cli/config` and `test/bats` (in `cdoc2-java-ref-impl` repository) 
 
-Add TEST of ESTEID-SK 2015 (test id-kaart issuer)
+Add TEST of ESTEID-SK 2015, TEST of ESTEID2018 (test id-kaart issuers)
 and esteid2018 (id-kaart issuer) and server trust store so that id-kaart certificates are trusted by the server
 ```
 keytool -import -trustcacerts -file ca_certs/TEST_of_ESTEID-SK_2015.pem.crt -alias TEST_of_ESTEID-SK_2015 -storepass passwd -keystore servertruststore.jks
 keytool -import -trustcacerts -file ca_certs/esteid2018.pem.crt -alias esteid2018 -storepass passwd -keystore servertruststore.jks
+keytool -import -trustcacerts -file ca_certs/TEST_of_ESTEID2018.pem.crt -keystore servertruststore.jks -alias TEST_of_ESTEID2018 -storepass passwd
 ```
 
 ### Update client keys in cdoc2-java-ref-impl repository and gatling tests
