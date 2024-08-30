@@ -419,17 +419,9 @@
 						<env>
 							<BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
 							<BP_SPRING_CLOUD_BINDINGS_DISABLED>true</BP_SPRING_CLOUD_BINDINGS_DISABLED>
+							<BP_DEPENDENCY_MIRROR>${bp.dependency.mirror}</BP_DEPENDENCY_MIRROR>
 							<BPL_SPRING_CLOUD_BINDINGS_DISABLED>true</BPL_SPRING_CLOUD_BINDINGS_DISABLED>
 						</env>
-						<buildpacks>
-							<buildpack>paketo-buildpacks/ca-certificates@3.6.3</buildpack>
-							<buildpack>paketo-buildpacks/bellsoft-liberica</buildpack>
-							<buildpack>/usr/src/project/ria-infra-scripts/buildpacks/bellsoft-liberica</buildpack>
-							<buildpack>/usr/src/project/ria-infra-scripts/buildpacks/syft</buildpack>
-							<buildpack>paketo-buildpacks/executable-jar</buildpack>
-							<buildpack>paketo-buildpacks/dist-zip</buildpack>
-							<buildpack>paketo-buildpacks/spring-boot</buildpack>
-						</buildpacks>
 					</image>
 				</configuration>
 				<executions>
