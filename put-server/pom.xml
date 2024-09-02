@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.5</version>
+		<version>3.3.3</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
@@ -24,16 +24,14 @@
 
 		<tests>!(pkcs11 | slow)</tests>
 
-
-		<spring-boot.version>3.2.5</spring-boot.version>
-		<org-testcontainers.version>1.19.7</org-testcontainers.version>
-		<micrometer.version>1.12.5</micrometer.version>
+		<spring-boot.version>3.3.3</spring-boot.version>
+		<org-testcontainers.version>1.19.8</org-testcontainers.version>
+		<micrometer.version>1.13.3</micrometer.version>
 
         <!-- https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html#appendix.dependency-versions.properties-->
         <!-- force usage of newer logback as SB 3.2.5 depends on vulnerable 1.4.14 -->
-        <logback.version>1.5.6</logback.version>
+        <logback.version>1.5.7</logback.version>
 	</properties>
-
 
 	<profiles>
 		<profile>
@@ -265,7 +263,7 @@
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
-			<version>4.24.0</version>
+			<version>4.27.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -291,7 +289,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.3.1</version>
+				<version>3.5.0</version>
 
 				<configuration>
 					<configLocation>../checkstyle.xml</configLocation>
@@ -381,7 +379,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.2.5</version>
+				<version>3.5.0</version>
 				<configuration>
 					<trimStackTrace>false</trimStackTrace>
 					<groups>${tests}</groups>
