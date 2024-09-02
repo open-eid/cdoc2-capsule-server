@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import ee.cyber.cdoc2.server.config.DbConnectionConfigProperties;
+import ee.cyber.cdoc2.server.exeptions.JobFailureException;
 
 
 /**
@@ -50,7 +51,7 @@ public final class ExpiredCapsuleCleanUpJob {
         } catch (SQLException e) {
             String errorMsg = "Expired key capsules deletion has failed";
             log.error(errorMsg);
-            throw new RuntimeException(errorMsg, e);
+            throw new JobFailureException(errorMsg, e);
         }
     }
 
@@ -64,7 +65,7 @@ public final class ExpiredCapsuleCleanUpJob {
         } catch (SQLException e) {
             String errorMsg = "Failed to establish database connection";
             log.error(errorMsg);
-            throw new RuntimeException(errorMsg, e);
+            throw new JobFailureException(errorMsg, e);
         }
     }
 
