@@ -47,7 +47,7 @@ jobs:
       - name: Build Docker/OCI images and publish to GH Container registry (ghcr.io)
         run: |
           mvn spring-boot:build-image -s $GITHUB_WORKSPACE/settings.xml \
-            -f put-server
+            -f put-server \
             -Dmaven.test.skip=true \
             -Dspring-boot.build-image.publish=true \
             -Ddocker.publishRegistry.url=ghcr.io \
