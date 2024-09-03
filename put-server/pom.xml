@@ -420,6 +420,13 @@
 							<BPL_SPRING_CLOUD_BINDINGS_DISABLED>true</BPL_SPRING_CLOUD_BINDINGS_DISABLED>
 						</env>
 					</image>
+					<docker>
+						<publishRegistry>
+							<url>${docker.publishRegistry.url}</url>
+							<username>${docker.publishRegistry.username}</username>
+							<password>${docker.publishRegistry.password}</password>
+						</publishRegistry>
+					</docker>
 				</configuration>
 				<executions>
 					<execution>
