@@ -43,9 +43,9 @@ The servers require a keystore file to secure HTTP connections using TLS.
 The keystore file is created with the `keytool` utility
 (included with Java Runtime).
 
-To generate a keystore file `cdoc2server.p12` with password `passwd`, alias `cdoc2-server` and validity of 365 days:
+To generate a keystore file `cdoc2server.p12` with password `passwd`, alias `cdoc2-server` and validity of 3650 days:
 ```
-keytool -genkeypair -alias cdoc2-server -keyalg ec -groupname secp384r1 -sigalg SHA512withECDSA -keystore cdoc2server.p12 -storepass passwd -validity 365
+keytool -genkeypair -alias cdoc2-server -keyalg ec -groupname secp384r1 -sigalg SHA512withECDSA -keystore cdoc2server.p12 -storepass passwd -validity 3650
 ```
 
 For more details about operations with certificates in keystore files, see [^1].
