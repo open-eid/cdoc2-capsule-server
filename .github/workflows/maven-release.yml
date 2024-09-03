@@ -23,7 +23,6 @@ jobs:
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
       - name: Publish to GitHub Packages Apache Maven
-        uses: actions/setup-java@v4
         run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -38,7 +37,6 @@ jobs:
           password: ${{ github.token }}
 
       - name: Build Docker/OCI images and publish to GH Container registry (ghcr.io)
-        uses: actions/setup-java@v4
         run: |
           mvn spring-boot:build-image -s $GITHUB_WORKSPACE/settings.xml \
             -f put-server
