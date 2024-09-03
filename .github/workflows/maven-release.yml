@@ -37,6 +37,13 @@ jobs:
           #password: ${{ secrets.GITHUB_TOKEN }}
           password: ${{ github.token }}
 
+      # Fail fast if compilation fails without downloading all docker images
+      - name: Install packages (temp)
+        run: mvn install -s $GITHUB_WORKSPACE/settings.xml -Dmaven.test.skip=true
+        env:
+          MAVEN_REPO: open-eid/cdoc2-capsule-server
+          GITHUB_TOKEN: ${{ github.token }}
+
       - name: Build Docker/OCI images and publish to GH Container registry (ghcr.io)
         run: |
           mvn spring-boot:build-image -s $GITHUB_WORKSPACE/settings.xml \
@@ -55,5 +62,7 @@ jobs:
           # Note: git tag can contain more symbols than Container registry, allowed for docker tag:
           # lowercase and uppercase letters, digits, underscores, periods, and hyphens.
           TAG: ${{ github.event.release.tag_name }}
+          #force usage of open-eid repo
+          MAVEN_REPO: open-eid/cdoc2-capsule-server
 
 
