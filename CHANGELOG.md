@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.4.0] Maintenance (Spring Boot 3.3.3) (2024-09-03)
+
+### Bugfixes
+* Fix building on Windows
+* Allow loading [pkcs11 (smart-card) test properties](README.md#pkcs11-tests) from file system (previously only classpath was working) by upgrading `cdoc2-lib` test dependency to `2.0.0`
+
+### Internal
+* Upgrade Spring Boot to `3.3.3`. Update other 3rd party dependencies to latest.
+* Update client and server certificates used for unit-tests. Add scripts for future updates
+* Move gatling-tests into separate repository
+* Move cdoc2-openapi (OpenAPI specifications) into separate repository
+* Add GitHub initial workflows
+* [Buildpacks dependency mirror](https://paketo.io/docs/howto/configuration/#dependency-mirrors) can be specified as `-Dbp.dependency.mirror=https://mirror.example.org` when creating Docker image with `mvn spring-boot:build-image`  
+
+
 ## [1.3.1] Fix dependencies for 1.3.0 (2024-07-03)
 
 ### Bugfixes
