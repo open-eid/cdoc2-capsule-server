@@ -38,11 +38,11 @@ jobs:
           password: ${{ github.token }}
 
       # Fail fast if compilation fails without downloading all docker images
-      - name: Install packages (temp)
-        run: mvn install -s $GITHUB_WORKSPACE/settings.xml -Dmaven.test.skip=true
-        env:
-          MAVEN_REPO: open-eid/cdoc2-capsule-server
-          GITHUB_TOKEN: ${{ github.token }}
+#      - name: Install packages (temp)
+#        run: mvn install -s $GITHUB_WORKSPACE/settings.xml -Dmaven.test.skip=true
+#        env:
+#          MAVEN_REPO: open-eid/cdoc2-capsule-server
+#          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Build Docker/OCI images and publish to GH Container registry (ghcr.io)
         run: |
@@ -50,19 +50,20 @@ jobs:
             -f put-server \
             -Dmaven.test.skip=true \
             -Dspring-boot.build-image.publish=true \
-            -Ddocker.publishRegistry.url=ghcr.io \
+            -Ddocker.publishRegistry.url=${REGISTRY} \
             -Ddocker.publishRegistry.username=${USERNAME} \
             -Ddocker.publishRegistry.password=${GITHUB_TOKEN} \
-            -Dspring-boot.build-image.imageName=cdoc2/cdoc2-put-server:${TAG}-${GITHUB_SHA}
+            -Dspring-boot.build-image.imageName=${REGISTRY}/cdoc2/cdoc2-put-server:${TAG}-${GITHUB_SHA}
 
-        #Note: imageName tag is built from git tag which can be different from module version
         env:
+          REGISTRY: ghcr.io
           USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ github.token }}
           # Note: git tag can contain more symbols than Container registry, allowed for docker tag:
           # lowercase and uppercase letters, digits, underscores, periods, and hyphens.
+          # Note: imageName tag is built from git tag which can be different from module version
           TAG: ${{ github.event.release.tag_name }}
-          #force usage of open-eid repo
+          #force usage of open-eid Maven repo
           MAVEN_REPO: open-eid/cdoc2-capsule-server
 
 
