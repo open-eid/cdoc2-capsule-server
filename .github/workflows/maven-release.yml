@@ -31,10 +31,8 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
-          #registry: ${{ env.REGISTRY }}
           registry: ghcr.io
           username: ${{ github.actor }}
-          #password: ${{ secrets.GITHUB_TOKEN }}
           password: ${{ github.token }}
 
       # Fail fast if compilation fails without downloading all docker images
@@ -53,7 +51,7 @@ jobs:
             -Ddocker.publishRegistry.url=${REGISTRY} \
             -Ddocker.publishRegistry.username=${USERNAME} \
             -Ddocker.publishRegistry.password=${GITHUB_TOKEN} \
-            -Dspring-boot.build-image.imageName=${REGISTRY}/cdoc2/cdoc2-put-server:${TAG}-${GITHUB_SHA}
+            -Dspring-boot.build-image.imageName=${REGISTRY}/jann0k/cdoc2-put-server:${TAG}-${GITHUB_SHA}
 
         env:
           REGISTRY: ghcr.io
