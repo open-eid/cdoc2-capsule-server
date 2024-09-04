@@ -87,8 +87,9 @@ See [VERSIONING.md](https://github.com/open-eid/cdoc2-java-ref-impl/blob/master/
 
 ### GitHub release
 
-[Create release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release) on tag done by VERSIONING.md process. It will trigger `maven-release.yml` workflow that
-will deploy Maven packages to GitHub Maven package repository.
+[Create release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release) on tag done by [VERSIONING.md](https://github.com/open-eid/cdoc2-java-ref-impl/blob/master/VERSIONING.md) process. 
+It will trigger `maven-release.yml` workflow that will deploy Maven packages to GitHub Maven package repository
+and build & publish Docker/OCI images.
 
 
 ## Related projects
