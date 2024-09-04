@@ -420,6 +420,8 @@
 							<BP_DEPENDENCY_MIRROR>${bp.dependency.mirror}</BP_DEPENDENCY_MIRROR>
 							<BPL_SPRING_CLOUD_BINDINGS_DISABLED>true</BPL_SPRING_CLOUD_BINDINGS_DISABLED>
 						</env>
+						<!--suppress UnresolvedMavenProperty -->
+						<tags>${spring-boot.build-image.tags}</tags>
 					</image>
 					<docker>
 						<publishRegistry>

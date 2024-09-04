@@ -45,7 +45,8 @@ jobs:
             -Ddocker.publishRegistry.url=${REGISTRY} \
             -Ddocker.publishRegistry.username=${USERNAME} \
             -Ddocker.publishRegistry.password=${GITHUB_TOKEN} \
-            -Dspring-boot.build-image.imageName=${REGISTRY}/${GITHUB_REPOSITORY_OWNER}/cdoc2-get-server:${TAG}-${GITHUB_SHA}
+            -Dspring-boot.build-image.imageName=${REGISTRY}/${GITHUB_REPOSITORY_OWNER}/cdoc2-get-server:${TAG}-${GITHUB_SHA} \
+            -Dspring-boot.build-image.tags=${REGISTRY}/${GITHUB_REPOSITORY_OWNER}/cdoc2-get-server:latest
           mvn spring-boot:build-image -f put-server \
             -s $GITHUB_WORKSPACE/settings.xml \
             -Dmaven.test.skip=true \
