@@ -75,7 +75,7 @@ See [getting-started.md](getting-started.md) and [admin-guide.md](admin-guide.md
 
 ### Running pre-built Docker/OCI images
 
-Download `cdoc2-put-server` and `cdoc2-get-server` images from [open-eid Container registry](https://github.com/open-eid?ecosystem=container&tab=packages)
+Download `cdoc2-put-server` and `cdoc2-get-server` images from [open-eid Container registry](https://github.com/orgs/open-eid/packages?ecosystem=container)
 
 [ghcr.io login](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-with-a-personal-access-token-classic)
 
