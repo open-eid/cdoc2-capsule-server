@@ -38,16 +38,16 @@ jobs:
 
       - name: Build Docker/OCI images and publish to GH Container registry (ghcr.io)
         run: |
-          mvn spring-boot:build-image -s $GITHUB_WORKSPACE/settings.xml \
-            -f get-server \
+          mvn spring-boot:build-image -f get-server \
+            -s $GITHUB_WORKSPACE/settings.xml \
             -Dmaven.test.skip=true \
             -Dspring-boot.build-image.publish=true \
             -Ddocker.publishRegistry.url=${REGISTRY} \
             -Ddocker.publishRegistry.username=${USERNAME} \
             -Ddocker.publishRegistry.password=${GITHUB_TOKEN} \
             -Dspring-boot.build-image.imageName=${REGISTRY}/${GITHUB_REPOSITORY_OWNER}/cdoc2-get-server:${TAG}-${GITHUB_SHA}
-          mvn spring-boot:build-image -s $GITHUB_WORKSPACE/settings.xml \
-            -f put-server \
+          mvn spring-boot:build-image -f put-server \
+            -s $GITHUB_WORKSPACE/settings.xml \
             -Dmaven.test.skip=true \
             -Dspring-boot.build-image.publish=true \
             -Ddocker.publishRegistry.url=${REGISTRY} \
@@ -63,7 +63,7 @@ jobs:
           # lowercase and uppercase letters, digits, underscores, periods, and hyphens.
           # Note: imageName tag is built from git tag which can be different from module version
           TAG: ${{ github.event.release.tag_name }}
-          #force usage of open-eid Maven repo
+          # use open-eid Maven repo for dependencies download, see pom.xml
           MAVEN_REPO: open-eid/cdoc2-capsule-server
 
 
