@@ -9,7 +9,6 @@ on:
 
 jobs:
   publish:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -28,3 +27,44 @@ jobs:
         run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+      # test if username and password are correct (may still fail if no write access or wrong package name)
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Build Docker/OCI images and publish to GH Container registry (ghcr.io)
+        run: |
+          mvn spring-boot:build-image -f get-server \
+            -s $GITHUB_WORKSPACE/settings.xml \
+            -Dmaven.test.skip=true \
+            -Dspring-boot.build-image.publish=true \
+            -Ddocker.publishRegistry.url=${REGISTRY} \
+            -Ddocker.publishRegistry.username=${USERNAME} \
+            -Ddocker.publishRegistry.password=${GITHUB_TOKEN} \
+            -Dspring-boot.build-image.imageName=${REGISTRY}/${GITHUB_REPOSITORY_OWNER}/cdoc2-get-server:${TAG}-${GITHUB_SHA} \
+            -Dspring-boot.build-image.tags=${REGISTRY}/${GITHUB_REPOSITORY_OWNER}/cdoc2-get-server:latest
+          mvn spring-boot:build-image -f put-server \
+            -s $GITHUB_WORKSPACE/settings.xml \
+            -Dmaven.test.skip=true \
+            -Dspring-boot.build-image.publish=true \
+            -Ddocker.publishRegistry.url=${REGISTRY} \
+            -Ddocker.publishRegistry.username=${USERNAME} \
+            -Ddocker.publishRegistry.password=${GITHUB_TOKEN} \
+            -Dspring-boot.build-image.imageName=${REGISTRY}/${GITHUB_REPOSITORY_OWNER}/cdoc2-put-server:${TAG}-${GITHUB_SHA} \
+            -Dspring-boot.build-image.tags=${REGISTRY}/${GITHUB_REPOSITORY_OWNER}/cdoc2-put-server:latest
+        env:
+          REGISTRY: ghcr.io
+          USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ github.token }}
+          # Note: git tag can contain more symbols than Container registry, allowed for docker tag:
+          # lowercase and uppercase letters, digits, underscores, periods, and hyphens.
+          # Note: imageName tag is built from git tag which can be different from module version
+          TAG: ${{ github.event.release.tag_name }}
+          # use open-eid Maven repo for dependencies download, see pom.xml
+          MAVEN_REPO: open-eid/cdoc2-capsule-server
+
+
