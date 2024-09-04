@@ -73,6 +73,13 @@ by [defining repository variable](https://docs.github.com/en/actions/writing-wor
 
 See [getting-started.md](getting-started.md) and [admin-guide.md](admin-guide.md)
 
+### Running pre-built Docker/OCI images
+
+Download `cdoc2-put-server` and `cdoc2-get-server` images from [open-eid Container registry](https://github.com/orgs/open-eid/packages?ecosystem=container)
+
+[ghcr.io login](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-with-a-personal-access-token-classic)
+
+TODO: Configuring Docker images
 
 ## Releasing and versioning
 
@@ -80,8 +87,9 @@ See [VERSIONING.md](https://github.com/open-eid/cdoc2-java-ref-impl/blob/master/
 
 ### GitHub release
 
-[Create release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release) on tag done by VERSIONING.md process. It will trigger `maven-release.yml` workflow that
-will deploy Maven packages to GitHub Maven package repository.
+[Create release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release) on tag done by [VERSIONING.md](https://github.com/open-eid/cdoc2-java-ref-impl/blob/master/VERSIONING.md) process. 
+It will trigger `maven-release.yml` workflow that will deploy Maven packages to GitHub Maven package repository
+and build & publish Docker/OCI images.
 
 
 ## Related projects
