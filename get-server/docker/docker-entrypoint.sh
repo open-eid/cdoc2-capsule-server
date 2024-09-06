@@ -6,4 +6,4 @@ JAVA_OPTS="${JAVA_OPTS:=-XX:InitialRAMPercentage=30 -XX:MinRAMPercentage=50 -XX:
 cd /opt/cdoc2
 
 echo "Running ${NAME}"
-exec java $JAVA_OPTS -jar cdoc2-get-server.jar
+exec java "$JAVA_OPTS" -jar "$NAME".jar
