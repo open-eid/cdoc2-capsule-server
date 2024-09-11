@@ -4,7 +4,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -74,17 +73,17 @@ abstract class KeyCapsuleIntegrationTest extends BaseInitializationTest {
         // prepare database for testing
         this.capsuleRepository.deleteAll();
 
-        Instant expiryTime = Instant.now();
+        Instant expiryTime = Instant.now().minusSeconds(60);
         KeyCapsuleDb model = new KeyCapsuleDb();
         model.setCapsuleType(KeyCapsuleDb.CapsuleType.SECP384R1);
 
         model.setRecipient("123".getBytes());
         model.setPayload("345".getBytes());
         model.setExpiryTime(expiryTime);
-        List<KeyCapsuleDb> savedCapsules = this.capsuleRepository.saveAll(List.of(model, model, model));
-        assertEquals(3, savedCapsules.size());
+        this.capsuleRepository.save(model);
 
-        cleanUpJob.cleanUpExpiredCapsules();
+        int deletedCapsules = cleanUpJob.cleanUpExpiredCapsules();
+        assertEquals(1, deletedCapsules);
 
         long count = this.capsuleRepository.count();
         assertEquals(0, count);
