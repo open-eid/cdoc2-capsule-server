@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
 
     // read hardware PKCS11 device conf from a properties file
-    private static final Pkcs11DeviceConfiguration PKCS11_CONF = Pkcs11DeviceConfiguration.load();
+    private Pkcs11DeviceConfiguration pkcs11Conf = new Pkcs11DeviceConfiguration();
 
     // rest client with client auth using keystore rsa/client-rsa-2048.p12
     @Qualifier("trustAllWithClientAuth")
@@ -94,7 +94,6 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         assertArrayEquals(capsule.getRecipientId(), serverCapsule.get().getRecipientId());
         assertArrayEquals(capsule.getEphemeralKeyMaterial(), serverCapsule.get().getEphemeralKeyMaterial());
         assertEquals(String.valueOf(capsule.getCapsuleType()), String.valueOf(serverCapsule.get().getCapsuleType()));
-
     }
 
     @Test
@@ -203,13 +202,14 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         prop += "cdoc2.client.ssl.trust-store.type=JKS\n";
         prop += "cdoc2.client.ssl.trust-store=" + TestData.getKeysDirectory().resolve("clienttruststore.jks") + "\n";
         prop += "cdoc2.client.ssl.trust-store-password=passwd\n";
+        prop += "pkcs11-library=" + pkcs11Conf.getPkcs11Library() + "\n";
 
         prop += "cdoc2.client.ssl.client-store.type=PKCS11\n";
 
         if (interactive) {
             prop += "cdoc2.client.ssl.client-store-password.prompt=PIN1\n";
         } else {
-            prop += "cdoc2.client.ssl.client-store-password=" + new String(PKCS11_CONF.pin()) + "\n";
+            prop += "cdoc2.client.ssl.client-store-password=" + new String(pkcs11Conf.getPin()) + "\n";
         }
 
         Properties p = new Properties();
@@ -223,7 +223,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         // Storing clientKeyStore in KeyServerPropertiesClient is a bit of hack for tests.
         // It's required to get recipient pub key
         // normally recipient certificate would come from LDAP, but for test-id card certs are not in LDAP
-        X509Certificate cert  = (X509Certificate) client.getClientCertificate(PKCS11_CONF.keyAlias());
+        X509Certificate cert  = (X509Certificate) client.getClientCertificate(pkcs11Conf.getKeyAlias());
         assertNotNull(cert);
         // Client public key TLS encoded binary base64 encoded
         PublicKey recipientPubKey = cert.getPublicKey();
@@ -264,7 +264,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
     void testPKCS11Client() throws Exception {
 
         //PIN1 for 37101010021 test id-kaart
-        var protectionParameter = new KeyStore.PasswordProtection(PKCS11_CONF.pin());
+        var protectionParameter = new KeyStore.PasswordProtection(pkcs11Conf.getPin());
 
         //Or ask pin interactively
         @SuppressWarnings("java:S125")
@@ -274,8 +274,8 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         KeyStore trustKeyStore = null;
         try {
             clientKeyStore = Pkcs11Tools.initPKCS11KeysStore(
-                PKCS11_CONF.pkcs11Library(),
-                PKCS11_CONF.slot(),
+                pkcs11Conf.getPkcs11Library(),
+                pkcs11Conf.getSlot(),
                 protectionParameter
             );
 
@@ -292,7 +292,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         log.debug("aliases: {}", Collections.list(clientKeyStore.aliases()));
 
 
-        X509Certificate cert  = (X509Certificate) clientKeyStore.getCertificate(PKCS11_CONF.keyAlias());
+        X509Certificate cert  = (X509Certificate) clientKeyStore.getCertificate(pkcs11Conf.getKeyAlias());
         log.debug("Certificate issuer is {}.  This must be in server truststore "
             + "or SSL handshake will fail with cryptic error", cert.getIssuerDN());
 
