@@ -1,5 +1,5 @@
-# this file is used to build a docker image for upgrading the database in RIA infra
-FROM nexus.riaint.ee:8500/liquibase/liquibase
+# TODO: support for multiple registries
+FROM liquibase/liquibase
 
 WORKDIR /liquibase/changelog
 
