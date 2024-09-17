@@ -1,5 +1,5 @@
 # TODO: support for multiple registries
-FROM liquibase/liquibase:latest
+FROM liquibase/liquibase:4.29.2
 
 WORKDIR /liquibase/changelog
 
