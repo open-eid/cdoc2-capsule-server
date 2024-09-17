@@ -2,6 +2,7 @@
 # --build-arg LIQUIBASE_IMAGE=custom.registry.io:8500/liquibase/liquibase
 ARG LIQUIBASE_IMAGE=docker.io/liquibase/liquibase:4.29.2
 FROM $LIQUIBASE_IMAGE
+USER liquibase
 
 WORKDIR /liquibase/changelog
 
