@@ -415,7 +415,9 @@
 				<configuration>
 					<image>
 						<env>
-							<BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
+							<!-- use  spring.threads.virtual.enabled=true in application.properties -->
+							<!-- to take advantage of Java 21 virtual threads -->
+							<BP_JVM_VERSION>21</BP_JVM_VERSION>
 							<BP_SPRING_CLOUD_BINDINGS_DISABLED>true</BP_SPRING_CLOUD_BINDINGS_DISABLED>
 							<!--suppress UnresolvedMavenProperty -->
 							<BP_DEPENDENCY_MIRROR>${bp.dependency.mirror}</BP_DEPENDENCY_MIRROR>

@@ -111,6 +111,19 @@ To run the server, execute the following command:
 java -jar -Dspring.config.location=application.properties cdoc2-put-server-VER.jar
 `
 
+#### Running in Docker
+
+From `1.4.1` release docker images are using `Java 21` as Java base image. To fully use Java21 improvements
+enable virtual threads by adding `spring.threads.virtual.enabled=true` into `application.properties`.
+
+To get better throughput it's recommended to give at least 2 CPUs and 1GB of memory per `get-server` and `put-server` instance.
+2 GB of memory per process is even better (some additional throughput gains).
+
+Instead of creating two VMs with 1CPU, create single VM with 2 CPU and run both
+`get-server` and `put-server` on that VM instance (two Java process per VM).
+
+For sample setup see [cdoc2-gatling-tests/setup-load-testing](https://github.com/open-eid/cdoc2-gatling-tests/tree/master/setup-load-testing)
+
 ### Get Server
 
 #### Requirements
@@ -140,6 +153,9 @@ This will configure the Get Server to trust all requests done by Estonian ID car
 The configuration file `application.properties` must contain the following configuration parameters:
 
 ```
+#Enable when running on Java21 to improve througput by ~20%
+#spring.threads.virtual.enabled=true
+
 # The format used for the keystore. It could be set to JKS in case it is a JKS file
 server.ssl.key-store-type=PKCS12
 
