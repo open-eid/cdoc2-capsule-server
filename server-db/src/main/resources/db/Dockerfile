@@ -1,5 +1,8 @@
-# this file is used to build a docker image for upgrading the database in RIA infra
-FROM nexus.riaint.ee:8500/liquibase/liquibase
+# by default use docker.io as Docker registry, overwrite with
+# --build-arg LIQUIBASE_IMAGE=custom.registry.io:8500/liquibase/liquibase
+ARG LIQUIBASE_IMAGE=docker.io/liquibase/liquibase:4.29.2
+FROM $LIQUIBASE_IMAGE
+USER liquibase
 
 WORKDIR /liquibase/changelog
 
