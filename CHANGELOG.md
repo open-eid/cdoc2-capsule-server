@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.4.1] Bug fixes (2024-09-19)
+
+### Features
+* Publish `cdoc2-server-liquibase` image as part of release to allow easier [database creation](postgres.README.md)
+
+### Bugfixes
+* Update DB clean-up function of expired key-capsules to correctly report number deleted records
+* Fix Junit tests on Windows
+* Another try to fix loading pkcs11 (smart-card) test properties from file system
+
+### Internal
+* Use Java 21 JVM for `cdoc2-*-server` Docker images to support Java 21 virtual threads and improved throughput
+* Update admin-guide.md and add recommendations for running with Docker
+* Base release branch version on `cdoc2-put-server` version not `cdoc2-server` pom version (`make_release.sh` script) 
+
 ## [1.4.0] Maintenance (Spring Boot 3.3.3) (2024-09-03)
 
 ### Bugfixes
