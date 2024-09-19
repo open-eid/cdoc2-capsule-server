@@ -120,9 +120,11 @@ To get better throughput it's recommended to give at least 2 CPUs and 1GB of mem
 2 GB of memory per process is even better (some additional throughput gains).
 
 Instead of creating two VMs with 1CPU, create single VM with 2 CPU and run both
-`get-server` and `put-server` on that VM instance (two Java process per VM).
+`get-server` and `put-server` on that VM instance (two Java process per VM sharing 2 CPUs).
 
-For sample setup see [cdoc2-gatling-tests/setup-load-testing](https://github.com/open-eid/cdoc2-gatling-tests/tree/master/setup-load-testing)
+For sample setup see:
+* [cdoc2-gatling-tests/setup-load-testing](https://github.com/open-eid/cdoc2-gatling-tests/tree/master/setup-load-testing) for `docker run` examples
+* [cdoc2-java-ref-impl/test/config/server/docker-compose.yml](https://github.com/open-eid/cdoc2-java-ref-impl/blob/master/test/config/server/docker-compose.yml) for `docker compose` example
 
 ### Get Server
 

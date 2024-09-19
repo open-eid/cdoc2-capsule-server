@@ -9,7 +9,7 @@
 # docker deploy
 
 #export GIT_REMOTE=gitlab.ext
-CDOC2_SERVER_VER=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+CDOC2_SERVER_VER=$(mvn -f put-server help:evaluate -Dexpression=project.version -q -DforceStdout)
 
 GIT_BRANCH=$(git branch --show-current)
 GIT_REMOTE=$(git config --get-regexp "branch\.$GIT_BRANCH\.remote" | sed -e "s/^.* //")

@@ -20,14 +20,14 @@ docker run --rm --link cdoc2-psql \
   --env DB_URL=jdbc:postgresql://cdoc2-psql/cdoc2 \
   --env DB_PASSWORD=secret \
   --env DB_USER=postgres \
-  ghcr.io/jann0k/cdoc2-server-liquibase:v1.4.0-liquibase.4-2bf479fd63cdf4c7277fcbef799e3da801cf741f
+  ghcr.io/open-eid/cdoc2-server-liquibase:v1.4.1-rc.1-74cbc827e3cf08c2f4a51711a2072b6344f9aee1
 ```
 
-or use standard liquibase command options:
+or use standard liquibase command:
 
 ```
 docker run --rm --link cdoc2-psql \
-ghcr.io/jann0k/cdoc2-server-liquibase:v1.4.0-liquibase.4-2bf479fd63cdf4c7277fcbef799e3da801cf741f \
+ghcr.io/open-eid/cdoc2-server-liquibase:v1.4.1-rc.1-74cbc827e3cf08c2f4a51711a2072b6344f9aee1 \
   --url jdbc:postgresql://cdoc2-psql/cdoc2 \
   --username=postgres \
   --password=secret \
