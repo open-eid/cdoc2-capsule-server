@@ -101,6 +101,8 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
         prop += "cdoc2.client.ssl.trust-store=" + TestData.getKeysDirectory().resolve("clienttruststore.jks") + "\n";
         prop += "cdoc2.client.ssl.trust-store-password=passwd\n";
 
+        prop = prop.replace("\\", "\\\\");
+
         Properties p = new Properties();
         p.load(new StringReader(prop));
 
@@ -139,6 +141,8 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
         prop += "cdoc2.client.ssl.trust-store.type=JKS\n";
         prop += "cdoc2.client.ssl.trust-store=" + TestData.getKeysDirectory().resolve("clienttruststore.jks") + "\n";
         prop += "cdoc2.client.ssl.trust-store-password=passwd\n";
+
+        prop = prop.replace("\\", "\\\\");
 
         Properties p = new Properties();
         p.load(new StringReader(prop));

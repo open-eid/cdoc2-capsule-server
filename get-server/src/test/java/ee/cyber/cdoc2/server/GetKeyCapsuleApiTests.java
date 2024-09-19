@@ -147,6 +147,8 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
             + TestData.getKeysDirectory().resolve("rsa/client-rsa-2048.p12") + "\n";
         prop += "cdoc2.client.ssl.client-store-password=passwd\n";
 
+        prop = prop.replace("\\", "\\\\");
+
         Properties p = new Properties();
         p.load(new StringReader(prop));
 
@@ -211,6 +213,8 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         } else {
             prop += "cdoc2.client.ssl.client-store-password=" + new String(pkcs11Conf.pin()) + "\n";
         }
+
+        prop = prop.replace("\\", "\\\\");
 
         Properties p = new Properties();
         p.load(new StringReader(prop));
@@ -438,6 +442,8 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         prop += "cdoc2.client.ssl.client-store.type=PKCS12\n";
         prop += "cdoc2.client.ssl.client-store=" + TestData.getKeysDirectory().resolve("cdoc2client.p12") + "\n";
         prop += "cdoc2.client.ssl.client-store-password=passwd\n";
+
+        prop = prop.replace("\\", "\\\\");
 
         Properties p = new Properties();
         p.load(new StringReader(prop));
