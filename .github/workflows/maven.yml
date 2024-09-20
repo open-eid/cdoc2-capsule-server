@@ -20,16 +20,26 @@ env:
 jobs:
   fork_setup:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true }}
+
     outputs:
       base_repo: ${{ steps.base_repo.outputs.name }}
       is_fork: ${{ steps.is_fork.outputs.is_fork }}
 
     steps:
       - id: base_repo
-        run: echo "name=${{github.event.pull_request.base.repo.full_name}}" >> "$GITHUB_OUTPUT"
+        run: |
+          if [ ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true }} ]; then
+            echo "name=${{github.event.pull_request.base.repo.full_name}}" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=${{ github.event.repo.name }}" >> "$GITHUB_OUTPUT"
+          fi
       - id: is_fork
-        run: echo "is_fork=true" >> "$GITHUB_OUTPUT"
+        run: |
+          if [ ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true }} ]; then
+            echo "is_fork=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_fork=false" >> "$GITHUB_OUTPUT"
+          fi
 
   build:
     runs-on: ubuntu-latest
@@ -49,9 +59,9 @@ jobs:
       - name: Build with Maven
         run: |
           echo "Debug env vars: is_fork=$IS_FORK base_repo=$BASE_REPO MAVEN_REPO=$MAVEN_REPO"
-          mvn help:active-profiles
-          echo "Using Maven repo=$(mvn help:evaluate -Dexpression=github_ci.maven_repo -q -DforceStdout)"
-          mvn -B verify
+          mvn help:active-profiles --file cdoc2-server/
+          echo "Using Maven repo=$(mvn help:evaluate --file cdoc2-server/ -Dexpression=github_ci.maven_repo -q -DforceStdout)"
+          mvn -B verify --file cdoc2-server/pom.xml
         env:
           GITHUB_TOKEN: ${{ github.token }} # GITHUB_TOKEN is the default env for the password
           IS_FORK: ${{needs.fork_setup.outputs.is_fork}}
