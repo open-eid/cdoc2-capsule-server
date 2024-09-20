@@ -23,10 +23,22 @@ jobs:
           distribution: 'temurin'
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
+# Maven versioning is broken in so many ways (Maven is older than git). In semver you want to increase version only when there
+# are changes in module. Maven forces to change submodule version even when only change was main pom version change
+# Here: deploy for each submodule is necessary
+# to deploy submodules even when main module didn't change
       - name: Publish to GitHub Packages Apache Maven
-        run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+        run: |
+          mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+          mvn -f cdoc2-shared-crypto deploy -Dmaven.test.skip=true -s $GITHUB_WORKSPACE/settings.xml
+          mvn -f server-openapi deploy -Dmaven.test.skip=true -s $GITHUB_WORKSPACE/settings.xml
+          mvn -f server-db deploy -Dmaven.test.skip=true -s $GITHUB_WORKSPACE/settings.xml
+          mvn -f server-common deploy -Dmaven.test.skip=true -s $GITHUB_WORKSPACE/settings.xml
+          mvn -f put-server deploy -Dmaven.test.skip=true -s $GITHUB_WORKSPACE/settings.xml
+          mvn -f get-server deploy -Dmaven.test.skip=true -s $GITHUB_WORKSPACE/settings.xml
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          MAVEN_REPO: open-eid/cdoc2-capsule-server # maven repo to download dependencies
 
       # test if username and password are correct (may still fail if no write access or wrong package name)
       - name: Log in to the Container registry
