@@ -60,13 +60,13 @@ jobs:
         run: |
           echo "Debug env vars: is_fork=$IS_FORK base_repo=$BASE_REPO MAVEN_REPO=$MAVEN_REPO"
           mvn help:active-profiles
-          echo "Using Maven repo=$(mvn help:evaluate --file cdoc2-server/ -Dexpression=github_ci.maven_repo -q -DforceStdout)"
+          echo "Using Maven repo=$(mvn help:evaluate -Dexpression=github_ci.maven_repo -q -DforceStdout)"
           mvn -B verify
         env:
           GITHUB_TOKEN: ${{ github.token }} # GITHUB_TOKEN is the default env for the password
           IS_FORK: ${{needs.fork_setup.outputs.is_fork}}
           BASE_REPO: ${{needs.fork_setup.outputs.base_repo}}
-          MAVEN_REPO: ${{vars.MAVEN_REPO}}
+          MAVEN_REPO: ${{vars.MAVEN_REPO}} # set as repository variable: open-eid/cdoc2-capsule-server
 
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
