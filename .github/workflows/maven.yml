@@ -18,6 +18,14 @@ env:
   ACTIONS_STEP_DEBUG: true
 
 jobs:
+  dump_contexts_to_log:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
   fork_setup:
     runs-on: ubuntu-latest
 
