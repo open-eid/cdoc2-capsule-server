@@ -66,6 +66,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }} # GITHUB_TOKEN is the default env for the password
           IS_FORK: ${{needs.fork_setup.outputs.is_fork}}
           BASE_REPO: ${{needs.fork_setup.outputs.base_repo}}
+          MAVEN_REPO: ${{vars.MAVEN_REPO}}
 
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
