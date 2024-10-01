@@ -271,8 +271,7 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
 
         KeyStore clientKeyStore = null;
         KeyStore trustKeyStore = null;
-        String pkcs11Library = pkcs11Conf.pkcs11Library();
-        log.info("Oleska: library in testPKCS11Client() in integration test: " + pkcs11Library);
+
         try {
             clientKeyStore = Pkcs11Tools.initPKCS11KeysStore(
                 pkcs11Conf.pkcs11Library(), pkcs11Conf.slot(), protectionParameter
