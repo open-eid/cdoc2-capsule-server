@@ -12,4 +12,4 @@ COPY changelog/changes ./db/changelog/changes
 
 COPY liquibase.properties.docker ./liquibase.properties
 
-CMD ["liquibase", "--url=$DB_URL", "--username=$DB_USER", "--password=${DB_PASSWORD}", "update"]
+CMD ["sh", "-c", "liquibase --url=$DB_URL --username=${DB_USER} --password=${DB_PASSWORD} update"]
