@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.4.2] x-expiry-time (2025-03-18)
+
+### Bugfixes
+* Return `x-expiry-time` header to `GET` `/key-capsules/{transactionId}` as specified in 
+  [cdoc2-key-capsules 2.1.0 OAS ](https://github.com/open-eid/cdoc2-openapi/blob/04eac9013b919c405eee6e88f497897758af29a0/cdoc2-key-capsules-openapi.yaml#L38) 
+
+### Internal 
+* Update dependency versions to latest (Spring Boot 3.4.3, BC 1.80 and others)
+
 ## [1.4.1] Bug fixes (2024-09-19)
 
 ### Features
