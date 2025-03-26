@@ -1,5 +1,6 @@
 package ee.cyber.cdoc2.server.api;
 
+import ee.cyber.cdoc2.server.Constants;
 import ee.cyber.cdoc2.shared.crypto.ECKeys;
 import ee.cyber.cdoc2.shared.crypto.RsaUtils;
 import ee.cyber.cdoc2.shared.crypto.KeyAlgorithm;
@@ -16,6 +17,7 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Optional;
 import javax.security.auth.x500.X500Principal;
@@ -62,7 +64,10 @@ public class GetKeyCapsuleApi implements KeyCapsulesApiDelegate {
         var capsule = capsuleDbOpt.get();
         if (isRecipient(clientPubKey, capsule)) {
             log.info("Found capsule(transaction={}) for client certificate", transactionId);
-            return ResponseEntity.ok(toDto(capsule));
+            return ResponseEntity.ok()
+                //return expiry-time as in RFC3339, example  2025-03-18T14:23:45.123Z
+                .header(Constants.X_EXPIRY_TIME_HEADER, DateTimeFormatter.ISO_INSTANT.format(capsule.getExpiryTime()))
+                .body(toDto(capsule));
         } else {
             log.info("Client certificate does not match capsule(transactionId={}) recipient", transactionId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

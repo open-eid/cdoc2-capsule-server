@@ -29,6 +29,7 @@ import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Optional;
@@ -360,6 +361,12 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
             new URI(this.capsuleApiUrl() + "/" + txId),
             Capsule.class
         );
+
+        assertTrue(response.getHeaders().containsKey(Constants.X_EXPIRY_TIME_HEADER));
+
+        log.debug("expiry-time {}", response.getHeaders().get(Constants.X_EXPIRY_TIME_HEADER));
+        //no exception means that x-expiry-time is formatted correctly
+        DateTimeFormatter.ISO_INSTANT.parse(response.getHeaders().get(Constants.X_EXPIRY_TIME_HEADER).get(0));
 
         assertNotNull(response);
         assertNotNull(response.getBody());
