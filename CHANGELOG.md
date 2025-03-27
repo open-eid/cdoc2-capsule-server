@@ -1,13 +1,16 @@
 # Changelog
 
-## [1.4.2] x-expiry-time (2025-03-18)
+## [1.4.2] Return `x-expiry-time` header to `GET /key-capsules/{transactionId}` (2025-03-26)
 
 ### Bugfixes
 * Return `x-expiry-time` header to `GET` `/key-capsules/{transactionId}` as specified in 
   [cdoc2-key-capsules 2.1.0 OAS ](https://github.com/open-eid/cdoc2-openapi/blob/04eac9013b919c405eee6e88f497897758af29a0/cdoc2-key-capsules-openapi.yaml#L38) 
 
 ### Internal 
-* Update dependency versions to latest (Spring Boot 3.4.3, BC 1.80 and others)
+* Update dependency versions to latest (Spring Boot 3.3.3 -> 3.4.3, BC 1.80 and others)
+* remove test dependencies requirements when building with `-Dmaven.test.skip=true` 
+  (although `-Dmaven.test.skip=true` doesn't compile tests, Maven still required test dependencies
+  and failed when those didn't exist)
 
 ## [1.4.1] Bug fixes (2024-09-19)
 

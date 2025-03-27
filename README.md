@@ -59,6 +59,12 @@ So defining single Maven package repo from `open-eid` is enough for pulling cdoc
 mvn clean install
 ```
 
+### Build Docker/OCI images locally
+
+```bash
+bash build-images.sh
+```
+
 ### GitHub workflow build
 
 Maven build is executed for GH event `pull_request` an and `push` to 'master'.
@@ -77,8 +83,8 @@ See [getting-started.md](getting-started.md) and [admin-guide.md](admin-guide.md
 
 Download `cdoc2-put-server` and `cdoc2-get-server` images from [open-eid Container registry](https://github.com/orgs/open-eid/packages?ecosystem=container)
 
-* See [cdoc2-gatling-tests/setup-load-testing](https://github.com/open-eid/cdoc2-gatling-tests/tree/master/setup-load-testing) for `docker run` examples 
-* See [cdoc2-java-ref-impl/test/config/server/docker-compose.yml](https://github.com/open-eid/cdoc2-java-ref-impl/blob/master/test/config/server/docker-compose.yml) for `docker compose` example
+* See [cdoc2-gatling-tests/doc2-capsule-server/setup-load-testing](https://github.com/open-eid/cdoc2-gatling-tests/tree/master/cdoc2-capsule-server/setup-load-testing) for `docker run` examples 
+* See [cdoc2-java-ref-impl/test/config/capsule-server/docker-compose.yml](https://github.com/open-eid/cdoc2-java-ref-impl/blob/master/test/config/capsule-server/docker-compose.yml) for `docker compose` example
 
 To create `cdoc2` database required by `put-server` and `get-server` see [postgres.README.md](postgres.README.md)
 
