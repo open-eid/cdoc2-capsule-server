@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.4.2] Return `x-expiry-time` header to `GET /key-capsules/{transactionId}` (2025-03-26)
+## [1.4.2] Return `x-expiry-time` header to `GET /key-capsules/{transactionId}` (2025-03-27)
 
 ### Bugfixes
 * Return `x-expiry-time` header to `GET` `/key-capsules/{transactionId}` as specified in 
