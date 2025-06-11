@@ -4,7 +4,7 @@
 
 	<artifactId>cdoc2-server</artifactId>
 	<groupId>ee.cyber.cdoc2</groupId>
-	<version>1.4.1</version>
+	<version>1.4.2</version>
 
 	<description>CDOC2 server pom</description>
 
@@ -32,14 +32,18 @@
 		<!-- ldap test require connection to external esteid.ldap.sk.ee server -->
 		<tests>!(pkcs11 | slow | ldap)</tests>
 
-		<!-- versions of dependencies has to correspond with spring boot version-->
-		<!-- https://docs.spring.io/spring-boot/docs/current/reference/html/dependency-versions.html-->
-		<junit-jupiter.version>5.11.4</junit-jupiter.version>
-		<lombok.version>1.18.36</lombok.version>
-		<logback-classic.version>1.5.16</logback-classic.version>
+		<junit-jupiter.version>5.12.2</junit-jupiter.version>
+
+		<!-- versions for spring-boot dependencies are defined here: -->
+		<!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
+		<spring-boot.version>3.5.0</spring-boot.version>
+
+		<!-- to override spring-boot dependency version, find its name from
+		    https://docs.spring.io/spring-boot/appendix/dependency-versions/properties.html
+		-->
+
+
 		<exec-maven-plugin.version>3.4.10</exec-maven-plugin.version>
-		<spring-boot.version>3.4.3</spring-boot.version>
-		<spring.version>6.2.3</spring.version>
 
   	</properties>
 
@@ -160,8 +164,20 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+
+			<!-- For dependencies, use versions from  spring-boot-dependencies BOM
+
+			 https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring-boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
 
 	<repositories>
 	<!-- configure repositories in settings.xml -->

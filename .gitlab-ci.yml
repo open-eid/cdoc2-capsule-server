@@ -10,10 +10,11 @@ variables:
   tags:
     - dind
   rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-      when: on_success
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: on_success
+# TODO: Building from Dockerfile is deprecated, use buildpacks instead, see build-images.sh
+#    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+#      when: on_success
+#    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+#      when: on_success
     - when: never
   script:
     - |

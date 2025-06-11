@@ -6,7 +6,7 @@
 
     <groupId>ee.cyber.cdoc2</groupId>
     <artifactId>cdoc2-shared-crypto</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.2</version>
     <description>CDOC2 common crypto functions shared between lib and server</description>
     <packaging>jar</packaging>
 
@@ -16,8 +16,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 
-        <bouncycastle.version>1.80</bouncycastle.version>
-        <logback.version>1.5.16</logback.version>
+        <bouncycastle.version>1.81</bouncycastle.version>
+        <logback.version>1.5.18</logback.version>
     </properties>
 
     <profiles>
