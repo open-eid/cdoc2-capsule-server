@@ -1,5 +1,6 @@
 package ee.cyber.cdoc2.server.api;
 
+import ee.cyber.cdoc2.server.Constants;
 import ee.cyber.cdoc2.server.config.KeyCapsuleConfigProperties;
 import ee.cyber.cdoc2.server.generated.model.Capsule;
 import ee.cyber.cdoc2.server.generated.api.KeyCapsulesApi;
@@ -12,6 +13,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Optional;
 
@@ -78,7 +80,10 @@ public class CreateKeyCapsuleApi implements KeyCapsulesApiDelegate {
 
             URI created = getResourceLocation(saved.getTransactionId());
 
-            return ResponseEntity.created(created).build();
+            return ResponseEntity
+                .created(created)
+                .header(Constants.X_EXPIRY_TIME_HEADER, DateTimeFormatter.ISO_INSTANT.format(saved.getExpiryTime()))
+                .build();
         } catch (Exception e) {
             log.error(
                 "Failed to save key capsule(type={}, recipient={}, payloadLength={})",

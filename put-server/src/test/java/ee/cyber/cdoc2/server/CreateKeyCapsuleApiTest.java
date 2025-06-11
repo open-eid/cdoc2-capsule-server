@@ -9,10 +9,12 @@ import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
+@Slf4j
 class CreateKeyCapsuleApiTest extends KeyCapsuleIntegrationTest {
 
     @Autowired
@@ -142,6 +144,11 @@ class CreateKeyCapsuleApiTest extends KeyCapsuleIntegrationTest {
         ResponseEntity<Void> response
             = api.createCapsule(rsaCapsule, requestExpiryTime);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertTrue(response.getHeaders().containsKey(Constants.X_EXPIRY_TIME_HEADER));
+
+        log.debug("POST expiry-time {}", response.getHeaders().get(Constants.X_EXPIRY_TIME_HEADER));
+        //no exception means that x-expiry-time is formatted correctly
+        DateTimeFormatter.ISO_INSTANT.parse(response.getHeaders().get(Constants.X_EXPIRY_TIME_HEADER).get(0));
     }
 
     private KeyCapsuleDb assertCapsuleCreatedInDb(Capsule capsule) {

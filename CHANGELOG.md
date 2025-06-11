@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.5.0] Add `x-expiry-time` header to `POST /key-capsules/{transactionId}` response (2025-06-09)
+
+### Features
+* Add `x-expiry-time` header to `POST` `/key-capsules/{transactionId}` result as specified in [cdoc2-key-capsules 2.2.0 OAS](https://github.com/open-eid/cdoc2-openapi)
+
+### Internal
+* Use `spring-boot-dependencies` BOM for `cdoc2-server` parent POM for easier version alignment with `cdoc2-put-server` and `cdoc2-get-server` that use `spring-boot-starter-parent` parent 
+* Update `spring-boot` version `3.4.3` -> `3.5.0`
+* Update `org.bouncycastle:bcpkix-jdk18on` version `1.80` -> `1.81`
+
+
 ## [1.4.2] Return `x-expiry-time` header to `GET /key-capsules/{transactionId}` (2025-03-27)
 
 ### Bugfixes
