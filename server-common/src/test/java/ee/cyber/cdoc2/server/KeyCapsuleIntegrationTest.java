@@ -50,6 +50,7 @@ abstract class KeyCapsuleIntegrationTest extends BaseInitializationTest {
         model.setRecipient("123".getBytes());
         model.setPayload("345".getBytes());
         model.setExpiryTime(EXPIRY_TIME);
+        model.setExpiryTimeAdjusted(EXPIRY_TIME_ADJUSTED);
         KeyCapsuleDb saved = this.capsuleRepository.save(model);
 
         assertNotNull(saved);
@@ -80,6 +81,7 @@ abstract class KeyCapsuleIntegrationTest extends BaseInitializationTest {
         model.setRecipient("123".getBytes());
         model.setPayload("345".getBytes());
         model.setExpiryTime(expiryTime);
+        model.setExpiryTimeAdjusted(false);
         this.capsuleRepository.save(model);
 
         int deletedCapsules = cleanUpJob.cleanUpExpiredCapsules();
@@ -105,6 +107,7 @@ abstract class KeyCapsuleIntegrationTest extends BaseInitializationTest {
                 .setRecipient(dto.getRecipientId())
                 .setPayload(dto.getEphemeralKeyMaterial())
                 .setExpiryTime(expiryTime)
+                .setExpiryTimeAdjusted(false)
         );
     }
 

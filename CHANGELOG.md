@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.5.1] Add `x-expiry-time-adjusted` header to `GET /key-capsules/{transactionId}` response (2025-06-09)
+
+### Features
+* Add `x-expiry-time-adjusted` header to `GET /key-capsules/{transactionId}` result as specified in [cdoc2-key-capsules 2.2.0 OAS](https://github.com/open-eid/cdoc2-openapi)
+  Changed the behavior of the `x-expiry-time` header in the `POST /key-capsules/{transactionId}`.
+  Now if the `x-expiry-time` is larger than the maximum allowed expiry time, then the expiry
+  time is set as the maximum allowed value.
+  If the expiry time value was adjusted, then the header `x-expiry-time-adjusted` in the endpoint `GET /key-capsules/{transactionId}`
+  will be set to `true`.
+
 ## [1.5.0] Add `x-expiry-time` header to `POST /key-capsules/{transactionId}` response (2025-06-09)
 
 ### Features

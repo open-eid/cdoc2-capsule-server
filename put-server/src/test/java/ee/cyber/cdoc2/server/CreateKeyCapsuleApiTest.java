@@ -15,6 +15,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,7 +34,6 @@ import ee.cyber.cdoc2.server.model.db.KeyCapsuleDb;
 import static ee.cyber.cdoc2.server.Utils.getCapsuleExpirationTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
@@ -43,6 +44,12 @@ class CreateKeyCapsuleApiTest extends KeyCapsuleIntegrationTest {
 
     @Autowired
     private KeyCapsuleConfigProperties configProperties;
+
+    @BeforeEach
+    public void setup() {
+        this.capsuleRepository.deleteAll();
+    }
+
 
     @Test
     void shouldCreateCapsuleWithDefaultExpiryTime() throws Exception {
@@ -83,15 +90,14 @@ class CreateKeyCapsuleApiTest extends KeyCapsuleIntegrationTest {
     }
 
     @Test
-    void shouldFailToCreateEcCapsuleWithOverloadedExpiryTime() throws Exception {
+    void shouldCreateCapsuleWithMaxExpiryTimeWhenToLongTimeIsRequested() throws Exception {
         var capsule = getEcCapsule();
 
         LocalDateTime expiryTime = LocalDateTime.now().plusYears(10);
 
-        assertThrows(
-            IllegalArgumentException.class, () ->
-                api.createCapsule(capsule, expiryTime)
-        );
+        api.createCapsule(capsule, expiryTime);
+
+        assertMaxExpiryTimeIsAssignedToCapsule(capsule);
     }
 
     @Test
@@ -100,10 +106,9 @@ class CreateKeyCapsuleApiTest extends KeyCapsuleIntegrationTest {
 
         LocalDateTime expiryTime = LocalDateTime.now().plusYears(10);
 
-        assertThrows(
-            IllegalArgumentException.class, () ->
-                api.createCapsule(rsaCapsule, expiryTime)
-        );
+        api.createCapsule(rsaCapsule, expiryTime);
+
+        assertMaxExpiryTimeIsAssignedToCapsule(rsaCapsule);
     }
 
     private Capsule getRsaCapsule() throws Exception {
@@ -158,4 +163,17 @@ class CreateKeyCapsuleApiTest extends KeyCapsuleIntegrationTest {
         return retrievedOpt.get();
     }
 
+    private void assertMaxExpiryTimeIsAssignedToCapsule(Capsule capsule) {
+        KeyCapsuleDb savedCapsule = assertCapsuleCreatedInDb(capsule);
+        Instant savedExpiryTime = savedCapsule.getExpiryTime();
+        assertNotNull(savedExpiryTime);
+
+        Instant savedExpiryDate = savedExpiryTime.truncatedTo(ChronoUnit.DAYS);
+
+        Instant expectedInstant
+            = getCapsuleExpirationTime(configProperties.maxExpirationDuration()).toInstant();
+        Instant expectedExpiryDate = expectedInstant.truncatedTo(ChronoUnit.DAYS);
+
+        assertEquals(expectedExpiryDate, savedExpiryDate);
+    }
 }
