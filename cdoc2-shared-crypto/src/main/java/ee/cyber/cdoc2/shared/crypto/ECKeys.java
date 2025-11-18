@@ -1,14 +1,10 @@
 package ee.cyber.cdoc2.shared.crypto;
 
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.security.AlgorithmParameters;
 import java.security.GeneralSecurityException;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.interfaces.ECKey;
@@ -20,7 +16,6 @@ import java.security.spec.ECPublicKeySpec;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.Arrays;
 import java.util.HexFormat;
-import java.util.Objects;
 import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.math.ec.custom.sec.SecP256R1Curve;
 import org.bouncycastle.math.ec.custom.sec.SecP384R1Curve;
@@ -56,68 +51,6 @@ public final class ECKeys {
     private static final Logger log = LoggerFactory.getLogger(ECKeys.class);
 
     private ECKeys() {
-    }
-
-    public static KeyPair generateEcKeyPair(String ecCurveName)
-        throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
-        KeyPairGenerator keyPairGenerator
-            = KeyPairGenerator.getInstance(KeyAlgorithm.Algorithm.EC.name());
-        keyPairGenerator.initialize(new ECGenParameterSpec(ecCurveName));
-        return keyPairGenerator.generateKeyPair();
-    }
-
-    /**
-     * Encode EcPublicKey in TLS 1.3 format https://datatracker.ietf.org/doc/html/rfc8446#section-4.2.8.2
-     * @param curve EC curve that this ecPublicKey uses. Used to get curve key length.
-     * @param ecPublicKey EC public key
-     * @return ecPublicKey encoded in TLS 1.3 EC pub key format
-     */
-    public static byte[] encodeEcPubKeyForTls(EllipticCurve curve, ECPublicKey ecPublicKey) {
-        int keyLength = curve.getKeyLength();
-        return encodeEcPubKeyForTls(ecPublicKey, keyLength);
-    }
-
-    /**
-     * Encode EcPublicKey in TLS 1.3 format https://datatracker.ietf.org/doc/html/rfc8446#section-4.2.8.2
-     * @param ecPublicKey EC public key
-     * @return ecPublicKey encoded in TLS 1.3 EC pub key format
-     */
-    public static byte[] encodeEcPubKeyForTls(ECPublicKey ecPublicKey) throws GeneralSecurityException {
-        if (ECPoint.POINT_INFINITY.equals(ecPublicKey.getW())) {
-            throw new IllegalArgumentException("Cannot encode infinity ECPoint");
-        }
-        EllipticCurve curve = EllipticCurve.forOid(ECKeys.getCurveOid(ecPublicKey));
-        int keyLength = curve.getKeyLength();
-        return encodeEcPubKeyForTls(ecPublicKey, keyLength);
-    }
-
-    @SuppressWarnings("checkstyle:LineLength")
-    private static byte[] encodeEcPubKeyForTls(ECPublicKey ecPublicKey, int keyLength) {
-        byte[] xBytes = toUnsignedByteArray(ecPublicKey.getW().getAffineX(), keyLength);
-        byte[] yBytes = toUnsignedByteArray(ecPublicKey.getW().getAffineY(), keyLength);
-
-        //CHECKSTYLE:OFF
-        //EC pubKey in TLS 1.3 format
-        //https://datatracker.ietf.org/doc/html/rfc8446#section-4.2.8.2
-        //https://github.com/bcgit/bc-java/blob/526b5846653100fc521c1a68c02dbe9df3347a29/core/src/main/java/org/bouncycastle/math/ec/ECCurve.java#L410
-        //CHECKSTYLE:ON
-        byte[] tlsPubKey = new byte[1 + xBytes.length + yBytes.length];
-        tlsPubKey[0] = 0x04; //uncompressed
-
-        System.arraycopy(xBytes, 0, tlsPubKey, 1, xBytes.length);
-        System.arraycopy(yBytes, 0, tlsPubKey,  1 + xBytes.length, yBytes.length);
-
-        return tlsPubKey;
-    }
-
-    static ECPublicKey decodeSecP384R1EcPublicKeyFromTls(ByteBuffer encoded) throws GeneralSecurityException {
-        return decodeSecP384R1EcPublicKeyFromTls(
-            Arrays.copyOfRange(encoded.array(), encoded.position(), encoded.limit()));
-    }
-
-    static ECPublicKey decodeSecP256R1EcPublicKeyFromTls(ByteBuffer encoded) throws GeneralSecurityException {
-        return decodeSecP256R1EcPublicKeyFromTls(
-            Arrays.copyOfRange(encoded.array(), encoded.position(), encoded.limit()));
     }
 
     /**
@@ -182,25 +115,6 @@ public final class ECKeys {
 
         return (ECPublicKey) KeyFactory
             .getInstance(KeyAlgorithm.Algorithm.EC.name()).generatePublic(pubECSpec);
-    }
-
-    private static byte[] toUnsignedByteArray(BigInteger bigInteger, int len) {
-        Objects.requireNonNull(bigInteger, "Cannot convert null bigInteger to byte[]");
-        //https://stackoverflow.com/questions/4407779/biginteger-to-byte
-        byte[] array = bigInteger.toByteArray();
-        if ((array[0] == 0) && (array.length == len + 1)) {
-            return Arrays.copyOfRange(array, 1, array.length);
-        } else if (array.length < len) {
-            byte[] padded = new byte[len];
-            System.arraycopy(array, 0, padded, len - array.length, array.length);
-            return padded;
-        } else {
-            if ((array.length != len) && (log.isWarnEnabled())) {
-                log.warn("Expected EC key to be {} bytes, but was {}. bigInteger: {}",
-                    len, array.length, bigInteger.toString(16));
-            }
-            return array;
-        }
     }
 
     public static String getCurveOid(ECKey key)
@@ -295,18 +209,6 @@ public final class ECKeys {
             log.debug("EC pub key is not on secp256r1 curve");
         }
         return onCurve;
-    }
-
-    private static boolean isEcKeyAlgorithm(String privateKeyAlgorithm, String publicKeyAlgorithm) {
-        if (!KeyAlgorithm.isEcKeysAlgorithm(privateKeyAlgorithm)) {
-            log.debug("Not EC key pair. Algorithm is {} (expected EC)", privateKeyAlgorithm);
-            return false;
-        }
-        if (!KeyAlgorithm.isEcKeysAlgorithm(publicKeyAlgorithm)) {
-            log.debug("Not EC key pair. Algorithm is {} (expected EC)", publicKeyAlgorithm);
-            return false;
-        }
-        return true;
     }
 
 }
