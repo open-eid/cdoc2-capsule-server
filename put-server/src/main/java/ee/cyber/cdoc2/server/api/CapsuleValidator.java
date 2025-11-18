@@ -13,6 +13,8 @@ import java.security.interfaces.ECPublicKey;
 
 import ee.cyber.cdoc2.server.generated.model.Capsule;
 
+import static ee.cyber.cdoc2.server.generated.model.Capsule.CapsuleTypeEnum.ECC_SECP384R1;
+
 /**
  * Utility class for validating capsules.
  */
@@ -24,20 +26,24 @@ public final class CapsuleValidator {
     }
 
     static boolean isValid(Capsule capsule) {
-        switch (capsule.getCapsuleType()) {
-            case ECC_SECP384R1:
-                return validateEcSecp34r1Capsule(capsule);
-            case RSA:
-                return validateRSACapsule(capsule);
-            default:
+        return switch (capsule.getCapsuleType()) {
+            case ECC_SECP384R1, ECC_SECP256R1 -> validateEcCapsule(capsule);
+            case RSA -> validateRSACapsule(capsule);
+            default ->
                 throw new IllegalArgumentException("Unexpected capsule type: " + capsule.getCapsuleType());
-        }
+        };
     }
 
-    private static boolean validateEcSecp34r1Capsule(Capsule capsule) {
+    private static boolean validateEcCapsule(Capsule capsule) {
 
         try {
-            int tlsEncodedKeyLen = 2 * ECKeys.SECP_384_R_1_LEN_BYTES + 1;
+
+            var keyLength = switch (capsule.getCapsuleType()) {
+                case ECC_SECP384R1 -> ECKeys.SECP_384_R_1_LEN_BYTES;
+                case ECC_SECP256R1 -> ECKeys.SECP_256_R_1_LEN_BYTES;
+                default -> throw new IllegalArgumentException("Must be a elliptic curve capsule");
+            };
+            int tlsEncodedKeyLen = 2 * keyLength + 1;
 
             if (capsule.getRecipientId() == null || capsule.getEphemeralKeyMaterial() == null) {
                 log.error("Recipient id or ephemeral key was null");
@@ -45,16 +51,23 @@ public final class CapsuleValidator {
             }
             if (capsule.getRecipientId().length != tlsEncodedKeyLen
                     || capsule.getEphemeralKeyMaterial().length != tlsEncodedKeyLen) {
-                log.error("Invalid secp384r1 curve key length");
+                log.error("Invalid {} curve key length", capsule.getCapsuleType());
                 return false;
             }
 
-            ECPublicKey recipientPubKey = ECKeys.decodeSecP384R1EcPublicKeyFromTls(capsule.getRecipientId());
-            ECPublicKey senderPubKey = ECKeys.decodeSecP384R1EcPublicKeyFromTls(capsule.getEphemeralKeyMaterial());
+            if (capsule.getCapsuleType() == ECC_SECP384R1) {
+                ECPublicKey recipientPubKey = ECKeys.decodeSecP384R1EcPublicKeyFromTls(capsule.getRecipientId());
+                ECPublicKey senderPubKey = ECKeys.decodeSecP384R1EcPublicKeyFromTls(capsule.getEphemeralKeyMaterial());
 
-            return (ECKeys.isValidSecP384R1(recipientPubKey) && ECKeys.isValidSecP384R1(senderPubKey));
+                return (ECKeys.isValidSecP384R1(recipientPubKey) && ECKeys.isValidSecP384R1(senderPubKey));
+            }
+            ECPublicKey recipientPubKey = ECKeys.decodeSecP256R1EcPublicKeyFromTls(capsule.getRecipientId());
+            ECPublicKey senderPubKey = ECKeys.decodeSecP256R1EcPublicKeyFromTls(capsule.getEphemeralKeyMaterial());
+
+            return (ECKeys.isValidSecP256R1(recipientPubKey) && ECKeys.isValidSecP256R1(senderPubKey));
+
         } catch (GeneralSecurityException gse) {
-            log.error("Invalid secp384r1 EC key", gse);
+            log.error("Invalid {} EC key", capsule.getCapsuleType(), gse);
         }
         return false;
     }

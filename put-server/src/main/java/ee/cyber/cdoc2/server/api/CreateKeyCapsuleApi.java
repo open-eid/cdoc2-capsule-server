@@ -115,14 +115,12 @@ public class CreateKeyCapsuleApi implements KeyCapsulesApiDelegate {
     }
 
     private static KeyCapsuleDb.CapsuleType getDbCapsuleType(Capsule.CapsuleTypeEnum dtoType) {
-        switch (dtoType) {
-            case ECC_SECP384R1:
-                return KeyCapsuleDb.CapsuleType.SECP384R1;
-            case RSA:
-                return KeyCapsuleDb.CapsuleType.RSA;
-            default:
-                throw new IllegalArgumentException("Unknown capsule type: " + dtoType);
-        }
+        return switch (dtoType) {
+            case ECC_SECP384R1 -> KeyCapsuleDb.CapsuleType.SECP384R1;
+            case ECC_SECP256R1 -> KeyCapsuleDb.CapsuleType.SECP256R1;
+            case RSA -> KeyCapsuleDb.CapsuleType.RSA;
+            default -> throw new IllegalArgumentException("Unknown capsule type: " + dtoType);
+        };
     }
 
     private OffsetDateTime getExpiryTime(LocalDateTime xExpiryTime) {
