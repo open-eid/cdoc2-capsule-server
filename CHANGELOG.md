@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.5.1] Add `x-expiry-time-adjusted` header to `GET /key-capsules/{transactionId}` response (2025-06-09)
+## [1.6.0] Add `x-expiry-time-adjusted` header to `GET /key-capsules/{transactionId}` response (2025-11-20)
 
 ### Features
 * Add `x-expiry-time-adjusted` header to `GET /key-capsules/{transactionId}` result as specified in [cdoc2-key-capsules 2.2.0 OAS](https://github.com/open-eid/cdoc2-openapi)
