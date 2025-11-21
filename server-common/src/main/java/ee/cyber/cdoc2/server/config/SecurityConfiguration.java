@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
 /**
@@ -34,10 +33,10 @@ public class SecurityConfiguration {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize ->
                 authorize
-                    .requestMatchers(new AntPathRequestMatcher("/key-capsules/**")).permitAll()
+                    .requestMatchers("/key-capsules/**").permitAll()
                     // authenticated URI must go first
-                    .requestMatchers(new AntPathRequestMatcher("/actuator/prometheus")).authenticated()
-                    .requestMatchers(new AntPathRequestMatcher("/actuator/**")).permitAll()
+                    .requestMatchers("/actuator/prometheus").authenticated()
+                    .requestMatchers("/actuator/**").permitAll()
                     .anyRequest().authenticated()
             )
             .x509(x509 ->
