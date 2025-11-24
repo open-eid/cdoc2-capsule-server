@@ -250,8 +250,18 @@ public final class ECKeys {
     }
 
     public static boolean isECSecp256r1(KeyPair keyPair) throws GeneralSecurityException {
-        // TODO: Implement this
-        return true;
+        if (!isEcKeyAlgorithm(keyPair.getPrivate().getAlgorithm(),
+            keyPair.getPublic().getAlgorithm())) {
+            return false;
+        }
+
+        ECPublicKey ecPublicKey = (ECPublicKey)keyPair.getPublic();
+        if (keyPair.getPrivate() instanceof ECKey ecKey) {
+            return isValidSecP256R1(ecPublicKey) && isEcSecp256r1Curve(ecKey);
+        } else {
+            return isValidSecP256R1(ecPublicKey)
+                && Crypto.isECPKCS11Key(keyPair.getPrivate()); //can't get curve for PKCS11 keys
+        }
     }
 
     public static boolean isValidSecP384R1(ECPublicKey ecPublicKey) throws GeneralSecurityException {
