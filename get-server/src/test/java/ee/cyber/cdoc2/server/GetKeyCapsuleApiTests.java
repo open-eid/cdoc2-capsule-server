@@ -363,6 +363,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         );
 
         assertTrue(response.getHeaders().containsKey(Constants.X_EXPIRY_TIME_HEADER));
+        assertTrue(response.getHeaders().containsKey(Constants.X_EXPIRY_TIME_ADJUSTED));
 
         log.debug("expiry-time {}", response.getHeaders().get(Constants.X_EXPIRY_TIME_HEADER));
         //no exception means that x-expiry-time is formatted correctly
