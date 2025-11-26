@@ -67,6 +67,7 @@ public class GetKeyCapsuleApi implements KeyCapsulesApiDelegate {
             return ResponseEntity.ok()
                 //return expiry-time as in RFC3339, example  2025-03-18T14:23:45.123Z
                 .header(Constants.X_EXPIRY_TIME_HEADER, DateTimeFormatter.ISO_INSTANT.format(capsule.getExpiryTime()))
+                .header(Constants.X_EXPIRY_TIME_ADJUSTED, String.valueOf(capsule.getExpiryTimeAdjusted()))
                 .body(toDto(capsule));
         } else {
             log.info("Client certificate does not match capsule(transactionId={}) recipient", transactionId);

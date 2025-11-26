@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 abstract class BaseInitializationTest {
 
     protected static final Instant EXPIRY_TIME = Instant.now().plusSeconds(86400);
+    protected static final boolean EXPIRY_TIME_ADJUSTED = false;
 
     protected static final KeyStore CLIENT_TRUST_STORE = TestData.loadKeyStore(
         "JKS",

@@ -62,7 +62,7 @@ public class CreateKeyCapsuleApi implements KeyCapsulesApiDelegate {
             return ResponseEntity.badRequest().build();
         }
 
-        OffsetDateTime expiryTime = getExpiryTime(xExpiryTime);
+        ExpiryTimeData expiryTimeData = getExpiryTime(xExpiryTime);
 
         try {
             var saved = this.keyCapsuleRepository.save(
@@ -70,7 +70,8 @@ public class CreateKeyCapsuleApi implements KeyCapsulesApiDelegate {
                     .setCapsuleType(getDbCapsuleType(capsule.getCapsuleType()))
                     .setRecipient(capsule.getRecipientId())
                     .setPayload(capsule.getEphemeralKeyMaterial())
-                    .setExpiryTime(expiryTime.toInstant())
+                    .setExpiryTime(expiryTimeData.xExpiryTime.toInstant())
+                    .setExpiryTimeAdjusted(expiryTimeData.expiryTimeAdjusted)
             );
 
             log.info(
@@ -123,20 +124,20 @@ public class CreateKeyCapsuleApi implements KeyCapsulesApiDelegate {
         };
     }
 
-    private OffsetDateTime getExpiryTime(LocalDateTime xExpiryTime) {
-        if (null != xExpiryTime) {
-            validateExpiryTime(xExpiryTime);
-
-            return toOffsetDateTime(xExpiryTime);
-        } else {
-            return getCapsuleExpirationTime(configProperties.defaultExpirationDuration());
-        }
-    }
-
-    private void validateExpiryTime(LocalDateTime expiryTime) {
+    private ExpiryTimeData getExpiryTime(LocalDateTime xExpiryTime) {
         OffsetDateTime xMaxExpiryTime = getCapsuleExpirationTime(configProperties.maxExpirationDuration());
-        if (toOffsetDateTime(expiryTime).isAfter(xMaxExpiryTime)) {
-            throw new IllegalArgumentException("Key capsule expire time cannot exceed max allowed");
+
+        if (null != xExpiryTime) {
+            if (toOffsetDateTime(xExpiryTime).isAfter(xMaxExpiryTime)) {
+                return new ExpiryTimeData(xMaxExpiryTime, true);
+            }
+
+            return new ExpiryTimeData(toOffsetDateTime(xExpiryTime), false);
+        } else {
+            return new ExpiryTimeData(
+                getCapsuleExpirationTime(configProperties.defaultExpirationDuration()),
+                false
+            );
         }
     }
 
@@ -144,4 +145,9 @@ public class CreateKeyCapsuleApi implements KeyCapsulesApiDelegate {
         return OffsetDateTime.of(expiryTime, ZoneOffset.UTC);
     }
 
+    private record ExpiryTimeData(
+        OffsetDateTime xExpiryTime,
+        boolean expiryTimeAdjusted
+    )  {
+    }
 }

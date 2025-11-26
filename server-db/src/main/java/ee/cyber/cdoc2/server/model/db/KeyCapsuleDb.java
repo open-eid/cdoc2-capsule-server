@@ -79,6 +79,10 @@ public class KeyCapsuleDb {
     @Column(nullable = false)
     private Instant expiryTime;
 
+    @NotNull
+    @Column(nullable = false)
+    private Boolean expiryTimeAdjusted;
+
     @CreatedDate
     private Instant createdAt;
 
