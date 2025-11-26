@@ -11,7 +11,7 @@
 
 	<artifactId>cdoc2-get-server</artifactId>
 	<groupId>ee.cyber.cdoc2</groupId>
-	<version>1.5.0</version>
+	<version>1.6.0</version>
 	<packaging>jar</packaging>
 
 	<name>cdoc2-get-server</name>
@@ -57,13 +57,13 @@
 				<dependency>
 					<groupId>ee.cyber.cdoc2</groupId>
 					<artifactId>cdoc2-lib</artifactId>
-					<version>2.0.1</version>
+					<version>3.1.0</version>
 					<scope>test</scope>
 				</dependency>
 				<dependency>
 					<groupId>ee.cyber.cdoc2</groupId>
 					<artifactId>cdoc2-lib</artifactId>
-					<version>2.0.1</version>
+					<version>3.1.0</version>
 					<type>test-jar</type>
 					<scope>test</scope>
 				</dependency>
