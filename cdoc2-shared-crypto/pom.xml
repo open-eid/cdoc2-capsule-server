@@ -6,7 +6,7 @@
 
     <groupId>ee.cyber.cdoc2</groupId>
     <artifactId>cdoc2-shared-crypto</artifactId>
-    <version>0.2.3</version>
+    <version>0.3.0</version>
     <description>CDOC2 common crypto functions shared between lib and server</description>
     <packaging>jar</packaging>
 
