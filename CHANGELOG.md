@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.6.0] Add `x-expiry-time-adjusted` header to `GET /key-capsules/{transactionId}` response (2025-11-20)
+## [1.6.0] Improved Key-Capsule Expiry Logic & secp265 Support (2025-11-xx)
 
 ### Features
 * Add `x-expiry-time-adjusted` header to `GET /key-capsules/{transactionId}` result as specified in [cdoc2-key-capsules 2.2.0 OAS](https://github.com/open-eid/cdoc2-openapi)
@@ -9,6 +9,7 @@
   time is set as the maximum allowed value.
   If the expiry time value was adjusted, then the header `x-expiry-time-adjusted` in the endpoint `GET /key-capsules/{transactionId}`
   will be set to `true`.
+* Add support for `secp265` elliptic curve to `cdoc2-get-server` and `cdoc2-put-server`.
 
 ## [1.5.0] Add `x-expiry-time` header to `POST /key-capsules/{transactionId}` response (2025-06-09)
 
