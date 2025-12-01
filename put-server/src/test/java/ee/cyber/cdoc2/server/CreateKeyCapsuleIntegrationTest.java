@@ -6,6 +6,7 @@ import ee.cyber.cdoc2.client.ExtApiException;
 import ee.cyber.cdoc2.client.KeyCapsuleClient;
 import ee.cyber.cdoc2.client.KeyCapsuleClientImpl;
 import ee.cyber.cdoc2.client.RsaCapsuleClientImpl;
+import ee.cyber.cdoc2.config.KeyCapsuleClientConfiguration;
 import ee.cyber.cdoc2.crypto.Crypto;
 import ee.cyber.cdoc2.crypto.ECKeys;
 import ee.cyber.cdoc2.crypto.EllipticCurve;
@@ -107,7 +108,8 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
         p.load(new StringReader(prop));
 
         //use KeyCapsulesClientImpl directly to get access to client public certificate loaded using properties file
-        KeyCapsuleClientImpl client = (KeyCapsuleClientImpl) KeyCapsuleClientImpl.create(p);
+        var config = KeyCapsuleClientConfiguration.load(p);
+        KeyCapsuleClientImpl client = (KeyCapsuleClientImpl) KeyCapsuleClientImpl.create(config);
 
         File[] certs = {TestData.getKeysDirectory().resolve("ca_certs/client-certificate.pem").toFile()};
         ECPublicKey recipientPubKey = ECKeys.loadCertKeys(certs).get(0);
@@ -147,7 +149,8 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
         Properties p = new Properties();
         p.load(new StringReader(prop));
 
-        KeyCapsuleClient client = KeyCapsuleClientImpl.create(p);
+        var config = KeyCapsuleClientConfiguration.load(p);
+        KeyCapsuleClient client = KeyCapsuleClientImpl.create(config);
 
         assertNotNull(client.getServerIdentifier());
 
@@ -200,7 +203,8 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
         Properties p = new Properties();
         p.load(new StringReader(prop));
 
-        KeyCapsuleClientImpl client = (KeyCapsuleClientImpl) KeyCapsuleClientImpl.create(p);
+        var config = KeyCapsuleClientConfiguration.load(p);
+        KeyCapsuleClientImpl client = (KeyCapsuleClientImpl) KeyCapsuleClientImpl.create(config);
 
         KeyPair senderKeyPair = EllipticCurve.SECP384R1.generateEcKeyPair();
         ECPublicKey senderPubKey = (ECPublicKey) senderKeyPair.getPublic();
@@ -292,12 +296,13 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
         log.debug("Certificate issuer is {}.  This must be in server truststore "
                 + "or SSL handshake will fail with cryptic error", cert.getIssuerX500Principal());
 
-        Cdoc2KeyCapsuleApiClient mTlsClient = Cdoc2KeyCapsuleApiClient.builder()
-                .withBaseUrl(baseUrl)
-                .withClientKeyStore(clientKeyStore)
-                .withClientKeyStoreProtectionParameter(protectionParameter)
-                .withTrustKeyStore(trustKeyStore)
-                .build();
+        var builder = Cdoc2KeyCapsuleApiClient.builder();
+        builder.withBaseUrl(baseUrl);
+        builder.withClientKeyStore(clientKeyStore);
+        builder.withClientKeyStoreProtectionParameter(protectionParameter);
+        builder.withTrustKeyStore(trustKeyStore);
+
+        Cdoc2KeyCapsuleApiClient mTlsClient = builder.build();
 
         //recipient must match to client's cert pub key or GET will fail with 404
         PublicKey recipientPubKey = cert.getPublicKey();
@@ -408,10 +413,11 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
     }
 
     private Cdoc2KeyCapsuleApiClient createClient() throws GeneralSecurityException {
-        return Cdoc2KeyCapsuleApiClient.builder()
-            .withBaseUrl(this.baseUrl)
-            .withTrustKeyStore(CLIENT_TRUST_STORE)
-            .build();
+        var builder = Cdoc2KeyCapsuleApiClient.builder();
+        builder.withBaseUrl(this.baseUrl);
+        builder.withTrustKeyStore(CLIENT_TRUST_STORE);
+
+        return  builder.build();
     }
 
 }

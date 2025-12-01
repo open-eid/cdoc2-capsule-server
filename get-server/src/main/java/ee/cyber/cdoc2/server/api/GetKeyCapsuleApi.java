@@ -83,13 +83,21 @@ public class GetKeyCapsuleApi implements KeyCapsulesApiDelegate {
 
     private static boolean isRecipient(PublicKey publicKey, KeyCapsuleDb capsule) {
         try {
-            if (capsule.getCapsuleType() == KeyCapsuleDb.CapsuleType.SECP384R1
-                    && KeyAlgorithm.isEcKeysAlgorithm(publicKey.getAlgorithm())
-                    && ECKeys.isEcSecp384r1Curve((ECPublicKey) publicKey)) {
-                return Arrays.equals(
-                    capsule.getRecipient(),
-                    ECKeys.encodeEcPubKeyForTls((ECPublicKey) publicKey)
-                );
+            if (KeyAlgorithm.isEcKeysAlgorithm(publicKey.getAlgorithm())
+                && publicKey instanceof ECPublicKey ecPublicKey) {
+
+                KeyCapsuleDb.CapsuleType type = capsule.getCapsuleType();
+
+                boolean curveMatches =
+                    (type == KeyCapsuleDb.CapsuleType.SECP384R1 && ECKeys.isEcSecp384r1Curve(ecPublicKey))
+                        || (type == KeyCapsuleDb.CapsuleType.SECP256R1 && ECKeys.isEcSecp256r1Curve(ecPublicKey));
+
+                if (curveMatches) {
+                    return Arrays.equals(
+                        capsule.getRecipient(),
+                        ECKeys.encodeEcPubKeyForTls(ecPublicKey)
+                    );
+                }
             }
             if (capsule.getCapsuleType() == KeyCapsuleDb.CapsuleType.RSA
                     && KeyAlgorithm.isRsaKeysAlgorithm(publicKey.getAlgorithm())) {
@@ -109,6 +117,9 @@ public class GetKeyCapsuleApi implements KeyCapsulesApiDelegate {
         switch (db.getCapsuleType()) {
             case SECP384R1:
                 dto.setCapsuleType(Capsule.CapsuleTypeEnum.ECC_SECP384R1);
+                break;
+            case SECP256R1:
+                dto.setCapsuleType(Capsule.CapsuleTypeEnum.ECC_SECP256R1);
                 break;
             case RSA:
                 dto.setCapsuleType(Capsule.CapsuleTypeEnum.RSA);

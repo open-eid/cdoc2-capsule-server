@@ -57,13 +57,13 @@
 				<dependency>
 					<groupId>ee.cyber.cdoc2</groupId>
 					<artifactId>cdoc2-lib</artifactId>
-					<version>2.0.1</version>
+					<version>3.1.0</version>
 					<scope>test</scope>
 				</dependency>
 				<dependency>
 					<groupId>ee.cyber.cdoc2</groupId>
 					<artifactId>cdoc2-lib</artifactId>
-					<version>2.0.1</version>
+					<version>3.1.0</version>
 					<type>test-jar</type>
 					<scope>test</scope>
 				</dependency>
@@ -190,7 +190,7 @@
 		<dependency>
 			<groupId>ee.cyber.cdoc2</groupId>
 			<artifactId>cdoc2-shared-crypto</artifactId>
-			<version>0.2.1</version>
+			<version>0.3.0</version>
 		</dependency>
 
 		<dependency>

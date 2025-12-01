@@ -1,12 +1,12 @@
 package ee.cyber.cdoc2.server;
 
-import ee.cyber.cdoc2.CDocUserException;
 import ee.cyber.cdoc2.UserErrorCode;
 import ee.cyber.cdoc2.client.Cdoc2KeyCapsuleApiClient;
 import ee.cyber.cdoc2.client.EcCapsuleClientImpl;
 import ee.cyber.cdoc2.client.KeyCapsuleClientImpl;
 import ee.cyber.cdoc2.client.RsaCapsuleClientImpl;
-import ee.cyber.cdoc2.client.api.ApiException;
+import ee.cyber.cdoc2.config.KeyCapsuleClientConfiguration;
+import ee.cyber.cdoc2.exceptions.CDocUserException;
 import ee.cyber.cdoc2.server.generated.model.Capsule;
 import ee.cyber.cdoc2.crypto.Crypto;
 import ee.cyber.cdoc2.crypto.ECKeys;
@@ -153,7 +153,8 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         Properties p = new Properties();
         p.load(new StringReader(prop));
 
-        KeyCapsuleClientImpl client = (KeyCapsuleClientImpl) KeyCapsuleClientImpl.create(p);
+        var config = KeyCapsuleClientConfiguration.load(p);
+        KeyCapsuleClientImpl client = (KeyCapsuleClientImpl) KeyCapsuleClientImpl.create(config);
 
         X509Certificate cert = (X509Certificate) client.getClientCertificate();
         assertNotNull(cert);
@@ -220,7 +221,8 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         Properties p = new Properties();
         p.load(new StringReader(prop));
 
-        KeyCapsuleClientImpl client = (KeyCapsuleClientImpl) KeyCapsuleClientImpl.create(p);
+        var config = KeyCapsuleClientConfiguration.load(p);
+        KeyCapsuleClientImpl client = (KeyCapsuleClientImpl) KeyCapsuleClientImpl.create(config);
 
         KeyPair senderKeyPair = EllipticCurve.SECP384R1.generateEcKeyPair();
         ECPublicKey senderPubKey = (ECPublicKey) senderKeyPair.getPublic();
@@ -301,12 +303,13 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         log.debug("Certificate issuer is {}.  This must be in server truststore "
             + "or SSL handshake will fail with cryptic error", cert.getIssuerDN());
 
-        Cdoc2KeyCapsuleApiClient client = Cdoc2KeyCapsuleApiClient.builder()
-                .withBaseUrl(baseUrl)
-                .withClientKeyStore(clientKeyStore)
-                .withClientKeyStoreProtectionParameter(protectionParameter)
-                .withTrustKeyStore(trustKeyStore)
-                .build();
+        var builder = Cdoc2KeyCapsuleApiClient.builder();
+        builder.withBaseUrl(baseUrl);
+        builder.withClientKeyStore(clientKeyStore);
+        builder.withClientKeyStoreProtectionParameter(protectionParameter);
+        builder.withTrustKeyStore(trustKeyStore);
+
+        Cdoc2KeyCapsuleApiClient client = builder.build();
 
         Capsule capsule = new Capsule();
 
@@ -433,10 +436,8 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
 
         Cdoc2KeyCapsuleApiClient client = createClientWithPkcs12();
 
-        assertThrows(
-            ApiException.class,
-            () -> client.getCapsule(txId)
-        );
+        var response = client.getCapsule(txId);
+        assertTrue(response.isEmpty());
     }
 
     private static KeyCapsuleClientImpl createPkcs12ServerClient(String serverBaseUrl) throws Exception {
@@ -456,7 +457,8 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         Properties p = new Properties();
         p.load(new StringReader(prop));
 
-        return (KeyCapsuleClientImpl) KeyCapsuleClientImpl.create(p);
+        var config = KeyCapsuleClientConfiguration.load(p);
+        return (KeyCapsuleClientImpl) KeyCapsuleClientImpl.create(config);
     }
 
     private Cdoc2KeyCapsuleApiClient createClientWithPkcs12() throws GeneralSecurityException {
@@ -477,12 +479,14 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
             log.error("Error initializing key stores", e);
         }
 
-        return Cdoc2KeyCapsuleApiClient.builder()
-            .withBaseUrl(baseUrl)
-            .withClientKeyStore(clientKeyStore)
-            .withClientKeyStorePassword("passwd".toCharArray())
-            .withTrustKeyStore(trustKeyStore)
-            .build();
+
+        var builder = Cdoc2KeyCapsuleApiClient.builder();
+        builder.withBaseUrl(baseUrl);
+        builder.withClientKeyStore(clientKeyStore);
+        builder.withClientKeyStorePassword("passwd".toCharArray());
+        builder.withTrustKeyStore(trustKeyStore);
+
+        return builder.build();
     }
 
 }
