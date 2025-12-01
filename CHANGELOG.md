@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.6.0] Improved Key-Capsule Expiry Logic & secp265 Support (2025-11-xx)
+## [1.6.0] Improved Key-Capsule Expiry Logic & secp265 Support (2025-12-01)
 
 ### Features
 * Add `x-expiry-time-adjusted` header to `GET /key-capsules/{transactionId}` result as specified in [cdoc2-key-capsules 2.2.0 OAS](https://github.com/open-eid/cdoc2-openapi)
