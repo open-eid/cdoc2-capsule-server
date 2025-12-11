@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.7.0] Improved logging (2026-xx-xx)
+
+### Internal
+* Log the `Content-Type`, `Origin` and `Sec-Fetch-*` header values for each request.
+
 ## [1.6.0] Improved Key-Capsule Expiry Logic & secp265 Support (2025-12-01)
 
 ### Features
