@@ -4,6 +4,7 @@
 
 ### Internal
 * Log the `Content-Type`, `Origin` and `Sec-Fetch-*` header values for each request.
+* Remove the certificate subject common name (CN) from the log's.
 
 ## [1.6.0] Improved Key-Capsule Expiry Logic & secp265 Support (2025-12-01)
 

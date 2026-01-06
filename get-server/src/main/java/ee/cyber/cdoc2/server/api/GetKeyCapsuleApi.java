@@ -143,7 +143,7 @@ public class GetKeyCapsuleApi implements KeyCapsulesApiDelegate {
 
         if (certs.length > 0) {
             var clientCert = certs[0];
-            log.info("Got client certificate(subject='{}')", getCertSubjectName(clientCert));
+            log.info("Got client certificate(subject='{}')", getCertSubjectNameWithoutCN(clientCert));
             return Optional.of(clientCert);
         } else {
             log.info("No client certificate in http request");
@@ -151,9 +151,13 @@ public class GetKeyCapsuleApi implements KeyCapsulesApiDelegate {
         }
     }
 
-    private static String getCertSubjectName(X509Certificate certificate) {
+    private static String getCertSubjectNameWithoutCN(X509Certificate certificate) {
         return Optional.ofNullable(certificate.getSubjectX500Principal())
             .map(X500Principal::getName)
+            // Remove the Common name from logs for privacy, it can contain name and id code
+            .map(name -> name.replaceAll("CN=((?:\\\\.|[^,])+)", ""))
+            // Clean up leading/trailing commas
+            .map(name -> name.replaceAll("^,\\s*|,\\s*$", ""))
             .orElse("");
     }
 
