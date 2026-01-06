@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import javax.security.auth.x500.X500Principal;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -151,13 +152,17 @@ public class GetKeyCapsuleApi implements KeyCapsulesApiDelegate {
         }
     }
 
+    private static final Pattern CN_PATTERN = Pattern.compile("CN=((?:\\\\.|[^,])+)");
+    private static final Pattern EXTRA_COMMAS = Pattern.compile(",,");
+    private static final Pattern TRAILING_COMMA = Pattern.compile(",\\s*$");
+
     private static String getCertSubjectNameWithoutCN(X509Certificate certificate) {
         return Optional.ofNullable(certificate.getSubjectX500Principal())
             .map(X500Principal::getName)
             // Remove the Common name from logs for privacy, it can contain name and id code
-            .map(name -> name.replaceAll("CN=((?:\\\\.|[^,])+)", ""))
-            // Clean up leading/trailing commas
-            .map(name -> name.replaceAll("^,\\s*|,\\s*$", ""))
+            .map(name -> CN_PATTERN.matcher(name).replaceAll(""))
+            .map(name -> EXTRA_COMMAS.matcher(name).replaceAll(","))
+            .map(name -> TRAILING_COMMA.matcher(name).replaceAll(""))
             .orElse("");
     }
 
