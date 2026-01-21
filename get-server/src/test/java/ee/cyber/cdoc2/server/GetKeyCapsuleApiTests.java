@@ -7,6 +7,7 @@ import ee.cyber.cdoc2.client.KeyCapsuleClientImpl;
 import ee.cyber.cdoc2.client.RsaCapsuleClientImpl;
 import ee.cyber.cdoc2.config.KeyCapsuleClientConfiguration;
 import ee.cyber.cdoc2.exceptions.CDocUserException;
+import ee.cyber.cdoc2.server.api.GetKeyCapsuleApi;
 import ee.cyber.cdoc2.server.generated.model.Capsule;
 import ee.cyber.cdoc2.crypto.Crypto;
 import ee.cyber.cdoc2.crypto.ECKeys;
@@ -19,6 +20,7 @@ import ee.cyber.cdoc2.crypto.RsaUtils;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URI;
 import java.nio.file.Files;
@@ -26,6 +28,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.PublicKey;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
@@ -37,6 +40,8 @@ import java.util.Properties;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.naming.ldap.LdapName;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -46,11 +51,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpStatus;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @Slf4j
@@ -438,6 +439,28 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
 
         var response = client.getCapsule(txId);
         assertTrue(response.isEmpty());
+    }
+
+    @Test
+    void testSubjectCommonNameRemoval() throws Exception {
+        // Recipient public key TLS encoded and base64 encoded from client-certificate.pem
+        var path = TestData.getKeysDirectory().resolve("ca_certs/client-certificate.pem");
+
+        X509Certificate clientCertificate;
+        try (InputStream in = Files.newInputStream(path)) {
+            CertificateFactory factory = CertificateFactory.getInstance("X.509");
+            clientCertificate = (X509Certificate) factory.generateCertificate(in);
+        }
+
+        String censoredSubjectNameStr = GetKeyCapsuleApi.getCertSubjectNameWithoutCN(clientCertificate);
+
+        String original = clientCertificate.getSubjectX500Principal().getName();
+        assertTrue(original.contains("CN="));
+
+        assertFalse(censoredSubjectNameStr.contains("CN="));
+        // Check if censoredSubjectNameStr is a valid, if not,
+        // then the following code will throw InvalidNameException
+        new LdapName(censoredSubjectNameStr);
     }
 
     private static KeyCapsuleClientImpl createPkcs12ServerClient(String serverBaseUrl) throws Exception {
