@@ -1,5 +1,7 @@
 package ee.cyber.cdoc2.server.filter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,6 +10,8 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,6 +22,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class RequestLoggingFilter implements Filter {
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -31,14 +37,20 @@ public class RequestLoggingFilter implements Filter {
     }
 
     private void logRequestHeaders(HttpServletRequest request) {
-        String method = request.getMethod();
-        String uri = request.getRequestURI();
-        String contentType = request.getHeader("Content-Type");
-        String origin = request.getHeader("Origin");
-        int contentLength = request.getContentLength();
+        Map<String, Object> logData = new LinkedHashMap<>();
 
-        // Collect all Sec-Fetch-* headers
-        var secFetchHeaders = Collections.list(request.getHeaderNames())
+        logData.put("method", request.getMethod());
+        logData.put("uri", request.getRequestURI());
+
+        putIfNotNull(logData, "contentType", request.getHeader("Content-Type"));
+        putIfNotNull(logData, "origin", request.getHeader("Origin"));
+
+        int contentLength = request.getContentLength();
+        if (contentLength >= 0) {
+            logData.put("contentLength", contentLength);
+        }
+
+        Map<String, String> secFetchHeaders = Collections.list(request.getHeaderNames())
             .stream()
             .filter(name -> name.toLowerCase().startsWith("sec-fetch-"))
             .collect(Collectors.toMap(
@@ -46,30 +58,30 @@ public class RequestLoggingFilter implements Filter {
                 request::getHeader
             ));
 
-        // Build log message
-        StringBuilder logMessage = new StringBuilder();
-        logMessage.append(String.format("Request: %s %s", method, uri));
-
-        if (contentType != null) {
-            logMessage.append(String.format(" | Content-Type: %s", contentType));
-        }
-
-        // Log content length for requests with body
-        if (contentLength > 0) {
-            logMessage.append(String.format(" | Content-Length: %d bytes", contentLength));
-        }
-
-        if (origin != null) {
-            logMessage.append(String.format(" | Origin: %s", origin));
-        }
-
         if (!secFetchHeaders.isEmpty()) {
-            String secFetchInfo = secFetchHeaders.entrySet().stream()
-                .map(entry -> String.format("%s: %s", entry.getKey(), entry.getValue()))
-                .collect(Collectors.joining(", "));
-            logMessage.append(String.format(" | Sec-Fetch headers: [%s]", secFetchInfo));
+            logData.put("secFetchHeaders", secFetchHeaders);
         }
 
-        log.info(logMessage.toString());
+        putIfNotNull(logData, "clientIp", getClientIp(request));
+
+        try {
+            log.info(OBJECT_MAPPER.writeValueAsString(logData));
+        } catch (JsonProcessingException e) {
+            log.warn("Failed to serialize request log as JSON", e);
+        }
+    }
+
+    private void putIfNotNull(Map<String, Object> map, String key, Object value) {
+        if (value != null) {
+            map.put(key, value);
+        }
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        String xff = request.getHeader("X-Forwarded-For");
+        if (xff != null && !xff.isBlank()) {
+            return xff.split(",")[0].trim();
+        }
+        return null;
     }
 }

@@ -3,7 +3,7 @@
 ## [1.7.0] Improved logging (2026-xx-xx)
 
 ### Internal
-* Log the `Content-Type`, `Origin` and `Sec-Fetch-*` header values for each request.
+* Log the `Content-Type`, `Origin` and `Sec-Fetch-*`, `X-Forwarded-For` header values for each request.
 * Added request completion time logging.
 * For `POST` requests, log the size of the request body.
 
