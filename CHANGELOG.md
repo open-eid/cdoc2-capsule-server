@@ -9,6 +9,9 @@
 * Remove the certificate subject common name (CN) from the log's.
 * Add support for tracing.
 
+### Bugfixes
+* Fix database connection not retried in the expired capsule cleanup job.
+
 ## [1.6.0] Improved Key-Capsule Expiry Logic & secp265 Support (2025-12-01)
 
 ### Features

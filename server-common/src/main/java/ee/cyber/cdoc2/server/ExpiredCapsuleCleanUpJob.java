@@ -1,20 +1,16 @@
 package ee.cyber.cdoc2.server;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Types;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import ee.cyber.cdoc2.server.config.DbConnectionConfigProperties;
 import ee.cyber.cdoc2.server.exeptions.JobFailureException;
 
 
@@ -26,13 +22,7 @@ import ee.cyber.cdoc2.server.exeptions.JobFailureException;
 @RequiredArgsConstructor
 public final class ExpiredCapsuleCleanUpJob {
 
-    private Connection dbConnection;
-    private final DbConnectionConfigProperties configProperties;
-
-    @PostConstruct
-    void init() {
-        dbConnection = createDbConnection();
-    }
+    private final JdbcTemplate jdbcTemplate;
 
     /**
      * Executes the stored function {@code expired_cdoc2_capsule_cleanup()} in CDOC2 database
@@ -41,45 +31,27 @@ public final class ExpiredCapsuleCleanUpJob {
     public int cleanUpExpiredCapsules() {
         log.debug("Executing expired key capsules deletion from database");
 
-        String query = "{? = call expired_cdoc2_capsule_cleanup()}";
-        try (CallableStatement stmt = dbConnection.prepareCall(query)) {
-            stmt.registerOutParameter(1, Types.INTEGER);
-            stmt.execute();
-            return getExecutionResult(stmt);
-        } catch (SQLException e) {
-            String errorMsg = "Expired key capsules deletion has failed";
-            log.error(errorMsg);
-            throw new JobFailureException(errorMsg, e);
-        }
-    }
-
-    int getExecutionResult(CallableStatement stmt) throws SQLException {
-        int deleted = stmt.getInt(1);
-        if (deleted == 0) {
-            log.debug("No expired key capsules");
-        } else {
-            log.info("Total number of successfully deleted expired key capsules is {}", deleted);
-        }
-        return deleted;
-    }
-
-    private Connection createDbConnection() {
         try {
-            return DriverManager.getConnection(
-                configProperties.url(),
-                configProperties.username(),
-                configProperties.password()
-            );
-        } catch (SQLException e) {
-            String errorMsg = "Failed to establish database connection";
-            log.error(errorMsg);
+            Integer deleted = jdbcTemplate.execute((Connection connection) -> {
+                String query = "{? = call expired_cdoc2_capsule_cleanup()}";
+                try (CallableStatement stmt = connection.prepareCall(query)) {
+                    stmt.registerOutParameter(1, Types.INTEGER);
+                    stmt.execute();
+                    return stmt.getInt(1);
+                }
+            });
+
+            if (deleted == null || deleted == 0) {
+                log.debug("No expired key capsules");
+                return 0;
+            } else {
+                log.info("Total number of successfully deleted expired key capsules is {}", deleted);
+                return deleted;
+            }
+        } catch (Exception e) {
+            String errorMsg = "Expired key capsules deletion has failed";
+            log.error(errorMsg, e);
             throw new JobFailureException(errorMsg, e);
         }
     }
-
-    @PreDestroy
-    public void preDestroy() throws SQLException {
-        dbConnection.close();
-    }
-
 }
