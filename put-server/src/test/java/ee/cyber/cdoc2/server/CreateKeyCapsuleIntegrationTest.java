@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,7 +61,7 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
 
     @Qualifier("trustAllNoClientAuth")
     @Autowired
-    private RestTemplate restTemplate;
+    private RestClient restClient;
 
     @Test
     void shouldCreateEcCapsuleUsingPKCS12Client() throws Exception {
@@ -382,7 +382,11 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
 
         invalidCapsules.forEach(capsule -> assertThrows(
             HttpClientErrorException.BadRequest.class,
-            () -> this.restTemplate.postForEntity(this.capsuleApiUrl(), capsule, Void.class)
+            () -> this.restClient.post()
+                .uri(this.capsuleApiUrl())
+                .body(capsule)
+                .retrieve()
+                .toBodilessEntity()
         ));
     }
 
@@ -407,7 +411,14 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
 
             log.info("Creating RSA capsule for {}", certFile);
 
-            var location = this.restTemplate.postForLocation(new URI(this.capsuleApiUrl()), rsaCapsule);
+            var location = this.restClient.post()
+                .uri(new URI(this.capsuleApiUrl()))
+                .body(rsaCapsule)
+                .retrieve()
+                .toBodilessEntity()
+                .getHeaders()
+                .getLocation();
+
             assertNotNull(location);
         }
     }
