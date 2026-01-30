@@ -8,6 +8,17 @@
 * For `POST` requests, log the size of the request body.
 * Remove the certificate subject common name (CN) from the log's.
 * Add support for tracing.
+* Updated the following dependency's:
+    * `spring-boot` version `3.5.0` -> `4.0.1`
+    * `junit-bom` version `5.12.2` -> `6.1.0-M1`
+    * `maven-checkstyle-plugin` version `3.5.0` -> `3.6.0`
+    * `maven-failsafe-plugin` version `3.5.0` -> `3.5.4`
+    * `maven-release-plugin` version `3.1.1` -> `3.3.1`
+    * `jacoco-maven-plugin` version `0.8.12` -> `0.8.14`
+    * `jakarta.validation-api` version `3.1.1` -> `4.0.0-M1`
+    * `maven-jar-plugin` version `3.4.2` -> `3.5.0`
+    * `maven-antrun-plugin` version `3.1.0` -> `3.2.0`
+    * `liquibase-core` version `4.31.1` -> `5.0.1`
 
 ### Bugfixes
 * Fix database connection not retried in the expired capsule cleanup job.

@@ -45,7 +45,6 @@
 			<scope>test</scope>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
@@ -90,11 +89,14 @@
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>postgresql</artifactId>
-				<scope>test</scope>
+            <version>1.21.4</version>
+            <scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>junit-jupiter</artifactId>
+            <version>1.21.4</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -116,7 +118,7 @@
 			<groupId>jakarta.validation</groupId>
 			<artifactId>jakarta.validation-api</artifactId>
 			<!-- for some reason spring boot 3.5.0 still uses 3.0.2 -->
-			<version>3.1.1</version>
+			<version>4.0.0-M1</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -149,7 +151,7 @@
 				<!-- compile tests as a jar for use by server projects -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.4.2</version>
+				<version>3.5.0</version>
 				<executions>
 					<execution>
 						<goals>
@@ -162,7 +164,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>3.1.0</version>
+				<version>3.2.0</version>
 				<executions>
 					<execution>
 						<phase>generate-test-resources</phase>

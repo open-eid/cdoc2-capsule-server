@@ -47,9 +47,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClient;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.client.RestClientResponseException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,7 +64,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
     // rest client with client auth using keystore rsa/client-rsa-2048.p12
     @Qualifier("trustAllWithClientAuth")
     @Autowired
-    private RestTemplate restTemplate;
+    private RestClient restClient;
 
     @Test
     void testPKCS12Client() throws Exception {
@@ -361,10 +362,11 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
 
         String txId = this.saveCapsule(rsaCapsule, EXPIRY_TIME).getTransactionId();
 
-        var response = this.restTemplate.getForEntity(
-            new URI(this.capsuleApiUrl() + "/" + txId),
-            Capsule.class
-        );
+        ResponseEntity<Capsule> response = this.restClient
+            .get()
+            .uri(this.capsuleApiUrl() + "/" + txId)
+            .retrieve()
+            .toEntity(Capsule.class);
 
         assertTrue(response.getHeaders().containsKey(Constants.X_EXPIRY_TIME_HEADER));
         assertTrue(response.getHeaders().containsKey(Constants.X_EXPIRY_TIME_ADJUSTED));
@@ -388,9 +390,13 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         String txId = "KC123"; // too short tx
         URI requestUri = new URI(this.capsuleApiUrl() + "/" + txId);
 
-        HttpClientErrorException ex = assertThrows(
-            HttpClientErrorException.class,
-            () -> this.restTemplate.getForEntity(requestUri, Capsule.class)
+        RestClientResponseException ex = assertThrows(
+            RestClientResponseException.class,
+            () -> this.restClient
+                .get()
+                .uri(requestUri)
+                .retrieve()
+                .toEntity(Capsule.class)
         );
 
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
@@ -400,9 +406,13 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
     void shouldGetHttp404() throws Exception {
         String txId = "KC12345678901234567890"; // certificate provided and passes validation, but capsule not found
         URI requestUri = new URI(this.capsuleApiUrl() + "/" + txId);
-        HttpClientErrorException ex = assertThrows(
-            HttpClientErrorException.class,
-            () -> this.restTemplate.getForEntity(requestUri, Capsule.class)
+        RestClientResponseException ex = assertThrows(
+            RestClientResponseException.class,
+            () -> this.restClient
+                .get()
+                .uri(requestUri)
+                .retrieve()
+                .toEntity(Capsule.class)
         );
 
         assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());

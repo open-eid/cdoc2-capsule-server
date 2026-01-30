@@ -24,7 +24,7 @@
 
 		<tests>!(pkcs11 | slow)</tests>
 
-		<spring-boot.version>3.5.0</spring-boot.version>
+        <spring-boot.version>4.0.1</spring-boot.version>
 		<!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html-->
 	</properties>
 
@@ -219,20 +219,6 @@
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
 
-		<!--
-		without jaxp-api dependency server will fail to start with:
-
-		org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory'
-		defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]:
-		Invocation of init method failed;
-		nested exception is java.lang.NoClassDefFoundError: javax/xml/bind/JAXBException
-		-->
-		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>2.3.1</version>
-		</dependency>
-
 		<!-- metrics using micrometer -->
 		<dependency>
 			<groupId>io.micrometer</groupId>
@@ -275,7 +261,7 @@
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
-			<version>4.31.1</version>
+			<version>5.0.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
