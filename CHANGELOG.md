@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.7.0] Improved logging (2026-xx-xx)
+## [1.7.0] Improved logging (2026-01-30)
 
 ### Internal
 * Log the `Content-Type`, `Origin` and `Sec-Fetch-*`, `X-Forwarded-For` header values for each request.
