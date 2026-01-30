@@ -98,6 +98,15 @@ See [VERSIONING.md](https://github.com/open-eid/cdoc2-java-ref-impl/blob/master/
 It will trigger `maven-release.yml` workflow that will deploy Maven packages to GitHub Maven package repository
 and build & publish Docker/OCI images.
 
+### Creating SBOM (Software Bill of Materials)
+
+The SBOM report will be automatically generated at build time.
+
+To manually create the SBOM report, run:
+```
+mvn cyclonedx:makeAggregateBom
+```
+The generated reports (`target/bom.json` and `target/bom.xml`) include dependencies from all submodules.
 
 ## Related projects
 
