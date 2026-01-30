@@ -19,6 +19,7 @@
     * `maven-jar-plugin` version `3.4.2` -> `3.5.0`
     * `maven-antrun-plugin` version `3.1.0` -> `3.2.0`
     * `liquibase-core` version `4.31.1` -> `5.0.1`
+* Add `logstash-logback-encoder` dependency to support OpenTelemetry JSON logging.
 
 ### Bugfixes
 * Fix database connection not retried in the expired capsule cleanup job.
