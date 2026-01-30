@@ -5,6 +5,7 @@
 ### Internal
 * Log the `Content-Type`, `Origin` and `Sec-Fetch-*` header values for each request.
 * Added request completion time logging.
+* For `POST` requests, log the size of the request body.
 
 ## [1.6.0] Improved Key-Capsule Expiry Logic & secp265 Support (2025-12-01)
 
