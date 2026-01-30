@@ -35,6 +35,7 @@ public class RequestLoggingFilter implements Filter {
         String uri = request.getRequestURI();
         String contentType = request.getHeader("Content-Type");
         String origin = request.getHeader("Origin");
+        int contentLength = request.getContentLength();
 
         // Collect all Sec-Fetch-* headers
         var secFetchHeaders = Collections.list(request.getHeaderNames())
@@ -51,6 +52,11 @@ public class RequestLoggingFilter implements Filter {
 
         if (contentType != null) {
             logMessage.append(String.format(" | Content-Type: %s", contentType));
+        }
+
+        // Log content length for requests with body
+        if (contentLength > 0) {
+            logMessage.append(String.format(" | Content-Length: %d bytes", contentLength));
         }
 
         if (origin != null) {
