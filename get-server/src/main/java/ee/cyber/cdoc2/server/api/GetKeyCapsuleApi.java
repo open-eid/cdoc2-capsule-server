@@ -19,7 +19,12 @@ import java.security.interfaces.RSAPublicKey;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
+import javax.naming.ldap.Rdn;
 import javax.security.auth.x500.X500Principal;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -143,7 +148,7 @@ public class GetKeyCapsuleApi implements KeyCapsulesApiDelegate {
 
         if (certs.length > 0) {
             var clientCert = certs[0];
-            log.info("Got client certificate(subject='{}')", getCertSubjectName(clientCert));
+            log.info("Got client certificate(subject='{}')", getCertSubjectNameWithoutCN(clientCert));
             return Optional.of(clientCert);
         } else {
             log.info("No client certificate in http request");
@@ -151,10 +156,29 @@ public class GetKeyCapsuleApi implements KeyCapsulesApiDelegate {
         }
     }
 
-    private static String getCertSubjectName(X509Certificate certificate) {
+    public static String getCertSubjectNameWithoutCN(X509Certificate certificate) {
         return Optional.ofNullable(certificate.getSubjectX500Principal())
             .map(X500Principal::getName)
+            // Remove the Common name from logs for privacy, it can contain name and id code
+            .map(GetKeyCapsuleApi::removeCN)
             .orElse("");
+    }
+
+    private static String removeCN(String distinguishedName) {
+        try {
+            LdapName ldapName = new LdapName(distinguishedName);
+            List<Rdn> rdns = ldapName.getRdns();
+
+            List<Rdn> filteredRdns = rdns.stream()
+                .filter(rdn -> !rdn.getType().equalsIgnoreCase("CN"))
+                .collect(Collectors.toList());
+
+            LdapName result = new LdapName(filteredRdns);
+            return result.toString();
+        } catch (InvalidNameException e) {
+            // If parsing fails, return empty string
+            return "";
+        }
     }
 
 }
