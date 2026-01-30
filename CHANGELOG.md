@@ -7,6 +7,7 @@
 * Added request completion time logging.
 * For `POST` requests, log the size of the request body.
 * Remove the certificate subject common name (CN) from the log's.
+* Add support for tracing.
 
 ## [1.6.0] Improved Key-Capsule Expiry Logic & secp265 Support (2025-12-01)
 
