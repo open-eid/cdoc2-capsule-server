@@ -29,7 +29,8 @@ Depends on:
 Configure github package repo access
 https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry#authenticating-with-a-personal-access-token
 
-Example `<profile>` section of `settings.xml` for using cdoc2 dependencies:
+Add repository url to `<profile>` section of your PC local file `.m2/settings.xml` for using cdoc2
+dependencies:
 ```xml
   <profile>
       <id>github</id>
