@@ -284,6 +284,10 @@ management.metrics.data.repository.autotime.enabled=true
 # https://docs.spring.io/spring-boot/docs/2.1.5.RELEASE/reference/htmlsingle/#production-ready-metrics-spring-mvc
 # http.server.requests metrics
 management.metrics.web.server.auto-time-requests=true
+
+# Tracing configuration
+management.tracing.sampling.probability=1.0
+management.otlp.tracing.endpoint=http://localhost:4318/v1/traces
 ```
 
 If needed to list all spring boot application.properties enable endpoint `/env` temporary:
@@ -377,5 +381,34 @@ jvm_memory_used_bytes{application="cdoc2-put-server",applications="transfer-serv
 ...........
 ```
 
+### Tracing
+
+The CDOC2 Key Capsule Server supports distributed tracing using OpenTelemetry Protocol (OTLP) through Spring Boot's Micrometer integration.
+To visualize traces, you need to run a compatible trace backend.
+
+#### Configuration
+To enable tracing, add the following configuration parameters to application.properties:
+```
+# Tracing configuration
+# Probability of requests to sample (1.0 = 100%, 0.1 = 10%)
+management.tracing.sampling.probability=1.0
+
+# OTLP endpoint for trace export
+# Default endpoint for OpenTelemetry Collector or compatible backends
+management.otlp.tracing.endpoint=http://localhost:4318/v1/traces
+```
+
+#### Trace Propagation
+The CDOC2 servers support W3C Trace Context propagation, allowing distributed traces to span across multiple services and components.
+
+To propagate traces, include the `traceparent` header in your HTTP requests:
+```
+traceparent: 00-<trace-id>-<span-id>-01
+```
+Format breakdown:
+* `00` - Version (currently always "00")
+* `<trace-id>` - 32-character hexadecimal trace identifier (16 bytes)
+* `<span-id>` - 16-character hexadecimal span identifier (8 bytes)
+* `01` - Trace flags (01 = sampled, 00 = not sampled)
 
 [^1]: https://docs.oracle.com/cd/E54932_01/doc.705/e54936/cssg_create_ssl_cert.htm#CSVSG182
