@@ -14,6 +14,8 @@ import java.security.interfaces.ECPublicKey;
 import ee.cyber.cdoc2.server.generated.model.Capsule;
 
 import static ee.cyber.cdoc2.server.generated.model.Capsule.CapsuleTypeEnum.ECC_SECP384R1;
+import static ee.cyber.cdoc2.shared.crypto.EllipticCurve.SECP256R1;
+import static ee.cyber.cdoc2.shared.crypto.EllipticCurve.SECP384R1;
 
 /**
  * Utility class for validating capsules.
@@ -39,8 +41,8 @@ public final class CapsuleValidator {
         try {
 
             var keyLength = switch (capsule.getCapsuleType()) {
-                case ECC_SECP384R1 -> ECKeys.SECP_384_R_1_LEN_BYTES;
-                case ECC_SECP256R1 -> ECKeys.SECP_256_R_1_LEN_BYTES;
+                case ECC_SECP384R1 -> SECP384R1.getKeyLength();
+                case ECC_SECP256R1 -> SECP256R1.getKeyLength();
                 default -> throw new IllegalArgumentException("Must be a elliptic curve capsule");
             };
             int tlsEncodedKeyLen = 2 * keyLength + 1;

@@ -11,41 +11,58 @@ import org.slf4j.LoggerFactory;
  */
 public enum EllipticCurve {
 
-    UNKNOWN(null, null),
-    SECP384R1(ECKeys.SECP_384_R_1, ECKeys.SECP_384_OID),
-    SECP256R1(ECKeys.SECP_256_R_1, ECKeys.SECP_256_OID);
+    UNKNOWN(null, null, 0),
+    // https://docs.oracle.com/en/java/javase/17/security/oracle-providers.html
+    // Table 4-28 Recommended Curves Provided by the SunEC Provider
+    SECP384R1("secp384r1", "1.3.132.0.34", 384 / 8),
+    SECP256R1("secp256r1", "1.2.840.10045.3.1.7", 256 / 8);
 
     private static final Logger log = LoggerFactory.getLogger(EllipticCurve.class);
 
     private final String name;
     private final String oid;
+    private final int keyLengthBytes;
 
-    EllipticCurve(String name, String oid) {
+    EllipticCurve(String name, String oid, int keyLengthBytes) {
         this.name = name;
         this.oid = oid;
+        this.keyLengthBytes = keyLengthBytes;
     }
 
     public String getName() {
         return name;
     }
 
+    public String getOid() {
+        return oid;
+    }
+
     /**
      * Key length in bytes. For secp384r1, its 384/8=48
      */
     public int getKeyLength() {
-        return switch (this) {
-            case SECP384R1 -> ECKeys.SECP_384_R_1_LEN_BYTES;
-            case SECP256R1 -> ECKeys.SECP_256_R_1_LEN_BYTES;
-            default -> throw new IllegalStateException("getKeyLength not implemented for " + this);
-        };
+        if (this == UNKNOWN) {
+            throw new IllegalStateException("getKeyLength not implemented for " + this);
+        }
+        return keyLengthBytes;
     }
 
     public static EllipticCurve forOid(String oid) throws NoSuchAlgorithmException {
-        return switch (oid) {
-            case ECKeys.SECP_384_OID -> SECP384R1;
-            case ECKeys.SECP_256_OID -> SECP256R1;
-            default -> throw new NoSuchAlgorithmException("Unknown EC curve oid " + oid);
-        };
+        for (EllipticCurve curve : values()) {
+            if (curve != UNKNOWN && curve.oid.equals(oid)) {
+                return curve;
+            }
+        }
+        throw new NoSuchAlgorithmException("Unknown EC curve oid " + oid);
+    }
+
+    public static EllipticCurve forName(String name) throws NoSuchAlgorithmException {
+        for (EllipticCurve curve : values()) {
+            if (curve != UNKNOWN && curve.name.equals(name)) {
+                return curve;
+            }
+        }
+        throw new NoSuchAlgorithmException("Unknown EC curve name " + name);
     }
 
 }
