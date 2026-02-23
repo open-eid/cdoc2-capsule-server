@@ -1,6 +1,7 @@
 package ee.cyber.cdoc2.server.api;
 
 import ee.cyber.cdoc2.shared.crypto.ECKeys;
+import ee.cyber.cdoc2.shared.crypto.EllipticCurve;
 import ee.cyber.cdoc2.shared.crypto.RsaUtils;
 import java.io.IOException;
 
@@ -13,7 +14,6 @@ import java.security.interfaces.ECPublicKey;
 
 import ee.cyber.cdoc2.server.generated.model.Capsule;
 
-import static ee.cyber.cdoc2.server.generated.model.Capsule.CapsuleTypeEnum.ECC_SECP384R1;
 import static ee.cyber.cdoc2.shared.crypto.EllipticCurve.SECP256R1;
 import static ee.cyber.cdoc2.shared.crypto.EllipticCurve.SECP384R1;
 
@@ -39,13 +39,13 @@ public final class CapsuleValidator {
     private static boolean validateEcCapsule(Capsule capsule) {
 
         try {
-
-            var keyLength = switch (capsule.getCapsuleType()) {
-                case ECC_SECP384R1 -> SECP384R1.getKeyLength();
-                case ECC_SECP256R1 -> SECP256R1.getKeyLength();
+            EllipticCurve curve = switch (capsule.getCapsuleType()) {
+                case ECC_SECP256R1 -> SECP256R1;
+                case ECC_SECP384R1 -> SECP384R1;
                 default -> throw new IllegalArgumentException("Must be a elliptic curve capsule");
             };
-            int tlsEncodedKeyLen = 2 * keyLength + 1;
+
+            int tlsEncodedKeyLen = 2 * curve.getKeyLength() + 1;
 
             if (capsule.getRecipientId() == null || capsule.getEphemeralKeyMaterial() == null) {
                 log.error("Recipient id or ephemeral key was null");
@@ -57,17 +57,10 @@ public final class CapsuleValidator {
                 return false;
             }
 
-            if (capsule.getCapsuleType() == ECC_SECP384R1) {
-                ECPublicKey recipientPubKey = ECKeys.decodeSecP384R1EcPublicKeyFromTls(capsule.getRecipientId());
-                ECPublicKey senderPubKey = ECKeys.decodeSecP384R1EcPublicKeyFromTls(capsule.getEphemeralKeyMaterial());
+            ECPublicKey recipientPubKey = ECKeys.decodeEcPublicKeyFromTls(curve, capsule.getRecipientId());
+            ECPublicKey senderPubKey = ECKeys.decodeEcPublicKeyFromTls(curve, capsule.getEphemeralKeyMaterial());
 
-                return (ECKeys.isValidSecP384R1(recipientPubKey) && ECKeys.isValidSecP384R1(senderPubKey));
-            }
-            ECPublicKey recipientPubKey = ECKeys.decodeSecP256R1EcPublicKeyFromTls(capsule.getRecipientId());
-            ECPublicKey senderPubKey = ECKeys.decodeSecP256R1EcPublicKeyFromTls(capsule.getEphemeralKeyMaterial());
-
-            return (ECKeys.isValidSecP256R1(recipientPubKey) && ECKeys.isValidSecP256R1(senderPubKey));
-
+            return (ECKeys.isValidPublicKey(curve, recipientPubKey) && ECKeys.isValidPublicKey(curve, senderPubKey));
         } catch (GeneralSecurityException gse) {
             log.error("Invalid {} EC key", capsule.getCapsuleType(), gse);
         }

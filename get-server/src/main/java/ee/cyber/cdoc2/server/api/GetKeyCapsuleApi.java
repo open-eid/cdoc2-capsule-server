@@ -2,6 +2,7 @@ package ee.cyber.cdoc2.server.api;
 
 import ee.cyber.cdoc2.server.Constants;
 import ee.cyber.cdoc2.shared.crypto.ECKeys;
+import ee.cyber.cdoc2.shared.crypto.EllipticCurve;
 import ee.cyber.cdoc2.shared.crypto.RsaUtils;
 import ee.cyber.cdoc2.shared.crypto.KeyAlgorithm;
 import ee.cyber.cdoc2.server.model.db.KeyCapsuleDb;
@@ -33,6 +34,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.NativeWebRequest;
+
+import static ee.cyber.cdoc2.shared.crypto.ECKeys.getCurve;
 
 
 /**
@@ -91,16 +94,12 @@ public class GetKeyCapsuleApi implements KeyCapsulesApiDelegate {
             if (KeyAlgorithm.isEcKeysAlgorithm(publicKey.getAlgorithm())
                 && publicKey instanceof ECPublicKey ecPublicKey) {
 
-                KeyCapsuleDb.CapsuleType type = capsule.getCapsuleType();
+                EllipticCurve curve = EllipticCurve.forName(capsule.getCapsuleType().name());
 
-                boolean curveMatches =
-                    (type == KeyCapsuleDb.CapsuleType.SECP384R1 && ECKeys.isEcSecp384r1Curve(ecPublicKey))
-                        || (type == KeyCapsuleDb.CapsuleType.SECP256R1 && ECKeys.isEcSecp256r1Curve(ecPublicKey));
-
-                if (curveMatches) {
+                if (getCurve(ecPublicKey) == curve) {
                     return Arrays.equals(
                         capsule.getRecipient(),
-                        ECKeys.encodeEcPubKeyForTls(ecPublicKey)
+                        ECKeys.encodeEcPubKeyForTls(curve, ecPublicKey)
                     );
                 }
             }
