@@ -11,7 +11,9 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PublicKey;
 import java.security.interfaces.ECKey;
+import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECParameterSpec;
@@ -22,8 +24,13 @@ import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.Objects;
 
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static ee.cyber.cdoc2.shared.crypto.EllipticCurve.forPubKey;
 
 /**
  * EC key generation, encoding and decoding. Supports secp384r1 and secp256r1.
@@ -94,7 +101,7 @@ public final class ECKeys {
     // Decoding
     // -------------------------------------------------------------------------
 
-    static ECPublicKey decodeEcPublicKeyFromTls(EllipticCurve curve, ByteBuffer encoded)
+    public static ECPublicKey decodeEcPublicKeyFromTls(EllipticCurve curve, ByteBuffer encoded)
         throws GeneralSecurityException {
         return decodeEcPublicKeyFromTls(curve,
             Arrays.copyOfRange(encoded.array(), encoded.position(), encoded.limit()));
@@ -116,18 +123,6 @@ public final class ECKeys {
                     + HexFormat.of().formatHex(encoded));
         }
         return ecPublicKey;
-    }
-
-    /** @deprecated Use {@link #decodeEcPublicKeyFromTls(EllipticCurve, byte[])} with {@code EllipticCurve.SECP384R1} */
-    @Deprecated
-    public static ECPublicKey decodeSecP384R1EcPublicKeyFromTls(byte[] encoded) throws GeneralSecurityException {
-        return decodeEcPublicKeyFromTls(EllipticCurve.SECP384R1, encoded);
-    }
-
-    /** @deprecated Use {@link #decodeEcPublicKeyFromTls(EllipticCurve, byte[])} with {@code EllipticCurve.SECP256R1} */
-    @Deprecated
-    public static ECPublicKey decodeSecP256R1EcPublicKeyFromTls(byte[] encoded) throws GeneralSecurityException {
-        return decodeEcPublicKeyFromTls(EllipticCurve.SECP256R1, encoded);
     }
 
     // -------------------------------------------------------------------------
@@ -166,18 +161,6 @@ public final class ECKeys {
         return onCurve;
     }
 
-    /** @deprecated Use {@link #isValidPublicKey(EllipticCurve, ECPublicKey)} with {@code EllipticCurve.SECP384R1} */
-    @Deprecated
-    public static boolean isValidSecP384R1(ECPublicKey ecPublicKey) throws GeneralSecurityException {
-        return isValidPublicKey(EllipticCurve.SECP384R1, ecPublicKey);
-    }
-
-    /** @deprecated Use {@link #isValidPublicKey(EllipticCurve, ECPublicKey)} with {@code EllipticCurve.SECP256R1} */
-    @Deprecated
-    public static boolean isValidSecP256R1(ECPublicKey ecPublicKey) throws GeneralSecurityException {
-        return isValidPublicKey(EllipticCurve.SECP256R1, ecPublicKey);
-    }
-
     /**
      * Returns true if the key pair's algorithm is EC and both keys are on the expected {@code curve}.
      */
@@ -193,18 +176,6 @@ public final class ECKeys {
             // Can't interrogate the curve for unextractable PKCS11 keys; trust the public key
             return isValidPublicKey(curve, ecPublicKey) && Crypto.isECPKCS11Key(keyPair.getPrivate());
         }
-    }
-
-    /** @deprecated Use {@link #isECKeyPairForCurve(EllipticCurve, KeyPair)} with {@code EllipticCurve.SECP384R1} */
-    @Deprecated
-    public static boolean isECSecp384r1(KeyPair keyPair) throws GeneralSecurityException {
-        return isECKeyPairForCurve(EllipticCurve.SECP384R1, keyPair);
-    }
-
-    /** @deprecated Use {@link #isECKeyPairForCurve(EllipticCurve, KeyPair)} with {@code EllipticCurve.SECP256R1} */
-    @Deprecated
-    public static boolean isECSecp256r1(KeyPair keyPair) throws GeneralSecurityException {
-        return isECKeyPairForCurve(EllipticCurve.SECP256R1, keyPair);
     }
 
     /**
@@ -227,17 +198,43 @@ public final class ECKeys {
         return params.getParameterSpec(ECGenParameterSpec.class).getName();
     }
 
-    /** @deprecated Use {@link #getCurve(ECKey)} and compare to {@code EllipticCurve.SECP384R1} */
-    @Deprecated
-    public static boolean isEcSecp384r1Curve(ECKey key) throws GeneralSecurityException {
-        return getCurve(key) == EllipticCurve.SECP384R1;
+    /**
+     * Check if public key is supported by CDOC lib
+     *
+     * @param publicKey to check for encryption by CDOC
+     * @return if publicKey is supported for encryption by CDOC
+     */
+    public static boolean isSupported(PublicKey publicKey) {
+        try {
+            EllipticCurve curve = forPubKey(publicKey);
+            return isValidPublicKey(curve, (ECPublicKey) publicKey);
+        } catch (GeneralSecurityException ge) {
+            log.info("Unsupported public key {}", ge.toString());
+            return false;
+        }
     }
 
-    /** @deprecated Use {@link #getCurve(ECKey)} and compare to {@code EllipticCurve.SECP256R1} */
-    @Deprecated
-    public static boolean isEcSecp256r1Curve(ECKey key) throws GeneralSecurityException {
-        return getCurve(key) == EllipticCurve.SECP256R1;
+    /**
+     * Derive EC public key from EC private key (and its curve)
+     * @param ecPrivateKey EC private key
+     * @return EC KeyPair where public key is derived from ecPrivateKey
+     * @throws GeneralSecurityException
+     */
+    public static KeyPair deriveECPubKeyFromPrivKey(ECPrivateKey ecPrivateKey) throws GeneralSecurityException {
+        KeyFactory keyFactory
+            = KeyFactory.getInstance(KeyAlgorithm.Algorithm.EC.name(), new BouncyCastleProvider());
+
+        ECNamedCurveParameterSpec spec = ECNamedCurveTable.getParameterSpec(getCurveOid(ecPrivateKey));
+        org.bouncycastle.math.ec.ECPoint q = spec.getG().multiply(ecPrivateKey.getS());
+        PublicKey bcPublicKey = keyFactory.generatePublic(new org.bouncycastle.jce.spec.ECPublicKeySpec(q, spec));
+
+        ECPublicKey publicKey = ECKeys.decodeEcPublicKeyFromTls(
+            forPubKey(bcPublicKey),
+            encodeEcPubKeyForTls((ECPublicKey) bcPublicKey)
+        );
+        return new KeyPair(publicKey, ecPrivateKey);
     }
+
 
     // -------------------------------------------------------------------------
     // Private helpers
