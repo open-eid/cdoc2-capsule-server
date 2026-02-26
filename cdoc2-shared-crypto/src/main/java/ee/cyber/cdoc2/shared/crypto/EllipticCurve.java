@@ -11,6 +11,7 @@ import java.util.Locale;
 import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.math.ec.custom.sec.SecP256R1Curve;
 import org.bouncycastle.math.ec.custom.sec.SecP384R1Curve;
+import org.bouncycastle.math.ec.custom.sec.SecP521R1Curve;
 
 
 /**
@@ -26,18 +27,26 @@ public enum EllipticCurve {
         null,
         (byte) 0 // Value from the cdoc2 spec
     ),
-    SECP384R1(
-        "secp384r1",
-        "1.3.132.0.34",
-        384 / 8, new SecP384R1Curve(),
-        (byte) 1 // Value from the cdoc2 spec
-    ),
     SECP256R1(
         "secp256r1",
         "1.2.840.10045.3.1.7",
         256 / 8,
         new SecP256R1Curve(),
         (byte) 2 // Value from the cdoc2 spec
+    ),
+    SECP384R1(
+        "secp384r1",
+        "1.3.132.0.34",
+        384 / 8,
+        new SecP384R1Curve(),
+        (byte) 1 // Value from the cdoc2 spec
+    ),
+    SECP521R1(
+        "secp521r1",
+        "1.3.132.0.35",
+        521 / 8 + 1,
+        new SecP521R1Curve(),
+        (byte) 3 // Value from the cdoc2 spec
     );
 
     private final String name;
@@ -100,6 +109,7 @@ public enum EllipticCurve {
         return switch (value) {
             case (byte) 1 -> SECP384R1;
             case (byte) 2 -> SECP256R1;
+            case (byte) 3 -> SECP521R1;
             default -> throw new NoSuchAlgorithmException("Unknown EC curve value " + value);
         };
     }

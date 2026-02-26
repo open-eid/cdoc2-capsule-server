@@ -97,13 +97,17 @@ abstract class KeyCapsuleIntegrationTest extends BaseInitializationTest {
      * @return the saved capsule
      */
     protected KeyCapsuleDb saveCapsule(Capsule dto, Instant expiryTime) {
+        KeyCapsuleDb.CapsuleType capsuleType = switch (dto.getCapsuleType()) {
+            case ECC_SECP256R1 -> KeyCapsuleDb.CapsuleType.SECP256R1;
+            case ECC_SECP384R1 -> KeyCapsuleDb.CapsuleType.SECP384R1;
+            case ECC_SECP521R1 -> KeyCapsuleDb.CapsuleType.SECP521R1;
+            case RSA -> KeyCapsuleDb.CapsuleType.RSA;
+            default -> throw new RuntimeException("Unknown capsule type");
+        };
+
         return this.capsuleRepository.save(
             new KeyCapsuleDb()
-                .setCapsuleType(
-                    dto.getCapsuleType() == Capsule.CapsuleTypeEnum.ECC_SECP384R1
-                        ? KeyCapsuleDb.CapsuleType.SECP384R1
-                        : KeyCapsuleDb.CapsuleType.RSA
-                )
+                .setCapsuleType(capsuleType)
                 .setRecipient(dto.getRecipientId())
                 .setPayload(dto.getEphemeralKeyMaterial())
                 .setExpiryTime(expiryTime)

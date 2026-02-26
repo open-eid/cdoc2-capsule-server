@@ -14,8 +14,7 @@ import java.security.interfaces.ECPublicKey;
 
 import ee.cyber.cdoc2.server.generated.model.Capsule;
 
-import static ee.cyber.cdoc2.shared.crypto.EllipticCurve.SECP256R1;
-import static ee.cyber.cdoc2.shared.crypto.EllipticCurve.SECP384R1;
+import static ee.cyber.cdoc2.shared.crypto.EllipticCurve.*;
 
 /**
  * Utility class for validating capsules.
@@ -29,7 +28,7 @@ public final class CapsuleValidator {
 
     static boolean isValid(Capsule capsule) {
         return switch (capsule.getCapsuleType()) {
-            case ECC_SECP384R1, ECC_SECP256R1 -> validateEcCapsule(capsule);
+            case ECC_SECP256R1, ECC_SECP384R1, ECC_SECP521R1 -> validateEcCapsule(capsule);
             case RSA -> validateRSACapsule(capsule);
             default ->
                 throw new IllegalArgumentException("Unexpected capsule type: " + capsule.getCapsuleType());
@@ -42,6 +41,7 @@ public final class CapsuleValidator {
             EllipticCurve curve = switch (capsule.getCapsuleType()) {
                 case ECC_SECP256R1 -> SECP256R1;
                 case ECC_SECP384R1 -> SECP384R1;
+                case ECC_SECP521R1 -> SECP521R1;
                 default -> throw new IllegalArgumentException("Must be a elliptic curve capsule");
             };
 

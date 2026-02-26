@@ -119,11 +119,14 @@ public class GetKeyCapsuleApi implements KeyCapsulesApiDelegate {
         dto.setEphemeralKeyMaterial(db.getPayload());
 
         switch (db.getCapsuleType()) {
+            case SECP256R1:
+                dto.setCapsuleType(Capsule.CapsuleTypeEnum.ECC_SECP256R1);
+                break;
             case SECP384R1:
                 dto.setCapsuleType(Capsule.CapsuleTypeEnum.ECC_SECP384R1);
                 break;
-            case SECP256R1:
-                dto.setCapsuleType(Capsule.CapsuleTypeEnum.ECC_SECP256R1);
+            case SECP521R1:
+                dto.setCapsuleType(Capsule.CapsuleTypeEnum.ECC_SECP521R1);
                 break;
             case RSA:
                 dto.setCapsuleType(Capsule.CapsuleTypeEnum.RSA);

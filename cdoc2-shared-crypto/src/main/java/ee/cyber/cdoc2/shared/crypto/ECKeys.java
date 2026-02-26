@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import static ee.cyber.cdoc2.shared.crypto.EllipticCurve.forPubKey;
 
 /**
- * EC key generation, encoding and decoding. Supports secp384r1 and secp256r1.
+ * EC key generation, encoding and decoding. Supports secp256r1, secp384r1 and secp521r1.
  */
 @SuppressWarnings("squid:S6706")
 public final class ECKeys {
