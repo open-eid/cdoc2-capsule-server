@@ -80,7 +80,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         capsule.recipientId(ECKeys.encodeEcPubKeyForTls(curve, recipientKey));
 
         // Sender public key
-        KeyPair senderKeyPair = curve.generateEcKeyPair();
+        KeyPair senderKeyPair = ECKeys.generateEcKeyPair(curve);
         ECPublicKey senderPubKey = (ECPublicKey) senderKeyPair.getPublic();
         capsule.ephemeralKeyMaterial(ECKeys.encodeEcPubKeyForTls(senderPubKey));
 
@@ -110,7 +110,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         //recipientPubKey must match with pub key in mutual TLS
         ECPublicKey recipientPubKey = (ECPublicKey) cert.getPublicKey();
 
-        ECPublicKey senderPubKey = (ECPublicKey) EllipticCurve.SECP384R1.generateEcKeyPair().getPublic();
+        ECPublicKey senderPubKey = (ECPublicKey) ECKeys.generateEcKeyPair(EllipticCurve.SECP384R1).getPublic();
 
         log.debug("Sender pub key: {}",
             Base64.getEncoder().encodeToString(
@@ -226,7 +226,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
         var config = KeyCapsuleClientConfiguration.load(p);
         KeyCapsuleClientImpl client = (KeyCapsuleClientImpl) KeyCapsuleClientImpl.create(config);
 
-        KeyPair senderKeyPair = EllipticCurve.SECP384R1.generateEcKeyPair();
+        KeyPair senderKeyPair = ECKeys.generateEcKeyPair(EllipticCurve.SECP384R1);
         ECPublicKey senderPubKey = (ECPublicKey) senderKeyPair.getPublic();
 
         // Storing clientKeyStore in KeyServerPropertiesClient is a bit of hack for tests.
@@ -315,7 +315,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
 
         Capsule capsule = new Capsule();
 
-        KeyPair senderKeyPair = EllipticCurve.SECP384R1.generateEcKeyPair();
+        KeyPair senderKeyPair = ECKeys.generateEcKeyPair(EllipticCurve.SECP384R1);
         ECPublicKey senderPubKey = (ECPublicKey) senderKeyPair.getPublic();
 
         PublicKey pubKey = cert.getPublicKey();

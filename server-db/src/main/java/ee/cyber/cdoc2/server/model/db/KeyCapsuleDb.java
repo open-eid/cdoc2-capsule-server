@@ -36,8 +36,9 @@ public class KeyCapsuleDb {
 
     // key capsule type
     public enum CapsuleType {
-        SECP384R1, // elliptic curve
         SECP256R1, // elliptic curve
+        SECP384R1, // elliptic curve
+        SECP521R1, // elliptic curve
         RSA
     }
 

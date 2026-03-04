@@ -46,6 +46,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
+import static ee.cyber.cdoc2.crypto.EllipticCurve.*;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -57,34 +58,67 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
 
     // read hardware PKCS11 device conf from a properties file
-    private Pkcs11DeviceConfiguration pkcs11Conf = Pkcs11DeviceConfiguration.load();
+    private final Pkcs11DeviceConfiguration pkcs11Conf = Pkcs11DeviceConfiguration.load();
 
     @Qualifier("trustAllNoClientAuth")
     @Autowired
     private RestClient restClient;
 
     @Test
-    void shouldCreateEcCapsuleUsingPKCS12Client() throws Exception {
-        Cdoc2KeyCapsuleApiClient noAuthClient = createClient();
+    void shouldCreateEc256CapsuleUsingPKCS12Client() throws Exception {
+        // Client public key TLS encoded and base64 encoded from ecc-256-client-certificate.pem
+        File[] certs = {TestData.getKeysDirectory().resolve("ecc/ecc-256-client-certificate.pem").toFile()};
+        ECPublicKey recipientKey = ECKeys.loadCertKeys(certs).get(0);
 
-        EcCapsuleClientImpl client = new EcCapsuleClientImpl(
-                KeyCapsuleClientImpl.create("shouldCreateEcCapsuleUsingPKCS12Client", noAuthClient, noAuthClient));
+        shouldCreateEcCapsuleUsingPKCS12Client(recipientKey);
+    }
 
+    @Test
+    void shouldCreateEc384CapsuleUsingPKCS12Client() throws Exception {
         // Client public key TLS encoded and base64 encoded from client-certificate.pem
         File[] certs = {TestData.getKeysDirectory().resolve("ca_certs/client-certificate.pem").toFile()};
         ECPublicKey recipientKey = ECKeys.loadCertKeys(certs).get(0);
+
+        shouldCreateEcCapsuleUsingPKCS12Client(recipientKey);
+    }
+
+    @Test
+    void shouldCreateEc521CapsuleUsingPKCS12Client() throws Exception {
+        // Client public key TLS encoded and base64 encoded from ecc-521-client-certificate.pem
+        File[] certs = {TestData.getKeysDirectory().resolve("ecc/ecc-521-client-certificate.pem").toFile()};
+        ECPublicKey recipientKey = ECKeys.loadCertKeys(certs).get(0);
+
+        shouldCreateEcCapsuleUsingPKCS12Client(recipientKey);
+    }
+
+    private void shouldCreateEcCapsuleUsingPKCS12Client(
+        ECPublicKey recipientKey
+    ) throws Exception {
+        Cdoc2KeyCapsuleApiClient noAuthClient = createClient();
+
+        EcCapsuleClientImpl client = new EcCapsuleClientImpl(
+            KeyCapsuleClientImpl.create("shouldCreateEcCapsuleUsingPKCS12Client", noAuthClient, noAuthClient));
+
+
         EllipticCurve curve = EllipticCurve.forPubKey(recipientKey);
 
         // Sender public key
-        KeyPair senderKeyPair = curve.generateEcKeyPair();
+        KeyPair senderKeyPair = ECKeys.generateEcKeyPair(curve);
         ECPublicKey senderPubKey = (ECPublicKey) senderKeyPair.getPublic();
 
         String id = client.storeSenderKey(recipientKey, senderPubKey);
         assertNotNull(id);
 
+        var capsuleType = switch (curve) {
+            case SECP256R1 -> KeyCapsuleDb.CapsuleType.SECP256R1;
+            case SECP384R1 -> KeyCapsuleDb.CapsuleType.SECP384R1;
+            case SECP521R1 -> KeyCapsuleDb.CapsuleType.SECP521R1;
+            default -> throw new RuntimeException("Unexpected capsule type");
+        };
+
         this.checkCapsuleExistsInDb(
             id,
-            KeyCapsuleDb.CapsuleType.SECP384R1,
+            capsuleType,
             ECKeys.encodeEcPubKeyForTls(recipientKey),
             ECKeys.encodeEcPubKeyForTls(senderPubKey)
         );
@@ -114,11 +148,11 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
         File[] certs = {TestData.getKeysDirectory().resolve("ca_certs/client-certificate.pem").toFile()};
         ECPublicKey recipientPubKey = ECKeys.loadCertKeys(certs).get(0);
 
-        ECPublicKey senderPubKey = (ECPublicKey) EllipticCurve.SECP384R1.generateEcKeyPair().getPublic();
+        ECPublicKey senderPubKey = (ECPublicKey) ECKeys.generateEcKeyPair(SECP384R1).getPublic();
 
         log.debug("Sender pub key: {}",
             Base64.getEncoder().encodeToString(
-                ECKeys.encodeEcPubKeyForTls(EllipticCurve.SECP384R1, senderPubKey)
+                ECKeys.encodeEcPubKeyForTls(SECP384R1, senderPubKey)
             )
         );
 
@@ -206,7 +240,7 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
         var config = KeyCapsuleClientConfiguration.load(p);
         KeyCapsuleClientImpl client = (KeyCapsuleClientImpl) KeyCapsuleClientImpl.create(config);
 
-        KeyPair senderKeyPair = EllipticCurve.SECP384R1.generateEcKeyPair();
+        KeyPair senderKeyPair = ECKeys.generateEcKeyPair(SECP384R1);
         ECPublicKey senderPubKey = (ECPublicKey) senderKeyPair.getPublic();
 
         // Storing clientKeyStore in KeyCapsulesClientImpl is a bit of hack for tests.
@@ -306,7 +340,7 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
 
         //recipient must match to client's cert pub key or GET will fail with 404
         PublicKey recipientPubKey = cert.getPublicKey();
-        KeyPair senderKeyPair = EllipticCurve.SECP384R1.generateEcKeyPair();
+        KeyPair senderKeyPair = ECKeys.generateEcKeyPair(SECP384R1);
         EllipticCurve.forPubKey(recipientPubKey);
         ECPublicKey senderPubKey = (ECPublicKey) senderKeyPair.getPublic();
 

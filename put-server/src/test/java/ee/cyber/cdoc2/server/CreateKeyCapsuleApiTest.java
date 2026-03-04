@@ -136,7 +136,7 @@ class CreateKeyCapsuleApiTest extends KeyCapsuleIntegrationTest {
         capsule.recipientId(ECKeys.encodeEcPubKeyForTls(curve, recipientKey));
 
         // Sender public key
-        KeyPair senderKeyPair = curve.generateEcKeyPair();
+        KeyPair senderKeyPair = ECKeys.generateEcKeyPair(curve);
         ECPublicKey senderPubKey = (ECPublicKey) senderKeyPair.getPublic();
         capsule.ephemeralKeyMaterial(ECKeys.encodeEcPubKeyForTls(senderPubKey));
 
