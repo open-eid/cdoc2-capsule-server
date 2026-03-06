@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.7.1] secp521 Support (2026-02-xx)
+## [1.7.1] secp521 Support (2026-03-06)
 
 ### Features
 * Add support for `secp521` elliptic curve to `cdoc2-get-server` and `cdoc2-put-server`.
