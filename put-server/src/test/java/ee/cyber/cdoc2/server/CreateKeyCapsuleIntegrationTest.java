@@ -425,6 +425,28 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
     }
 
     @Test
+    void shouldReturnExpiryHeadersOnCreate() throws Exception {
+        var bytes = Files.readAllBytes(
+            TestData.getKeysDirectory().resolve("rsa/client-rsa-2048-cert.pem").toAbsolutePath());
+        var cert = PemTools.loadCertificate(new ByteArrayInputStream(bytes));
+
+        var capsule = new Capsule()
+            .capsuleType(Capsule.CapsuleTypeEnum.RSA)
+            .ephemeralKeyMaterial(UUID.randomUUID().toString().getBytes())
+            .recipientId(RsaUtils.encodeRsaPubKey((RSAPublicKey) cert.getPublicKey()));
+
+        var headers = this.restClient.post()
+            .uri(new URI(this.capsuleApiUrl()))
+            .body(capsule)
+            .retrieve()
+            .toBodilessEntity()
+            .getHeaders();
+
+        assertTrue(headers.containsKey(Constants.X_EXPIRY_TIME_HEADER));
+        assertTrue(headers.containsKey(Constants.X_EXPIRY_TIME_ADJUSTED));
+    }
+
+    @Test
     void shouldCreateRsaCapsule() throws Exception {
         var rsaCapsule = new Capsule()
             .capsuleType(Capsule.CapsuleTypeEnum.RSA)
