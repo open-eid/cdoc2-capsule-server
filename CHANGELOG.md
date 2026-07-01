@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.2] Bug fixes (2026-06-xx)
+
+### Bugfixes
+* Return correct error code when client certificate is missing in `/key-capsules/{transactionId}`.
+* Return `x-expiry-time-adjusted` in `PUT /key-capsules`.
+
 ## [1.7.1] secp521 Support (2026-03-06)
 
 ### Features

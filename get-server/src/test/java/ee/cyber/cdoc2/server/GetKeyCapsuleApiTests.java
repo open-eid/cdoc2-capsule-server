@@ -66,6 +66,7 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
     @Autowired
     private RestClient restClient;
 
+
     @Test
     void testPKCS12Client() throws Exception {
         Cdoc2KeyCapsuleApiClient client = createClientWithPkcs12();
@@ -406,6 +407,35 @@ class GetKeyCapsuleApiTests extends KeyCapsuleIntegrationTest {
     void shouldGetHttp404() throws Exception {
         String txId = "KC12345678901234567890"; // certificate provided and passes validation, but capsule not found
         URI requestUri = new URI(this.capsuleApiUrl() + "/" + txId);
+        RestClientResponseException ex = assertThrows(
+            RestClientResponseException.class,
+            () -> this.restClient
+                .get()
+                .uri(requestUri)
+                .retrieve()
+                .toEntity(Capsule.class)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+    }
+
+    @Test
+    void shouldGetHttp400WhenClientCertificateDoesNotMatchCapsule() throws Exception {
+        var recipientCert = PemTools.loadCertificate(
+            new ByteArrayInputStream(
+                Files.readAllBytes(TestData.getKeysDirectory().resolve("rsa/client-rsa-4096-cert.pem")
+                    .toAbsolutePath())
+            )
+        );
+        var capsule = new Capsule()
+            .capsuleType(Capsule.CapsuleTypeEnum.RSA)
+            .ephemeralKeyMaterial(UUID.randomUUID().toString().getBytes())
+            .recipientId(RsaUtils.encodeRsaPubKey((RSAPublicKey) recipientCert.getPublicKey()));
+
+        String id = this.saveCapsule(capsule, EXPIRY_TIME).getTransactionId();
+        URI requestUri = new URI(this.capsuleApiUrl() + "/" + id);
+
+        // restClient uses client-rsa-2048.p12 — a different cert, not the capsule's recipient
         RestClientResponseException ex = assertThrows(
             RestClientResponseException.class,
             () -> this.restClient
