@@ -442,8 +442,8 @@ class CreateKeyCapsuleIntegrationTest extends KeyCapsuleIntegrationTest {
             .toBodilessEntity()
             .getHeaders();
 
-        assertTrue(headers.containsKey(Constants.X_EXPIRY_TIME_HEADER));
-        assertTrue(headers.containsKey(Constants.X_EXPIRY_TIME_ADJUSTED));
+        assertTrue(headers.containsHeader(Constants.X_EXPIRY_TIME_HEADER));
+        assertTrue(headers.containsHeader(Constants.X_EXPIRY_TIME_ADJUSTED));
     }
 
     @Test
