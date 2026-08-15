@@ -6,6 +6,16 @@
 * Return correct error code when client certificate is missing in `/key-capsules/{transactionId}`.
 * Return `x-expiry-time-adjusted` in `PUT /key-capsules`.
 
+### Internal
+* Updated all components to Spring Boot 4.1.0 - additionally updated:
+   * `logback-classic` version `1.5.18` -> `1.5.38`
+   * `bcpkix-jdk18on` version `1.81` -> `1.85`
+
+Component versions incremented:
+`cdoc2-common-server` `2.2.1` -> `2.3.0`
+`cdoc2-shared-crypto` `0.3.0` -> `0.3.1`
+`cdoc2-server-db` `2.2.2` -> `2.2.3`
+
 ## [1.7.1] secp521 Support (2026-03-06)
 
 ### Features

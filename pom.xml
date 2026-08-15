@@ -36,7 +36,7 @@
 
 		<!-- versions for spring-boot dependencies are defined here: -->
 		<!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
-		<spring-boot.version>4.0.1</spring-boot.version>
+		<spring-boot.version>4.1.0</spring-boot.version>
 
 		<!-- to override spring-boot dependency version, find its name from
 		    https://docs.spring.io/spring-boot/appendix/dependency-versions/properties.html
