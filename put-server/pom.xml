@@ -58,14 +58,14 @@
 				<dependency>
 					<groupId>ee.cyber.cdoc2</groupId>
 					<artifactId>cdoc2-lib</artifactId>
-					<version>3.6.2</version>
+					<version>3.7.1</version>
 					<scope>test</scope>
 				</dependency>
 				<dependency>
 					<groupId>ee.cyber.cdoc2</groupId>
 					<!-- cdoc2-lib src/test compiled classes-->
 					<artifactId>cdoc2-lib</artifactId>
-					<version>3.6.2</version>
+					<version>3.7.1</version>
 					<type>test-jar</type>
 					<scope>test</scope>
 				</dependency>
