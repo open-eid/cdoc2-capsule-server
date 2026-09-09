@@ -1,13 +1,13 @@
 # Changelog
 
-## [1.7.2] Bug fixes (2026-06-xx)
+## [1.7.2] Bug fixes
 
 ### Bugfixes
 * Return correct error code when client certificate is missing in `/key-capsules/{transactionId}`.
 * Return `x-expiry-time-adjusted` in `PUT /key-capsules`.
 
 ### Internal
-* Updated all components to Spring Boot 4.1.0 - additionally updated:
+* Updated all components to Spring Boot 4.1.1 - additionally updated:
    * `logback-classic` version `1.5.18` -> `1.5.38`
    * `bcpkix-jdk18on` version `1.81` -> `1.85`
 

@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.1.0</version>
+		<version>4.1.1</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
@@ -24,7 +24,7 @@
 
 		<tests>!(pkcs11 | slow)</tests>
 
-        <spring-boot.version>4.1.0</spring-boot.version>
+        <spring-boot.version>4.1.1</spring-boot.version>
 		<!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html-->
 	</properties>
 
@@ -276,6 +276,16 @@
         </dependency>
 
     </dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcprov-jdk18on</artifactId>
+				<version>1.85</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
 		<resources>
