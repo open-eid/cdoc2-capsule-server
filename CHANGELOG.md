@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.3] Security update
+
+* Spring managed dependencies `tomcat-embed-core`, `tomcat-embed-websocket`,
+  `tomcat-embed-el` forced to version `11.0.25` to fix critical vulnerabilities
+* increment `cdoc2-lib` and `cdoc2-client` versions
+
 ## [1.7.2] Bug fixes
 
 ### Bugfixes
@@ -10,8 +16,6 @@
 * Updated all components to Spring Boot 4.1.1 - additionally updated:
    * `logback-classic` version `1.5.18` -> `1.5.38`
    * `bcpkix-jdk18on` version `1.81` -> `1.85
-   * Spring managed dependencies `tomcat-embed-core`, `tomcat-embed-websocket`, 
-     `tomcat-embed-el` forced to version `11.0.25` to fix critical vulnerabilities
 
 Component versions incremented:
 `cdoc2-common-server` `2.2.1` -> `2.3.0`
