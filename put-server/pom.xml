@@ -11,7 +11,7 @@
 
 	<artifactId>cdoc2-put-server</artifactId>
 	<groupId>ee.cyber.cdoc2</groupId>
-	<version>1.7.2</version>
+	<version>1.7.3</version>
 	<packaging>jar</packaging>
 
 	<name>cdoc2-put-server</name>
@@ -58,14 +58,14 @@
 				<dependency>
 					<groupId>ee.cyber.cdoc2</groupId>
 					<artifactId>cdoc2-lib</artifactId>
-					<version>3.7.2</version>
+					<version>3.7.3</version>
 					<scope>test</scope>
 				</dependency>
 				<dependency>
 					<groupId>ee.cyber.cdoc2</groupId>
 					<!-- cdoc2-lib src/test compiled classes-->
 					<artifactId>cdoc2-lib</artifactId>
-					<version>3.7.2</version>
+					<version>3.7.3</version>
 					<type>test-jar</type>
 					<scope>test</scope>
 				</dependency>
