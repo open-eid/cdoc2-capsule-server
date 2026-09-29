@@ -238,6 +238,18 @@
             <artifactId>opentelemetry-exporter-otlp</artifactId>
         </dependency>
 
+		<!-- Spring Boot autoconfiguration for tracing (Tracer bean, MDC correlation, W3C propagation) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-micrometer-tracing</artifactId>
+		</dependency>
+
+		<!-- Spring Boot autoconfiguration wiring the OTel bridge + OTLP tracing exporter -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-micrometer-tracing-opentelemetry</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
