@@ -5,6 +5,7 @@
 * Spring managed dependencies `tomcat-embed-core`, `tomcat-embed-websocket`,
   `tomcat-embed-el` forced to version `11.0.25` to fix critical vulnerabilities
 * increment `cdoc2-lib` and `cdoc2-client` versions
+* Spring Boot 4 tracing enabled
 
 ## [1.7.2] Bug fixes
 
