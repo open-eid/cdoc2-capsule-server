@@ -7,7 +7,7 @@
     <parent>
         <groupId>ee.cyber.cdoc2</groupId>
         <artifactId>cdoc2-server</artifactId>
-        <version>1.7.1</version>
+        <version>1.7.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -29,7 +29,7 @@
         <spotbugs-annotations.version>4.9.3</spotbugs-annotations.version>
 
         <!--info.version from cdoc2-openapi/cdoc2-key-capsules-openapi.yaml -->
-        <cdoc2-key-capsules-openapi.version>3.1.1</cdoc2-key-capsules-openapi.version>
+        <cdoc2-key-capsules-openapi.version>3.1.2</cdoc2-key-capsules-openapi.version>
 
     </properties>
 
@@ -156,7 +156,7 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>7.12.0</version>
+                <version>7.19.0</version>
                 <executions>
                     <execution>
                         <id>generate-cdoc2-capsules</id>
@@ -177,7 +177,7 @@
                     <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
                     <generateAliasAsModel>false</generateAliasAsModel>
                     <configOptions>
-                        <useSpringBoot3>true</useSpringBoot3>
+                        <useJakartaEe>true</useJakartaEe>
                         <delegatePattern>true</delegatePattern>
                         <dateLibrary>java8-localdatetime</dateLibrary>
                         <hateoas>false</hateoas>

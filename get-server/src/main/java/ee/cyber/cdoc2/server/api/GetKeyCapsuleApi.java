@@ -58,7 +58,7 @@ public class GetKeyCapsuleApi implements KeyCapsulesApiDelegate {
     public ResponseEntity<Capsule> getCapsuleByTransactionId(String transactionId) {
         var clientCertOpt = this.getClientCertFromRequest();
         if (clientCertOpt.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         var clientCert = clientCertOpt.get();
         PublicKey clientPubKey = clientCert.getPublicKey();

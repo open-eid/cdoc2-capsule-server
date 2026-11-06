@@ -84,6 +84,7 @@ public class CreateKeyCapsuleApi implements KeyCapsulesApiDelegate {
             return ResponseEntity
                 .created(created)
                 .header(Constants.X_EXPIRY_TIME_HEADER, DateTimeFormatter.ISO_INSTANT.format(saved.getExpiryTime()))
+                .header(Constants.X_EXPIRY_TIME_ADJUSTED, String.valueOf(saved.getExpiryTimeAdjusted()))
                 .build();
         } catch (Exception e) {
             log.error(

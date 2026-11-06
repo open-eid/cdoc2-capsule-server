@@ -9,7 +9,7 @@
 ### Internal
 * Updated all components to Spring Boot 4.1.1 - additionally updated:
    * `logback-classic` version `1.5.18` -> `1.5.38`
-   * `bcpkix-jdk18on` version `1.81` -> `1.85
+   * `bcpkix-jdk18on` version `1.81` -> `1.85`
 
 Component versions incremented:
 `cdoc2-common-server` `2.2.1` -> `2.3.0`

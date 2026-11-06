@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.0</version>
+		<version>4.1.1</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
 	<artifactId>cdoc2-put-server</artifactId>
 	<groupId>ee.cyber.cdoc2</groupId>
-	<version>1.7.1</version>
+	<version>1.7.2</version>
 	<packaging>jar</packaging>
 
 	<name>cdoc2-put-server</name>
@@ -24,7 +24,7 @@
 
 		<tests>!(pkcs11 | slow)</tests>
 
-        <spring-boot.version>4.0.1</spring-boot.version>
+        <spring-boot.version>4.1.1</spring-boot.version>
 		<!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html-->
 	</properties>
 
@@ -58,21 +58,21 @@
 				<dependency>
 					<groupId>ee.cyber.cdoc2</groupId>
 					<artifactId>cdoc2-lib</artifactId>
-					<version>3.3.0</version>
+					<version>3.7.1</version>
 					<scope>test</scope>
 				</dependency>
 				<dependency>
 					<groupId>ee.cyber.cdoc2</groupId>
 					<!-- cdoc2-lib src/test compiled classes-->
 					<artifactId>cdoc2-lib</artifactId>
-					<version>3.3.0</version>
+					<version>3.7.1</version>
 					<type>test-jar</type>
 					<scope>test</scope>
 				</dependency>
 				<dependency>
 					<groupId>ee.cyber.cdoc2</groupId>
 					<artifactId>cdoc2-common-server</artifactId>
-					<version>2.2.1</version>
+					<version>2.3.0</version>
 					<type>test-jar</type>
 					<scope>test</scope>
 				</dependency>
@@ -192,7 +192,7 @@
 		<dependency>
 			<groupId>ee.cyber.cdoc2</groupId>
 			<artifactId>cdoc2-shared-crypto</artifactId>
-			<version>0.3.0</version>
+			<version>0.3.1</version>
 		</dependency>
 
 		<dependency>
@@ -205,13 +205,13 @@
 		<dependency>
 			<groupId>ee.cyber.cdoc2</groupId>
 			<artifactId>cdoc2-common-server</artifactId>
-			<version>2.2.1</version>
+			<version>2.3.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>ee.cyber.cdoc2</groupId>
 			<artifactId>cdoc2-server-db</artifactId>
-			<version>2.2.2</version>
+			<version>2.2.3</version>
 		</dependency>
 
 		<dependency>
@@ -250,18 +250,17 @@
 		</dependency>
 		<dependency>
 			<groupId>org.testcontainers</groupId>
-			<artifactId>junit-jupiter</artifactId>
+			<artifactId>testcontainers-junit-jupiter</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.testcontainers</groupId>
-			<artifactId>postgresql</artifactId>
+			<artifactId>testcontainers-postgresql</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.liquibase</groupId>
-			<artifactId>liquibase-core</artifactId>
-			<version>5.0.1</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-liquibase</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -272,11 +271,21 @@
         <dependency>
             <groupId>ee.cyber.cdoc2</groupId>
             <artifactId>cdoc2-client</artifactId>
-            <version>2.1.0</version>
+            <version>2.3.0</version>
             <scope>test</scope>
         </dependency>
 
     </dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcprov-jdk18on</artifactId>
+				<version>1.85</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
 		<resources>
