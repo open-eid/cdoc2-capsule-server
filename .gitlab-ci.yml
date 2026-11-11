@@ -1,3 +1,8 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - when: never
+
 variables:
   DOCKER_TLS_CERTDIR: ""
   DOCKER_HOST: "tcp://docker:2375"
@@ -57,6 +62,8 @@ test:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: on_success
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "web"
       when: on_success
     - when: never
   script:
@@ -124,6 +131,8 @@ build-components:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: on_success
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "web"
       when: on_success
     - when: never
   artifacts:
