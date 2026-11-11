@@ -10,7 +10,7 @@ The key capsule server requires a pre-installed PostgreSQL database to store dat
 
 The creation and updating of the database schema is currently done from the source tree
 using `liquibase-maven-plugin`. In order to create or update the database schema
-Maven (at least 3.8.4) and Java (at least JDK 17) are required.
+Maven (at least 3.8.4) and Java (at least JDK 21) are required.
 
 In `server-db/liquibase.properties` configure the database connection parameters to match your PostgreSQL
 installation:
@@ -53,7 +53,7 @@ For more details about operations with certificates in keystore files, see [^1].
 ### Put Server
 
 #### Requirements
-- Java runtime (at least JDK 17)
+- Java runtime (at least JDK 21)
 - the application binary `cdoc2-put-server-<VERSION>.jar`
 - the configuration file `application.properties`
 
@@ -129,7 +129,7 @@ For sample setup see:
 ### Get Server
 
 #### Requirements
-- Java runtime (at least JDK 17)
+- Java runtime (at least JDK 21)
 - the application binary `cdoc2-get-server-<VERSION>.jar`
 - the configuration file `application.properties`
 
@@ -223,7 +223,7 @@ To enable certificate revocation debug use `-Djava.security.debug="certpath"`
 
 Other options available for fine-tuning certificate revocation are described in
 
-https://docs.oracle.com/en/java/javase/17/security/java-pki-programmers-guide.html#GUID-EB250086-0AC1-4D60-AE2A-FC7461374746
+https://docs.oracle.com/en/java/javase/21/security/java-pki-programmers-guide.html#GUID-EB250086-0AC1-4D60-AE2A-FC7461374746
 
 To disable client certificate checking over OCSP `application.properties` must have:
 ```
